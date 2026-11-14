@@ -5225,18 +5225,15 @@
 
     panel.innerHTML = `
       <div class="card" style="padding:16px;">
-        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px; flex-wrap:wrap;">
-          <div>
-            <h3 style="margin:0 0 4px;">營運開支</h3>
-            <p style="margin:0; font-size:13px; color:#6B7894;">本月（${Number(d.monthKey.slice(4))} 月，已過 ${d.dayOfMonth}／${d.daysInMonth} 日）全月估算開支</p>
-            <div style="font-size:28px; font-weight:800; color:var(--brand-800); margin-top:6px;">${usd(d.totalUSD)} <span style="font-size:15px; font-weight:600; color:#6B7894;">${hkd(d.totalUSD)}</span></div>
-            ${d.vultrPendingUSD != null ? `<p style="margin:4px 0 0; font-size:13px; color:#6B7894;">Vultr 本月實際累計帳單：${usd(d.vultrPendingUSD)}</p>` : ''}
-          </div>
-          <div style="text-align:right;">
-            <button type="button" class="btn btn-outline" onclick="window.renderAdminCostsTab(true)">重新整理</button>
-            <p style="margin:6px 0 0; font-size:12px; color:#8A94A8;">更新時間：${esc(updated)}<br>數據每 30 分鐘更新一次</p>
-          </div>
+        <!-- v1.235.1：「重新整理」掣固定在標題右邊（手機窄畫面亦不會跌到中間），更新時間移到金額下面 -->
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
+          <h3 style="margin:0;">營運開支</h3>
+          <button type="button" class="btn btn-outline" style="font-size:13px; padding:5px 12px; min-height:0; flex-shrink:0;" onclick="window.renderAdminCostsTab(true)">重新整理</button>
         </div>
+        <p style="margin:4px 0 0; font-size:13px; color:#6B7894;">本月（${Number(d.monthKey.slice(4))} 月，已過 ${d.dayOfMonth}／${d.daysInMonth} 日）全月估算開支</p>
+        <div style="font-size:28px; font-weight:800; color:var(--brand-800); margin-top:6px;">${usd(d.totalUSD)} <span style="font-size:15px; font-weight:600; color:#6B7894;">${hkd(d.totalUSD)}</span></div>
+        ${d.vultrPendingUSD != null ? `<p style="margin:4px 0 0; font-size:13px; color:#6B7894;">Vultr 本月實際累計帳單：${usd(d.vultrPendingUSD)}</p>` : ''}
+        <p style="margin:6px 0 0; font-size:12px; color:#8A94A8;">更新時間：${esc(updated)}（數據每 30 分鐘更新一次）</p>
         <div style="display:flex; gap:14px; flex-wrap:wrap; margin-top:12px; font-size:12px; color:#6B7894;">
           ${['ok', 'watch', 'urgent'].map(k => `<span style="display:flex; align-items:center; gap:5px;"><span style="width:10px; height:10px; border-radius:50%; background:${LEVEL[k].color};"></span>${LEVEL[k].label}${k === 'ok' ? '（70% 以下）' : k === 'watch' ? '（70%–89%）' : '（90% 或以上）'}</span>`).join('')}
         </div>
@@ -5510,18 +5507,23 @@
       if (!m) { window.showToast('檔名不正確，應為 concenmate-web-' + ENV() + '-版本.zip（由 npm run bundle:' + ENV() + ' 產生）'); return; }
       if (m[1] !== ENV()) { window.showToast(`這是${m[1] === 'prod' ? '正式版' : '測試版'}更新包，不能在${window.IS_PROD_SITE ? '正式網站' : '測試環境'}上載`); return; }
       const ver = m[2];
-      if (upd.version && cmpVer(ver, upd.version) <= 0) { window.showToast(`版本 v${ver} 不比目前發佈的 v${upd.version} 新，App 不會更新`); return; }
+      if (upd.version && cmpVer(ver, upd.version) < 0) { window.showToast(`版本 v${ver} 比目前發佈的 v${upd.version} 舊，App 不會更新`); return; }
+      if (upd.version && cmpVer(ver, upd.version) === 0 && !(await window.appConfirm(`v${ver} 已經發佈過，要重新上載取代嗎？`))) return;
       if (cmpVer(ver, window.APP_VERSION) !== 0 && !(await window.appConfirm(`更新包版本 v${ver} 與本網站目前版本 ${window.APP_VERSION} 不同，確定要上載嗎？`))) return;
       if (f.size > 40 * 1024 * 1024) { window.showToast('檔案超過 40MB'); return; }
       btn.disabled = true;
       try {
+        prog.textContent = '計算檢查碼…';
+        // v1.235.5：App 更新套件規定要有 SHA-256 檢查碼
+        const hashBuf = await crypto.subtle.digest('SHA-256', await f.arrayBuffer());
+        const checksum = Array.from(new Uint8Array(hashBuf)).map(b => b.toString(16).padStart(2, '0')).join('');
         prog.textContent = '上載中…（' + (f.size / 1048576).toFixed(1) + ' MB）';
         const path = `app_updates/web-${ENV()}-${ver}.zip`;
         const ref = window.storageApi.ref(window.storage, path);
         await window.storageApi.uploadBytes(ref, f, { contentType: 'application/zip', cacheControl: 'public, max-age=31536000' });
         const url = await window.storageApi.getDownloadURL(ref);
         await window.fs.setDoc(window.fs.doc(window.db, 'admin_config', 'appUpdate'), {
-          version: ver, url, env: ENV(), size: f.size, path,
+          version: ver, url, checksum, env: ENV(), size: f.size, path,
           uploadedAt: Date.now(), uploadedBy: (window.currentUser && window.currentUser.loginId) || ''
         }, { merge: true });
         prog.textContent = '';

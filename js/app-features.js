@@ -6741,7 +6741,7 @@
     const panelTs = document.getElementById('load-timestamp');
     if (!panelTs) return;
     let el = document.getElementById('cm-upd-debug');
-    if (!el) { el = document.createElement('span'); el.id = 'cm-upd-debug'; panelTs.parentNode.appendChild(document.createElement('br')); panelTs.parentNode.appendChild(document.createTextNode('App 更新: ')); panelTs.parentNode.appendChild(el); el.style.color = '#A4B4D4'; }
+    if (!el) { el = document.createElement('span'); el.id = 'cm-upd-debug'; panelTs.parentNode.appendChild(document.createElement('br')); panelTs.parentNode.appendChild(document.createTextNode('App 更新: ')); panelTs.parentNode.appendChild(el); el.style.color = '#A4B4D4'; el.style.wordBreak = 'break-all'; }
     el.textContent = t;
   }
   let checking = false, lastCheck = 0;
@@ -6767,14 +6767,16 @@
         return;
       }
       if (!b) {
+        // v1.235.5：更新套件規定要附 SHA-256 檢查碼（後台上載時計算），防止下載到損壞或被改動的檔案
+        if (!cfg.checksum) { setUpdStatus('後台更新包缺少檢查碼，請在後台重新上載'); return; }
         setUpdStatus('下載 v' + cfg.version + ' 中…');
-        b = await U.download({ url: cfg.url, version: cfg.version });
+        b = await U.download({ url: cfg.url, version: cfg.version, checksum: cfg.checksum });
       }
       await U.next({ id: b.id });
       setUpdStatus('已下載 v' + cfg.version + '，下次打開或返回 App 時生效');
       console.log('[App 更新] 已下載 v' + cfg.version);
     } catch (e) {
-      setUpdStatus('失敗：' + ((e && e.message) || e));
+      setUpdStatus('失敗：' + String((e && e.message) || e).replace(/https?:\/\/\S+/g, '').slice(0, 80));
       console.warn('[App 更新] 檢查或下載失敗:', e);
     } finally { checking = false; }
   }
