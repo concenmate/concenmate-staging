@@ -6803,3 +6803,21 @@
   setTimeout(pingDaily, 6000);
   if (P.App && P.App.addListener) P.App.addListener('resume', function () { checkForUpdate(); pingDaily(); });
 })();
+
+
+// v1.235.9：中等闊度（601–900px，平板／手機橫向）圖示側欄用簡稱，跟語言切換更新
+(function () {
+  function applyShortNav() {
+    [['nav-btn-stream', 'nav.streamShort', '直播'], ['nav-btn-room', 'nav.roomShort', '溫習室']].forEach(([id, key, def]) => {
+      const b = document.getElementById(id);
+      if (!b) return;
+      b.setAttribute('data-short', '1');
+      const t = b.querySelector('.nav-text');
+      if (t) t.setAttribute('data-short-text', window.t ? window.t(key, def) : def);
+    });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', applyShortNav); else applyShortNav();
+  const prev = window.applyAppLanguage;
+  if (typeof prev === 'function') window.applyAppLanguage = function () { const r = prev.apply(this, arguments); applyShortNav(); return r; };
+  setTimeout(applyShortNav, 3000);
+})();

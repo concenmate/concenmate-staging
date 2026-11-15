@@ -60,7 +60,10 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
     const APP_CHECK_SITE_KEY_PROD = "6Lcv77QtAAAAAJZug6sVl1c9kGfo5WysiYdj8XL0"; // concenmate-app-web
     const APP_CHECK_SITE_KEY_DEV  = "6LdvC7UtAAAAALix2ouHlGXFLZ17zQpsqQX7kNXc"; // concenmate-dev-web
     const appCheckSiteKey = window.IS_PROD_SITE ? APP_CHECK_SITE_KEY_PROD : APP_CHECK_SITE_KEY_DEV;
-    try {
+    // v1.235.9：iPhone App（capacitor://localhost）用不到網頁版 reCAPTCHA，每次讀寫／呼叫 Cloud Functions
+    // 都要等它逾時，令登入及開房慢了數秒。iPhone App 暫不啟用網頁版 App Check（上架前改用 App Attest）。
+    const isIosApp = window.IS_NATIVE_APP && window.Capacitor && typeof window.Capacitor.getPlatform === 'function' && window.Capacitor.getPlatform() === 'ios';
+    if (!isIosApp) try {
       initializeAppCheck(app, {
         provider: new ReCaptchaEnterpriseProvider(appCheckSiteKey),
         isTokenAutoRefreshEnabled: true
