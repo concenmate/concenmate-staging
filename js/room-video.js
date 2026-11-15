@@ -1565,7 +1565,8 @@
       const roomCapacityForThisRoom = resolveRoomCapacity(roomCheckData);
       state.currentRoomCapacity = roomCapacityForThisRoom;
 
-      const canJoin = await joinRoomParticipants(roomId);
+      const __t0 = performance.now(); const __lap = (n) => console.info('[開房計時] ' + n + '：' + Math.round(performance.now() - __t0) + 'ms');
+      const canJoin = await joinRoomParticipants(roomId); __lap('加入參加者');
       if (!canJoin) {
         window.showToast(window.t('room.roomFullTemplate', `房間已滿（${roomCapacityForThisRoom}/${roomCapacityForThisRoom}），暫時無法加入`).replace(/\{count\}|\{max\}/g, roomCapacityForThisRoom), "🚫");
         return false;
@@ -1629,7 +1630,7 @@
         }
       });
 
-      await ensureTurnServers();
+      await ensureTurnServers(); if (typeof __lap === 'function') __lap('中轉伺服器設定');
       startTimer();
       listenToRoomSignaling(roomId);
       listenToParticipants(roomId);
@@ -1638,8 +1639,8 @@
       startPresenceCheckLoop();
 
       // 一入房就廣播上線通知並接駁現有用家，唔再要求「一定要開咗鏡頭先可以睇到人」
-      await broadcastPresenceAndConnect();
-      await connectToExistingPeers(roomId);
+      await broadcastPresenceAndConnect(); if (typeof __lap === 'function') __lap('廣播在線');
+      await connectToExistingPeers(roomId); if (typeof __lap === 'function') __lap('連接其他人');
       return true;
     }
 
