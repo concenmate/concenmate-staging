@@ -19,7 +19,7 @@
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
     import { initializeAppCheck, ReCaptchaEnterpriseProvider } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app-check.js";
-    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, deleteUser, EmailAuthProvider, reauthenticateWithCredential, updatePassword } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+    import { getAuth, initializeAuth, indexedDBLocalPersistence, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, deleteUser, EmailAuthProvider, reauthenticateWithCredential, updatePassword } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
     import { getFirestore, doc, setDoc, getDoc, updateDoc, deleteDoc, collection, onSnapshot, addDoc, getDocs, increment, query, where, orderBy, limit, arrayUnion, arrayRemove, documentId, startAfter, runTransaction, getCountFromServer, writeBatch } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
     import { getStorage, ref as storageRef, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-storage.js";
     import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-functions.js";
@@ -69,7 +69,11 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
       console.warn('App Check 初始化失敗（唔會影響其他功能，但保護力會減弱）:', e);
     }
 
-    const auth = getAuth(app);
+    // v1.235.8：iPhone App（capacitor://localhost）用 getAuth() 會一直等待載入彈出視窗登入用的元件而卡住，
+    // 登入及判斷登入狀態都不會完成。App 內改用 initializeAuth＋indexedDB（不載入該元件）；網站照舊用 getAuth()。
+    const auth = window.IS_NATIVE_APP
+      ? initializeAuth(app, { persistence: indexedDBLocalPersistence })
+      : getAuth(app);
     const db = getFirestore(app);
     const storage = getStorage(app);
     // ⚠️ region 一定要同 functions/index.js 嘅 setGlobalOptions({ region })
