@@ -6821,3 +6821,25 @@
   if (typeof prev === 'function') window.applyAppLanguage = function () { const r = prev.apply(this, arguments); applyShortNav(); return r; };
   setTimeout(applyShortNav, 3000);
 })();
+
+// v1.235.11：手機 App 平時鎖定直向，只有溫習室全螢幕及直播全螢幕可以轉橫；平板／摺機（短邊 600px 或以上）不鎖定
+(function () {
+  if (!window.IS_NATIVE_APP || !window.Capacitor || !window.Capacitor.Plugins) return;
+  const SO = window.Capacitor.Plugins.ScreenOrientation;
+  if (!SO) return;
+  const isPhone = () => Math.min(window.screen.width, window.screen.height) < 600;
+  let mode = '';
+  function apply() {
+    let want;
+    if (!isPhone()) want = 'free';
+    else {
+      const fs = document.body.classList.contains('room-fullscreen-active') || document.body.classList.contains('swm-full-open');
+      want = fs ? 'free' : 'portrait';
+    }
+    if (want === mode) return;
+    mode = want;
+    (want === 'portrait' ? SO.lock({ orientation: 'portrait' }) : SO.unlock()).catch(function () {});
+  }
+  apply();
+  new MutationObserver(apply).observe(document.body, { attributes: true, attributeFilter: ['class'] });
+})();

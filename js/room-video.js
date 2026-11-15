@@ -960,10 +960,29 @@
     // 嚟都係跟住加入／退出同步更新（見底下 leaveRoomParticipants 等
     // 幾處 increment(-1)），而家將「讀呢個數字」同「寫入」夾埋做同一
     // 個原子操作，先真正杜絕到競態漏洞。
-    async function joinRoomParticipants(roomId) {
+    async function joinRoomParticipants(roomId, justCreatedByMe) {
       const myUid = window.currentUser.uid;
       const roomRef = window.fs.doc(window.db, "rooms", roomId);
       const participantRef = window.fs.doc(window.db, "rooms", roomId, "participants", myUid);
+
+      // v1.235.11：自己剛建立的房（人數一定是 0）毋須用 transaction 先讀後寫，直接一次過寫入，快很多
+      if (justCreatedByMe && window.fs.writeBatch) {
+        try {
+          const b = window.fs.writeBatch(window.db);
+          b.set(participantRef, {
+            uid: myUid,
+            name: window.currentUser.username || '同學',
+            joinedAt: Date.now(),
+            cameraOn: false,
+            allowPhoto: !!(window.currentUser && window.currentUser.allowGroupPhoto === true)
+          });
+          b.update(roomRef, { participantCount: 1 });
+          await b.commit();
+          return true;
+        } catch (e) {
+          console.warn('快速加入失敗，改用一般方法:', e);
+        }
+      }
 
       try {
         return await window.fs.runTransaction(window.db, async (tx) => {
@@ -1469,6 +1488,9 @@
     };
 
     async function enterRoomSetup(roomId, roomName, subject, durationMins, hostName, isMyRoom, createdAt, hostUid) {
+      // v1.235.11：開房計時（Xcode／瀏覽器 Console「[開房計時]」）＋中轉伺服器設定提早並行取得
+      const __t0 = performance.now(); const __lap = (n) => console.info('[開房計時] ' + n + '：' + Math.round(performance.now() - __t0) + 'ms');
+      const __turnPromise = ensureTurnServers();
       if (typeof window.swmIsBusy === 'function' && window.swmIsBusy()) {
         window.showToast(window.t('stream.busyRoom', '你正在直播或觀看直播，請先離開直播再使用視訊溫習室'), '⚠️');
         return false;
@@ -1565,8 +1587,8 @@
       const roomCapacityForThisRoom = resolveRoomCapacity(roomCheckData);
       state.currentRoomCapacity = roomCapacityForThisRoom;
 
-      const __t0 = performance.now(); const __lap = (n) => console.info('[開房計時] ' + n + '：' + Math.round(performance.now() - __t0) + 'ms');
-      const canJoin = await joinRoomParticipants(roomId); __lap('加入參加者');
+      __lap('讀取房間及入場驗證');
+      const canJoin = await joinRoomParticipants(roomId, isMyRoom && createdAt && (Date.now() - createdAt < 60000)); __lap('加入參加者');
       if (!canJoin) {
         window.showToast(window.t('room.roomFullTemplate', `房間已滿（${roomCapacityForThisRoom}/${roomCapacityForThisRoom}），暫時無法加入`).replace(/\{count\}|\{max\}/g, roomCapacityForThisRoom), "🚫");
         return false;
@@ -1630,7 +1652,7 @@
         }
       });
 
-      await ensureTurnServers(); if (typeof __lap === 'function') __lap('中轉伺服器設定');
+      await __turnPromise; __lap('中轉伺服器設定');
       startTimer();
       listenToRoomSignaling(roomId);
       listenToParticipants(roomId);
