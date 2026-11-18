@@ -19,7 +19,7 @@
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
     import { initializeAppCheck, ReCaptchaEnterpriseProvider } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app-check.js";
-    import { getAuth, initializeAuth, indexedDBLocalPersistence, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, deleteUser, EmailAuthProvider, reauthenticateWithCredential, updatePassword } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+    import { getAuth, initializeAuth, indexedDBLocalPersistence, GoogleAuthProvider, signInWithPopup, reauthenticateWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, deleteUser, EmailAuthProvider, reauthenticateWithCredential, updatePassword } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
     import { getFirestore, initializeFirestore, doc, setDoc, getDoc, updateDoc, deleteDoc, collection, onSnapshot, addDoc, getDocs, increment, query, where, orderBy, limit, arrayUnion, arrayRemove, documentId, startAfter, runTransaction, getCountFromServer, writeBatch } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
     import { getStorage, ref as storageRef, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-storage.js";
     import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-functions.js";
@@ -452,6 +452,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
           const userDoc = await getDoc(userDocRef);
           if (userDoc.exists()) {
             window.currentUser = userDoc.data();
+            document.documentElement.classList.toggle('cm-google-acct', isGoogleAuthUser(user));
 
             // 「分區溫習排行榜」補漏：喺呢個 district 欄位推出之前已經
             // 註冊咗嘅舊帳戶，users/{uid} 文件冇呢個欄位，唔會出現喺任
@@ -472,6 +473,12 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
                 });
               }
             }
+          } else if (isGoogleAuthUser(user)) {
+            // v1.236.0：第一次用 Google 登入、未建立帳戶資料 → 顯示「完成註冊」表格，填好才可使用
+            window.currentUser = null;
+            if (typeof window.updateUserAuthUI === 'function') window.updateUserAuthUI();
+            window.openGoogleCompleteRegistration(user);
+            return;
           } else {
             window.currentUser = {
               uid: user.uid,
@@ -1024,7 +1031,8 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
       const pwdEl = document.getElementById('delete-account-password');
       const pwd = pwdEl ? pwdEl.value : '';
       if (!auth.currentUser || !window.currentUser) return;
-      if (!pwd) { window.showToast(window.t('profile.deleteNeedPassword', '請先輸入目前登入密碼'), '⚠️'); return; }
+      const viaGoogle = isGoogleAuthUser(auth.currentUser);
+      if (!pwd && !viaGoogle) { window.showToast(window.t('profile.deleteNeedPassword', '請先輸入目前登入密碼'), '⚠️'); return; }
       if (!(await window.appConfirm(window.t('profile.deleteConfirm1', '確定永久刪除你的帳戶？所有資料將會刪除，不能復原。')))) return;
       const typed = await window.appPrompt(window.t('profile.deleteConfirm2', '請輸入你的帳號 ID 以確認刪除：'), '');
       if (typed == null) return;
@@ -1035,8 +1043,12 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
       const btn = document.getElementById('delete-account-btn');
       if (btn) { btn.disabled = true; btn.innerText = window.t('profile.deleting', '正在刪除…'); }
       try {
-        const credential = EmailAuthProvider.credential(window.currentUser.email, pwd);
-        await reauthenticateWithCredential(auth.currentUser, credential);
+        if (viaGoogle) {
+          await reauthenticateWithPopup(auth.currentUser, new GoogleAuthProvider());
+        } else {
+          const credential = EmailAuthProvider.credential(window.currentUser.email, pwd);
+          await reauthenticateWithCredential(auth.currentUser, credential);
+        }
         await auth.currentUser.getIdToken(true);
         await window.callCloudFunction('deleteMyAccount', { confirm: 'DELETE' });
         window.showToast(window.t('profile.deleted', '帳戶已刪除，多謝你使用 ConcenMate'), '✅');
@@ -1058,6 +1070,69 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
     // 嘅電郵，純粹畀 Firebase Auth 內部識別用）；`usernames/{idLower}` 呢個
     // 頂層 collection 就做「ID → { uid, authEmail }」嘅對應表，登入嗰陣先
     // 查呢個表攞返 authEmail，先至真正用嚟 signInWithEmailAndPassword。
+    // ===================== v1.236.0：Google 註冊／登入（網站） =====================
+    function isGoogleAuthUser(u) {
+      return !!(u && Array.isArray(u.providerData) && u.providerData.some(p => p && p.providerId === 'google.com'));
+    }
+    window.isGoogleAccount = function() { return isGoogleAuthUser(auth.currentUser); };
+    window.signInWithGoogle = async function() {
+      if (window.IS_NATIVE_APP) {
+        window.showToast(window.t('auth.googleNotInApp', 'App 暫未支援 Google 登入，請使用帳號 ID 登入'), '');
+        return;
+      }
+      try {
+        const provider = new GoogleAuthProvider();
+        provider.setCustomParameters({ prompt: 'select_account' });
+        const cred = await signInWithPopup(auth, provider);
+        window.closeModal('modal-login');
+        // 已有帳戶資料：onAuthStateChanged 會照常登入；未有：會自動顯示「完成註冊」
+        const snap = await getDoc(doc(db, 'users', cred.user.uid)).catch(() => null);
+        if (snap && snap.exists()) {
+          window.closeModal('modal-register');
+          window.showToast(window.t('core.welcomeBack', '歡迎回來 ConcenMate！'), '');
+          if (typeof window.switchTab === 'function') window.switchTab('home');
+        }
+      } catch (error) {
+        if (error && (error.code === 'auth/popup-closed-by-user' || error.code === 'auth/cancelled-popup-request')) return;
+        if (error && error.code === 'auth/popup-blocked') {
+          window.showToast(window.t('auth.googlePopupBlocked', '瀏覽器擋住了 Google 登入視窗，請容許彈出視窗後再試'), '⚠️');
+          return;
+        }
+        window.showToast(window.t('auth.googleLoginFailedTemplate', 'Google 登入失敗：{error}').replace('{error}', window.friendlyErrorText ? window.friendlyErrorText(error) : (error.message || error)), '❌');
+      }
+    };
+    // 顯示註冊表格的「Google 模式」：隱藏密碼及電郵欄（電郵用 Google 帳戶的）
+    window.openGoogleCompleteRegistration = function(user) {
+      const modal = document.getElementById('modal-register');
+      if (!modal) return;
+      window.__googleRegUser = { uid: user.uid, email: user.email || '', name: user.displayName || '' };
+      modal.classList.add('cm-google-mode');
+      ['reg-password', 'reg-password-confirm', 'reg-contact-email'].forEach(id => { const el = document.getElementById(id); if (el) el.required = false; });
+      const em = document.getElementById('reg-contact-email'); if (em) em.value = user.email || '';
+      const nm = document.getElementById('reg-username'); if (nm && !nm.value && user.displayName) nm.value = String(user.displayName).slice(0, 30);
+      const banner = document.getElementById('reg-google-banner');
+      if (banner) {
+        banner.style.display = 'block';
+        banner.textContent = window.t('auth.googleCompleteBannerTemplate', '你正以 Google 帳戶（{email}）註冊。請填寫以下資料完成註冊；之後按「使用 Google 帳戶登入」即可登入。').replace('{email}', user.email || '');
+      }
+      window.closeModal('modal-login');
+      window.openModal('modal-register');
+    };
+    function leaveGoogleMode() {
+      const modal = document.getElementById('modal-register');
+      if (modal) modal.classList.remove('cm-google-mode');
+      ['reg-password', 'reg-password-confirm', 'reg-contact-email'].forEach(id => { const el = document.getElementById(id); if (el) el.required = true; });
+      const banner = document.getElementById('reg-google-banner'); if (banner) banner.style.display = 'none';
+      window.__googleRegUser = null;
+    }
+    // 取消註冊：Google 模式下要一併登出（未完成註冊的 Google 登入不保留）
+    window.cancelRegister = async function() {
+      const wasGoogle = !!window.__googleRegUser;
+      window.closeModal('modal-register');
+      leaveGoogleMode();
+      if (wasGoogle) { try { await signOut(auth); } catch (_) {} }
+    };
+
     window.registerWithFirebase = async function(loginId, password, profileData) {
       const idLower = loginId.toLowerCase();
 
@@ -1073,18 +1148,23 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
         return;
       }
 
-      const authEmail = `${idLower}@concenmate.local`;
-      let userCredential;
-      try {
-        userCredential = await createUserWithEmailAndPassword(auth, authEmail, password);
-      } catch (error) {
-        window.showToast(window.t('core.registerFailedTemplate', "註冊失敗：{error}").replace('{error}', window.friendlyErrorText(error)), "❌");
-        return;
+      const googleUser = (window.__googleRegUser && auth.currentUser && auth.currentUser.uid === window.__googleRegUser.uid) ? auth.currentUser : null;
+      const authEmail = googleUser ? (googleUser.email || '') : `${idLower}@concenmate.local`;
+      let userCredential = null;
+      if (!googleUser) {
+        try {
+          userCredential = await createUserWithEmailAndPassword(auth, authEmail, password);
+        } catch (error) {
+          window.showToast(window.t('core.registerFailedTemplate', "註冊失敗：{error}").replace('{error}', window.friendlyErrorText(error)), "❌");
+          return;
+        }
       }
-      const uid = userCredential.user.uid;
+      const uid = googleUser ? googleUser.uid : userCredential.user.uid;
+      if (googleUser) profileData.contactEmail = googleUser.email || '';
 
       try {
-        await setDoc(doc(db, 'usernames', idLower), { uid, authEmail, createdAt: Date.now() });
+        // Google 帳戶：對應表記錄 provider，用帳號 ID＋密碼登入時會提示改用 Google
+        await setDoc(doc(db, 'usernames', idLower), googleUser ? { uid, provider: 'google', createdAt: Date.now() } : { uid, authEmail, createdAt: Date.now() });
 
         // ⚠️ 導師帳號（accountType === 'tutor'）喺呢一步都係先建立一個
         // 同學生帳號結構完全一樣嘅 users/{uid} 文件（school／grade 呢類
@@ -1099,7 +1179,8 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
           email: authEmail,
           loginId: loginId,
           contactEmail: profileData.contactEmail || '',
-          emailVerified: false,
+          // Google 帳戶的電郵已由 Google 驗證，毋須再寄驗證電郵（rules 會核對）
+          emailVerified: !!googleUser,
           emailVerifyToken: null,
           username: profileData.username,
           school: profileData.school || '',
@@ -1137,7 +1218,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
         // 寄驗證電郵係「錦上添花」，就算寄唔到（例如 EmailJS 未設定、
         // 用戶網絡有問題）都唔應該擋住成個註冊流程，所以特登唔用
         // await、亦都唔理佢嘅失敗
-        if (newProfile.contactEmail) {
+        if (newProfile.contactEmail && !googleUser) {
           window.sendVerificationEmail().catch(e => console.error('寄驗證電郵失敗:', e));
         }
 
@@ -1163,6 +1244,13 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
         }
 
         window.closeModal('modal-register');
+        if (googleUser) {
+          // Google 帳戶完成註冊：重新載入一次，讓登入流程完整初始化（好友、通知、排行榜等）
+          leaveGoogleMode();
+          window.showToast(window.t('core.registerSuccessGoogleTemplate', '註冊成功！你的帳號 ID 是「{id}」，之後按「使用 Google 帳戶登入」即可登入').replace('{id}', loginId), '');
+          setTimeout(() => window.location.reload(), 1500);
+          return;
+        }
         window.updateUserAuthUI();
         if (profileData.accountType === 'tutor') {
           if (tutorApplySucceeded) {
@@ -1180,7 +1268,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
         // Firestore 寫入失敗（多數係撞正個 ID 岩岩俾人搶咗）：要清理返啱啱建立
         // 嗰個 Auth 帳號，否則會留低一個冇對應 Firestore 資料嘅「孤兒」帳號
         console.error('註冊寫入 Firestore 失敗，清理返啱啱建立的 Auth 帳號:', error);
-        try { await deleteUser(userCredential.user); } catch (e2) { /* 清理失敗都唔緊要，唔好擋住原本嘅錯誤訊息 */ }
+        if (userCredential) { try { await deleteUser(userCredential.user); } catch (e2) { /* 清理失敗都唔緊要，唔好擋住原本嘅錯誤訊息 */ } }
         window.showToast(window.t('core.registerFailedIdTakenTemplate', "註冊失敗，帳號 ID 可能剛被使用，請換一個再試：{error}").replace('{error}', window.friendlyErrorText(error)), "❌");
       }
     };
@@ -1194,6 +1282,10 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
         }
         const idLower = idOrEmail.toLowerCase();
         const mapSnap = await getDoc(doc(db, 'usernames', idLower));
+        if (mapSnap.exists() && mapSnap.data().provider === 'google') {
+          window.showToast(window.t('auth.useGoogleForThisAccount', '這個帳戶使用 Google 註冊，請按「使用 Google 帳戶登入」'), '');
+          return;
+        }
         if (!mapSnap.exists()) {
           // v1.207.1：帳號 ID 唔存在同密碼錯用同一句提示，避免有人逐個 ID
           // 試，靠提示分辨邊個帳號存在（帳號探測）。
@@ -1933,7 +2025,8 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
       // 兩次密碼輸入要完全一致先俾提交，避免同學打錯字自己都唔知，
       // 之後登入嗰陣先發現「個密碼點打都錯」（其實係註冊嗰陣打錯咗）。
       const mismatchHint = document.getElementById('reg-password-mismatch-hint');
-      if (password !== passwordConfirm) {
+      const googleMode = !!window.__googleRegUser;
+      if (!googleMode && password !== passwordConfirm) {
         if (mismatchHint) mismatchHint.style.display = 'block';
         window.showToast(window.t('core.registerPasswordMismatch', '兩次輸入的密碼不一致，請重新確認'), '⚠️');
         return;
@@ -1944,7 +2037,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
         window.showToast(window.t('core.accountIdFormatInvalid', '帳號 ID 格式要是 3-20 個英文字母／數字／底線'), '⚠️');
         return;
       }
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactEmail)) {
+      if (!googleMode && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactEmail)) {
         window.showToast(window.t('core.invalidEmailForVerify', '請輸入一個有效的電郵地址，用來做電郵驗證'), '⚠️');
         return;
       }
