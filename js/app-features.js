@@ -1136,7 +1136,7 @@
       // 上傳過頭像就顯示返自己個頭像，冇上傳就維持顯示品牌 Logo。
       const homeHeroAvatar = document.getElementById('home-hero-avatar');
       if (homeHeroAvatar) {
-        homeHeroAvatar.src = avatarSrc || 'assets/images/logo.png';
+        homeHeroAvatar.src = avatarSrc || 'assets/images/logo.png?v=2';
         if (avatarSrc) {
           homeHeroAvatar.style.cursor = 'zoom-in';
           homeHeroAvatar.onclick = () => openLightbox(avatarSrc, true);
