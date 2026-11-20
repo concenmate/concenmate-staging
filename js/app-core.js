@@ -345,6 +345,11 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
         listenToPublicRooms();
         return;
       }
+      // v1.239.0：未符合中學生資格的用戶點擊「中學溫習室」，提示先完成學生身份驗證
+      if (pool === 'secondary' && window.currentUser && typeof window.isSecondaryEligible === 'function' && !window.isSecondaryEligible(window.currentUser)) {
+        window.showSecondaryRoomHint();
+        return;
+      }
       window.openRoomPoolInfoModal();
     };
 
@@ -1216,9 +1221,8 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
           hours: "0.0",
           points: 0,
           exp: 0,
-          createdAt: new Date().toISOString(),
-          // v1.229.0：註冊時填寫的學歷當作已確認本學年
-          educationConfirmedYear: window.currentSchoolYearHK()
+          createdAt: new Date().toISOString()
+          // v1.239.0：學歷改為註冊後在「完成個人資料」填寫，屆時由伺服器記錄本學年已確認
         };
 
         await setDoc(doc(db, "users", uid), newProfile);
@@ -1952,6 +1956,105 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
       if (ageHint) ageHint.style.display = tooOld ? 'block' : 'none';
     };
 
+    // ===== v1.239.0：完成個人資料（註冊後補填，完成送 1 張免費扭蛋券） =====
+    // 「完整」= 有年級，並按年級填好學校／地區（中學要地區及學校；大專只要院校；其他／自修生毋須）
+    window.isProfileComplete = function(u) {
+      if (!u) return true;
+      if (u.accountType === 'tutor' || u.role === 'tutor') return true;
+      const grade = u.grade || '';
+      if (!grade) return false;
+      if (grade === '其他自修生') return true;
+      if (grade === '大專/大學') return !!u.school;
+      return !!u.school && !!u.district;
+    };
+    window.updateCompleteProfileCard = function() {
+      const card = document.getElementById('home-complete-profile-card');
+      if (!card) return;
+      const u = window.currentUser;
+      card.style.display = (u && !window.isProfileComplete(u)) ? 'block' : 'none';
+    };
+    window.showSecondaryRoomHint = async function() {
+      const msg = window.t('profileDone.secondaryHint', '你暫時未可以進入中學溫習室。請先到「學生身份驗證」完成以下步驟：表明你是中學生、以學校電郵（.edu.hk）驗證，以及確認本學年的學歷。要現在前往嗎？');
+      const go = typeof window.appConfirm === 'function' ? await window.appConfirm(msg) : window.confirm(msg);
+      if (go && typeof window.switchTab === 'function') window.switchTab('verification', document.getElementById('nav-btn-verification'));
+    };
+    window.openCompleteProfileModal = function() {
+      const u = window.currentUser || {};
+      // 按出生年月限制：滿 20 歲或以上不可選中學年級／「是中學生」（同註冊時的規則）
+      let tooOld = false;
+      if (u.birthYear && u.birthMonth) {
+        const now = new Date();
+        let age = now.getFullYear() - u.birthYear;
+        if ((now.getMonth() + 1) < u.birthMonth) age -= 1;
+        tooOld = age > REG_SECONDARY_STUDENT_MAX_AGE;
+      }
+      const gradeSelect = document.getElementById('reg-grade');
+      if (gradeSelect) Array.from(gradeSelect.options).forEach((opt) => { if (REG_SECONDARY_GRADE_VALUES.includes(opt.value)) opt.disabled = tooOld; });
+      const gradeAgeHint = document.getElementById('reg-grade-age-hint');
+      if (gradeAgeHint) gradeAgeHint.style.display = tooOld ? 'block' : 'none';
+      const yesBtn = document.getElementById('reg-is-secondary-student-yes-btn');
+      if (yesBtn) yesBtn.disabled = tooOld;
+      const ageHint = document.getElementById('reg-is-secondary-student-age-hint');
+      if (ageHint) ageHint.style.display = tooOld ? 'block' : 'none';
+      if (tooOld) window.setSecondaryStudentToggle('reg', 'no');
+      else if (u.isSecondaryStudent === true) window.setSecondaryStudentToggle('reg', 'yes');
+      // 已有年級（舊帳戶只欠學校）就預先揀好，伺服器亦不會改寫已有年級
+      if (gradeSelect && u.grade) gradeSelect.value = u.grade;
+      const fields = document.getElementById('register-student-fields');
+      if (fields) fields.style.display = 'block';
+      if (typeof window.populateRegSchoolDistrictOptions === 'function') window.populateRegSchoolDistrictOptions();
+      if (typeof window.updateRegSchoolOptions === 'function') window.updateRegSchoolOptions();
+      if (typeof window.renderStudentFavSubjectChipPicker === 'function') {
+        window.renderStudentFavSubjectChipPicker('reg-fav-picker', 'reg-fav', 4);
+        window.renderStudentFavSubjectChipPicker('reg-dislike-picker', 'reg-dislike', 4);
+      }
+      if (typeof window.fillRegAccountTable === 'function') window.fillRegAccountTable();
+      window.openModal('modal-complete-profile');
+    };
+    window.submitCompleteProfile = async function() {
+      const grade = document.getElementById('reg-grade').value;
+      if (!grade) { window.showToast(window.t('core.selectCurrentGrade', '請選擇現時年級'), '⚠️'); return; }
+      const answer = document.getElementById('reg-is-secondary-student').value;
+      if (answer !== 'yes' && answer !== 'no') { window.showToast(window.t('core.selectIsSecondaryStudent', '請選擇你現時是否中學生'), '⚠️'); return; }
+      const isTertiary = grade === '大專/大學';
+      const isOtherSelfStudy = grade === '其他自修生';
+      let school = '';
+      let district = '';
+      if (!isOtherSelfStudy) {
+        const sel = document.getElementById('reg-school').value.trim();
+        school = sel;
+        if (sel === '__other__') {
+          const customInput = document.getElementById('reg-school-custom');
+          school = customInput ? customInput.value.trim() : '';
+          if (!school) { window.showToast(isTertiary ? window.t('core.enterInstitutionName', '請輸入院校名稱') : window.t('core.enterSchoolNameReg', '請輸入學校名稱'), '⚠️'); return; }
+        } else if (!sel) {
+          window.showToast(isTertiary ? window.t('core.selectInstitutionName', '請選擇院校名稱') : window.t('core.selectDistrictAndSchool', '請選擇學校所在地區同學校名稱'), '⚠️');
+          return;
+        }
+        if (!isTertiary) {
+          district = document.getElementById('reg-school-district').value.trim();
+          if (!district) { window.showToast(window.t('core.selectSchoolDistrict', '請選擇學校所在地區'), '⚠️'); return; }
+        }
+      }
+      const favSubjects = document.getElementById('reg-fav').value.trim();
+      const dislikeSubjects = document.getElementById('reg-dislike').value.trim();
+      const btn = document.getElementById('complete-profile-submit-btn');
+      const oldText = btn ? btn.innerText : '';
+      if (btn) { btn.disabled = true; btn.innerText = window.t('common.processing', '處理中...'); }
+      try {
+        const r = await window.callCloudFunction('completeProfile', { grade, isSecondary: answer === 'yes', school, district, favSubjects, dislikeSubjects });
+        Object.assign(window.currentUser, r.profile || {});
+        window.closeModal('modal-complete-profile');
+        window.showToast(r.rewarded ? window.t('profileDone.rewardToast', '已完成個人資料！送你 1 張免費扭蛋券，可到「時數扭蛋機」使用。') : window.t('profileDone.savedToast', '已儲存個人資料'), r.rewarded ? '🎁' : '✅');
+        window.updateCompleteProfileCard();
+        if (typeof listenToPublicRooms === 'function') { try { listenToPublicRooms(); } catch (e) {} }
+      } catch (err) {
+        window.showToast(window.t('profileDone.saveFailed', '儲存失敗：') + (err && err.message ? err.message : ''), '⚠️');
+      } finally {
+        if (btn) { btn.disabled = false; btn.innerText = oldText; }
+      }
+    };
+
     // 註冊表格嘅「🎒 我是學生」／「🎓 我是導師」切換：揀導師嗰邊會顯示
     // 導師申請專用欄位（自我介紹、想教嘅科目），同時隱藏埋學生專用嘅
     // 學校／年級／喜愛學科／討厭學科——並且將呢兩組欄位嘅 required
@@ -2062,62 +2165,13 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
       }
       const birthYear = parseInt(birthYearRaw, 10);
       const birthMonth = parseInt(birthMonthRaw, 10);
-      // 由剔選格改做強制揀「是」／「否」之後，呢度要額外檢查有冇漏揀
-      // （hidden input 嘅值一定要係 'yes' 或者 'no'，唔可以係空字串），
-      // 否則就好似冇填「出生年月」咁樣擋住唔畀交表——呢個正正係呢次
-      // 改動想解決嘅問題：之前用剔選格，好多真係中學生嘅用戶漏剔咗都
-      // 照樣交得表，之後就誤入「公開溫習室」池，變相入錯咗視訊室。
-      const secondaryStudentAnswer = document.getElementById('reg-is-secondary-student').value;
-      if (secondaryStudentAnswer !== 'yes' && secondaryStudentAnswer !== 'no') {
-        window.showToast(window.t('core.selectIsSecondaryStudent', '請選擇你現時是否中學生'), '⚠️');
-        return;
-      }
-      const isSecondaryStudent = secondaryStudentAnswer === 'yes';
+      // v1.239.0：年級、是否中學生、學校、喜愛／討厭學科已移到註冊後的「完成個人資料」
+      // 視窗（openCompleteProfileModal），註冊時只填基本資料，減少新用戶要填的欄位。
+      const isSecondaryStudent = false;
 
       if (accountType === 'student') {
-        const grade = document.getElementById('reg-grade').value;
-        if (!grade) {
-          window.showToast(window.t('core.selectCurrentGrade', '請選擇現時年級'), '⚠️');
-          return;
-        }
-        const isTertiary = grade === '大專/大學';
-        const isOtherSelfStudy = grade === '其他自修生';
-
-        // 「學校名稱」／「院校名稱」係咪要填、用邊個選單，跟返
-        // updateRegSchoolOptions() 嗰套邏輯：中學（先揀地區、再揀學
-        // 校）要兩個都填；大專/大學淨係要揀院校，唔使揀地區；其他/
-        // 自修生兩個都唔使填，直接留空。
-        let school = '';
-        let district = '';
-        if (!isOtherSelfStudy) {
-          const schoolSelectValue = document.getElementById('reg-school').value.trim();
-          school = schoolSelectValue;
-          if (schoolSelectValue === '__other__') {
-            const customSchoolInput = document.getElementById('reg-school-custom');
-            school = customSchoolInput ? customSchoolInput.value.trim() : '';
-            if (!school) {
-              window.showToast(isTertiary ? window.t('core.enterInstitutionName', '請輸入院校名稱') : window.t('core.enterSchoolNameReg', '請輸入學校名稱'), '⚠️');
-              return;
-            }
-          } else if (!schoolSelectValue) {
-            window.showToast(isTertiary ? window.t('core.selectInstitutionName', '請選擇院校名稱') : window.t('core.selectDistrictAndSchool', '請選擇學校所在地區同學校名稱'), '⚠️');
-            return;
-          }
-          if (!isTertiary) {
-            // 「地區」淨係中學先要揀——「分區溫習排行榜」就係靠呢個
-            // 欄位嚟分組；大專/大學／其他自修生冇對應地區，留空。
-            district = document.getElementById('reg-school-district').value.trim();
-            if (!district) {
-              window.showToast(window.t('core.selectSchoolDistrict', '請選擇學校所在地區'), '⚠️');
-              return;
-            }
-          }
-        }
-        const favSubjects = document.getElementById('reg-fav').value.trim();
-        const dislikeSubjects = document.getElementById('reg-dislike').value.trim();
         window.registerWithFirebase(loginId, password, {
-          accountType, username, school, district, grade, favSubjects, dislikeSubjects, contactEmail,
-          birthYear, birthMonth, isSecondaryStudent
+          accountType, username, contactEmail, birthYear, birthMonth, isSecondaryStudent
         });
       } else {
         const tutorBio = document.getElementById('reg-tutor-bio').value.trim();

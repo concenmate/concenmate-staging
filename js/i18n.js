@@ -2517,6 +2517,21 @@
     'admin.s788': { 'zh-Hant': '上載中…（', 'en': 'Uploading… (', 'yue': '上載中…（' },
     'admin.s789': { 'zh-Hant': '已發佈 v', 'en': 'Published v', 'yue': '已發佈 v' },
     'admin.s790': { 'zh-Hant': '，App 下次打開時會自動下載', 'en': '. The app will download it automatically next time it opens', 'yue': '，App 下次打開時會自動下載' },
+    // v1.239.0 完成個人資料／中學溫習室提示
+    'profileDone.cardTitle': { 'zh-Hant': '完成個人資料，送你 1 張免費扭蛋券', 'en': 'Complete your profile and get 1 free gashapon ticket', 'yue': '完成個人資料，送你 1 張免費扭蛋券' },
+    'profileDone.cardDesc': { 'zh-Hant': '只需填寫年級、是否中學生及學校，約一分鐘即可完成。', 'en': 'Just fill in your grade, whether you\'re a secondary student, and your school. It takes about a minute.', 'yue': '只需要填年級、係咪中學生同學校，大約一分鐘就搞掂。' },
+    'profileDone.cardBtn': { 'zh-Hant': '立即填寫', 'en': 'Fill in now', 'yue': '即刻填' },
+    'profileDone.laterBtn': { 'zh-Hant': '稍後再填', 'en': 'Later', 'yue': '遲啲先填' },
+    'profileDone.submitBtn': { 'zh-Hant': '儲存並領取獎勵', 'en': 'Save and claim reward', 'yue': '儲存並領取獎勵' },
+    'profileDone.rewardToast': { 'zh-Hant': '已完成個人資料！送你 1 張免費扭蛋券，可到「時數扭蛋機」使用。', 'en': 'Profile completed! You got 1 free gashapon ticket. Use it in the Gashapon Machine.', 'yue': '搞掂個人資料！送你 1 張免費扭蛋券，可以去「時數扭蛋機」用。' },
+    'profileDone.savedToast': { 'zh-Hant': '已儲存個人資料', 'en': 'Profile saved', 'yue': '已經儲存個人資料' },
+    'profileDone.saveFailed': { 'zh-Hant': '儲存失敗：', 'en': 'Save failed: ', 'yue': '儲存唔到：' },
+    'profileDone.secondaryHint': { 'zh-Hant': '你暫時未可以進入中學溫習室。請先到「學生身份驗證」完成以下步驟：表明你是中學生、以學校電郵（.edu.hk）驗證，以及確認本學年的學歷。要現在前往嗎？', 'en': 'You can\'t enter the Secondary Study Room yet. Please go to Verification first: confirm you\'re a secondary student, verify with your school email (.edu.hk), and confirm your education for this school year. Go there now?', 'yue': '你暫時未入到中學溫習室。請先去「學生身份驗證」完成以下步驟：表明你係中學生、用學校電郵（.edu.hk）驗證，同埋確認今個學年嘅學歷。而家去唔去？' },
+    'srv.e129': { 'zh-Hant': '請選擇現時年級', 'en': 'Please select your current grade', 'yue': '請揀現時年級' },
+    'srv.e130': { 'zh-Hant': '請填寫學校名稱', 'en': 'Please enter your school name', 'yue': '請填學校名稱' },
+    'srv.e131': { 'zh-Hant': '請選擇學校所在地區', 'en': 'Please select your school\'s district', 'yue': '請揀學校所在地區' },
+    'profileDone.modalTitle': { 'zh-Hant': '完成個人資料', 'en': 'Complete your profile', 'yue': '完成個人資料' },
+    'profileDone.modalDesc': { 'zh-Hant': '填寫後即送 1 張免費扭蛋券。年級及學校儲存後不可自行更改，請如實填寫。', 'en': 'Get 1 free gashapon ticket once done. Grade and school can\'t be changed by yourself after saving, so please fill them in truthfully.', 'yue': '填完即刻送 1 張免費扭蛋券。年級同學校儲存咗之後唔可以自己改，請如實填寫。' },
   };
 
   // 目前語言：已登入用戶存喺 users/{uid} 文件嘅 language 欄位（跨裝置

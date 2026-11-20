@@ -2513,6 +2513,7 @@
         // v1.229.0：每年 9 月 1 日後第一次登入確認學歷
         if (typeof window.maybeShowEducationConfirm === 'function') setTimeout(window.maybeShowEducationConfirm, 1500);
         if (typeof window.applyNavVisibility === 'function') window.applyNavVisibility();
+        if (typeof window.updateCompleteProfileCard === 'function') window.updateCompleteProfileCard();
 
         switchTab('home');
       } else {
@@ -6440,6 +6441,8 @@
     if (!u || !u.uid || u.accountType === 'tutor' || u.role === 'tutor') return;
     if (navigator.webdriver) return;
     if (typeof u.educationConfirmedYear === 'number' && u.educationConfirmedYear >= window.currentSchoolYearHK()) return;
+    // v1.239.0：未完成個人資料的新帳戶不彈出（完成個人資料時會一併記錄本學年已確認）
+    if (typeof window.isProfileComplete === 'function' && !window.isProfileComplete(u)) return;
     const ob = document.getElementById('cm-onboard');
     if (ob && ob.classList.contains('show')) { setTimeout(window.maybeShowEducationConfirm, 3000); return; }
     window.showEducationConfirm(false);
