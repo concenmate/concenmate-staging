@@ -6,7 +6,7 @@
        打開檔案唔使拉就見到，方便快速核對版本）
        ======================================== -->
   <script>
-    window.APP_VERSION = "v1.238.1"; // 每次推送 GitHub 前，喺呢度改版號
+    window.APP_VERSION = "v1.239.0"; // 每次推送 GitHub 前，喺呢度改版號
   </script>
 
   <!-- v1.227.8：全站確認／輸入視窗，取代瀏覽器原生 confirm()／prompt()，外觀同資訊卡一致。
@@ -2220,6 +2220,17 @@
             </div>
           </div>
 
+          <!-- v1.239.0：完成個人資料送免費扭蛋券（只在學生資料未填齊時顯示） -->
+          <div id="home-complete-profile-card" class="card" style="display:none; margin-bottom:16px; padding:14px 16px; border:1px solid var(--brand-200); background:var(--brand-50, #F3F6FB);">
+            <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+              <div style="flex:1; min-width:200px;">
+                <div style="font-weight:bold; color:var(--brand-800); font-size:15px;" data-i18n="profileDone.cardTitle">完成個人資料，送你 1 張免費扭蛋券</div>
+                <div style="font-size:13px; color:#555; margin-top:2px;" data-i18n="profileDone.cardDesc">只需填寫年級、是否中學生及學校，約一分鐘即可完成。</div>
+              </div>
+              <button type="button" class="btn btn-primary" style="padding:8px 16px;" onclick="window.openCompleteProfileModal && window.openCompleteProfileModal()" data-i18n="profileDone.cardBtn">立即填寫</button>
+            </div>
+          </div>
+
           <!-- ── 主體兩欄 ── -->
           <div class="home-body">
 
@@ -3433,90 +3444,8 @@
           </div>
         </div>
 
-        <!-- 學生專用欄位：揀「導師」嗰陣會隱藏並取消 required -->
-        <div id="register-student-fields">
-          <!-- 「現時年級」擺喺最先，因為下面「學校所在地區／學校名稱」
-               會根據呢度揀嘅係中學定係大專／大學，去決定用邊一份院校
-               清單（見 window.updateRegSchoolOptions()）。 -->
-          <div>
-            <label style="font-size:13px; font-weight:bold; color:#555;" data-i18n="auth.gradeLabelRequired">現時年級 *</label>
-            <select id="reg-grade" class="input-field" required onchange="window.updateRegSchoolOptions && window.updateRegSchoolOptions()">
-              <option value="" selected disabled data-i18n="auth.selectGradePlaceholder">請選擇年級</option>
-              <option value="中一 (S1)" data-i18n="profile.gradeS1">中一 (S1)</option>
-              <option value="中二 (S2)" data-i18n="profile.gradeS2">中二 (S2)</option>
-              <option value="中三 (S3)" data-i18n="profile.gradeS3">中三 (S3)</option>
-              <option value="中四 (S4)" data-i18n="profile.gradeS4">中四 (S4)</option>
-              <option value="中五 (S5)" data-i18n="profile.gradeS5">中五 (S5)</option>
-              <option value="中六 (S6 DSE)" data-i18n="profile.gradeS6">中六 (S6 DSE)</option>
-              <option value="大專/大學" data-i18n="profile.gradeTertiary">大專 / 大學</option>
-              <option value="其他自修生" data-i18n="profile.gradeOther">其他 / 自修生</option>
-            </select>
-            <span id="reg-grade-age-hint" style="display:none; font-size:12px; color:#c0392b; margin-top:4px;" data-i18n="auth.gradeAgeHint">根據所填出生年月，中一至中六已不可選擇。</span>
-          </div>
-
-          <!-- 「本人確認現時為中學生」剔選格：純粹自我申報，唔係身份
-               驗證，亦都唔會擋住任何功能（唔剔一樣可以正常使用溫習室
-               等所有功能）。備注文字刻意冇講明將來嘅驗證同咩具體用途
-               掛鈎（例如扭蛋機優惠券），淨係含糊咁提到「日後可能要求
-               核實」，一嚟避免透露太多實作細節，二嚟令有心人唔知道講
-               大話嘅實際代價係咩，減低講大話嘅誘因。出生年月計出嚟
-               嘅約數年齡如果去到 20 歲或以上，呢個剔選格會自動變成
-               不能剔選（見 window.updateRegBirthAgeDisplay()），減少
-               擺明係成年人嘅帳戶都剔到呢個選項嘅情況。 -->
-          <div style="margin-top:10px; background:#F5F7F8; border-radius:10px; padding:10px 12px;">
-            <label style="font-size:13px; font-weight:bold; color:#555; display:block; margin-bottom:6px;" data-i18n="auth.isSecondaryLabelRequired">本人現時是否中學生？ *</label>
-            <div style="display:flex; gap:8px;">
-              <button type="button" id="reg-is-secondary-student-yes-btn" class="btn btn-outline" style="flex:1; justify-content:center; padding:8px; font-size:13px;" data-i18n="profile.isSecondaryYes" onclick="window.setSecondaryStudentToggle('reg', 'yes')">是，我是中學生</button>
-              <button type="button" id="reg-is-secondary-student-no-btn" class="btn btn-outline" style="flex:1; justify-content:center; padding:8px; font-size:13px;" data-i18n="profile.isSecondaryNo" onclick="window.setSecondaryStudentToggle('reg', 'no')">否</button>
-            </div>
-            <input type="hidden" id="reg-is-secondary-student" value="">
-            <p style="font-size:12px; color:#888; margin-top:6px; line-height:1.6;" data-i18n="profile.isSecondaryHint">請如實選擇。選擇「是」後，需要在「學生身份驗證」以學校電郵（.edu.hk）驗證，才會成為中學生帳戶；如發現虛報，帳戶可能會被暫停或終止。</p>
-            <span id="reg-is-secondary-student-age-hint" style="display:none; font-size:12px; color:#c0392b; margin-top:4px;" data-i18n="auth.isSecondaryAgeHintReg">根據所填出生年月，此項現時不可以選擇「是」。</span>
-            <div style="margin-top:8px; padding:10px; background:#fff; border:1px solid var(--brand-200); border-radius:8px;">
-              <b style="font-size:13px; color:var(--brand-800);" data-i18n="auth.accountTypeTitle">兩種帳戶的分別</b>
-              <div id="reg-account-type-table" style="margin-top:4px;"></div>
-            </div>
-          </div>
-
-          <!-- 「學校所在地區」／「學校名稱」係咪顯示、係咪必填，都要跟
-               返「現時年級」嚟決定（見 window.updateRegSchoolOptions()）：
-               中學年級——兩個都顯示、兩個都必填；大專/大學——淨係顯示
-               「院校名稱」（唔使先揀地區，直接揀院校），地區欄隱藏埋唔
-               使填；其他/自修生——兩個都隱藏埋唔使填。 -->
-          <div id="reg-school-district-wrap" style="margin-top:10px;">
-            <label id="reg-school-district-label" style="font-size:13px; font-weight:bold; color:#555;" data-i18n="auth.schoolDistrictLabel">學校所在地區 *</label>
-            <select id="reg-school-district" class="input-field" required disabled onchange="window.updateRegSchoolOptions && window.updateRegSchoolOptions()">
-              <option value="" data-i18n="auth.selectGradeFirstOption">請先選擇現時年級</option>
-            </select>
-          </div>
-
-          <div id="reg-school-wrap" style="margin-top:10px;">
-            <label id="reg-school-label" style="font-size:13px; font-weight:bold; color:#555;" data-i18n="auth.schoolNameLabel">學校名稱 *</label>
-            <select id="reg-school" class="input-field" required disabled onchange="window.handleRegSchoolSelectChange && window.handleRegSchoolSelectChange()">
-              <option value="" data-i18n="reg.chooseDistrictFirst">請先選擇地區</option>
-            </select>
-            <div id="reg-school-custom-wrap" style="display:none; margin-top:6px;">
-              <input type="text" id="reg-school-custom" class="input-field" placeholder="請輸入學校名稱" data-i18n-placeholder="auth.schoolNameCustomPlaceholder">
-            </div>
-          </div>
-
-          <!-- 「喜愛學科」／「討厭學科」都係跟中學課程（中一至中六）
-               嘅科目嚟設計，大專/大學／其他自修生冇固定嘅中學科目可
-               揀，所以呢兩組淨係揀咗中一至中六先會顯示（見
-               window.updateRegSchoolOptions()）。 -->
-          <div id="reg-fav-wrap" style="margin-top:10px; display:none;">
-            <label style="font-size:13px; font-weight:bold; color:#555;" data-i18n="auth.favSubjectsLabel">喜愛學科（可留白，最多揀 4 科）</label>
-            <div id="reg-fav-picker"></div>
-            <input type="hidden" id="reg-fav">
-          </div>
-
-          <div id="reg-dislike-wrap" style="margin-top:10px; display:none;">
-            <label style="font-size:13px; font-weight:bold; color:#555;" data-i18n="auth.dislikeSubjectsLabel">討厭學科（可留白，最多揀 4 科）</label>
-            <div id="reg-dislike-picker"></div>
-            <input type="hidden" id="reg-dislike">
-          </div>
-        </div>
-
+        <!-- v1.239.0：學生的年級、是否中學生、學校、喜愛／討厭學科已移到
+             「完成個人資料」視窗（#modal-complete-profile），註冊時毋須填寫 -->
         <!-- 導師專用欄位（導師申請資料）：揀「學生」嗰陣會隱藏並取消 required -->
         <div id="register-tutor-fields" style="display:none;">
           <div>
@@ -3683,6 +3612,102 @@
        溫習室」與「公開溫習室」兩個部分，各自獨立顯示。由
        window.openRoomPoolInfoModal() 開啟（見上面大廳標題旁邊嗰粒
        「！」掣）。 -->
+  <!-- v1.239.0：完成個人資料（註冊後補填年級、是否中學生、學校；完成送 1 張免費扭蛋券） -->
+  <div class="modal-backdrop" id="modal-complete-profile" style="display:none; align-items:flex-start; padding-top:40px;">
+    <div class="modal-box" style="max-height:85vh; overflow-y:auto;">
+      <h3 style="font-size:18px; font-weight:bold; color:var(--brand-800); text-align:center;" data-i18n="profileDone.modalTitle">完成個人資料</h3>
+      <p style="font-size:13px; color:#555; text-align:center; margin:4px 0 12px;" data-i18n="profileDone.modalDesc">填寫後即送 1 張免費扭蛋券。年級及學校儲存後不可自行更改，請如實填寫。</p>
+        <!-- 學生資料欄位（v1.239.0 由註冊表格搬到這裡，id 維持 reg-* 以沿用現有選單邏輯） -->
+        <div id="register-student-fields">
+          <!-- 「現時年級」擺喺最先，因為下面「學校所在地區／學校名稱」
+               會根據呢度揀嘅係中學定係大專／大學，去決定用邊一份院校
+               清單（見 window.updateRegSchoolOptions()）。 -->
+          <div>
+            <label style="font-size:13px; font-weight:bold; color:#555;" data-i18n="auth.gradeLabelRequired">現時年級 *</label>
+            <select id="reg-grade" class="input-field" required onchange="window.updateRegSchoolOptions && window.updateRegSchoolOptions()">
+              <option value="" selected disabled data-i18n="auth.selectGradePlaceholder">請選擇年級</option>
+              <option value="中一 (S1)" data-i18n="profile.gradeS1">中一 (S1)</option>
+              <option value="中二 (S2)" data-i18n="profile.gradeS2">中二 (S2)</option>
+              <option value="中三 (S3)" data-i18n="profile.gradeS3">中三 (S3)</option>
+              <option value="中四 (S4)" data-i18n="profile.gradeS4">中四 (S4)</option>
+              <option value="中五 (S5)" data-i18n="profile.gradeS5">中五 (S5)</option>
+              <option value="中六 (S6 DSE)" data-i18n="profile.gradeS6">中六 (S6 DSE)</option>
+              <option value="大專/大學" data-i18n="profile.gradeTertiary">大專 / 大學</option>
+              <option value="其他自修生" data-i18n="profile.gradeOther">其他 / 自修生</option>
+            </select>
+            <span id="reg-grade-age-hint" style="display:none; font-size:12px; color:#c0392b; margin-top:4px;" data-i18n="auth.gradeAgeHint">根據所填出生年月，中一至中六已不可選擇。</span>
+          </div>
+
+          <!-- 「本人確認現時為中學生」剔選格：純粹自我申報，唔係身份
+               驗證，亦都唔會擋住任何功能（唔剔一樣可以正常使用溫習室
+               等所有功能）。備注文字刻意冇講明將來嘅驗證同咩具體用途
+               掛鈎（例如扭蛋機優惠券），淨係含糊咁提到「日後可能要求
+               核實」，一嚟避免透露太多實作細節，二嚟令有心人唔知道講
+               大話嘅實際代價係咩，減低講大話嘅誘因。出生年月計出嚟
+               嘅約數年齡如果去到 20 歲或以上，呢個剔選格會自動變成
+               不能剔選（見 window.updateRegBirthAgeDisplay()），減少
+               擺明係成年人嘅帳戶都剔到呢個選項嘅情況。 -->
+          <div style="margin-top:10px; background:#F5F7F8; border-radius:10px; padding:10px 12px;">
+            <label style="font-size:13px; font-weight:bold; color:#555; display:block; margin-bottom:6px;" data-i18n="auth.isSecondaryLabelRequired">本人現時是否中學生？ *</label>
+            <div style="display:flex; gap:8px;">
+              <button type="button" id="reg-is-secondary-student-yes-btn" class="btn btn-outline" style="flex:1; justify-content:center; padding:8px; font-size:13px;" data-i18n="profile.isSecondaryYes" onclick="window.setSecondaryStudentToggle('reg', 'yes')">是，我是中學生</button>
+              <button type="button" id="reg-is-secondary-student-no-btn" class="btn btn-outline" style="flex:1; justify-content:center; padding:8px; font-size:13px;" data-i18n="profile.isSecondaryNo" onclick="window.setSecondaryStudentToggle('reg', 'no')">否</button>
+            </div>
+            <input type="hidden" id="reg-is-secondary-student" value="">
+            <p style="font-size:12px; color:#888; margin-top:6px; line-height:1.6;" data-i18n="profile.isSecondaryHint">請如實選擇。選擇「是」後，需要在「學生身份驗證」以學校電郵（.edu.hk）驗證，才會成為中學生帳戶；如發現虛報，帳戶可能會被暫停或終止。</p>
+            <span id="reg-is-secondary-student-age-hint" style="display:none; font-size:12px; color:#c0392b; margin-top:4px;" data-i18n="auth.isSecondaryAgeHintReg">根據所填出生年月，此項現時不可以選擇「是」。</span>
+            <div style="margin-top:8px; padding:10px; background:#fff; border:1px solid var(--brand-200); border-radius:8px;">
+              <b style="font-size:13px; color:var(--brand-800);" data-i18n="auth.accountTypeTitle">兩種帳戶的分別</b>
+              <div id="reg-account-type-table" style="margin-top:4px;"></div>
+            </div>
+          </div>
+
+          <!-- 「學校所在地區」／「學校名稱」係咪顯示、係咪必填，都要跟
+               返「現時年級」嚟決定（見 window.updateRegSchoolOptions()）：
+               中學年級——兩個都顯示、兩個都必填；大專/大學——淨係顯示
+               「院校名稱」（唔使先揀地區，直接揀院校），地區欄隱藏埋唔
+               使填；其他/自修生——兩個都隱藏埋唔使填。 -->
+          <div id="reg-school-district-wrap" style="margin-top:10px;">
+            <label id="reg-school-district-label" style="font-size:13px; font-weight:bold; color:#555;" data-i18n="auth.schoolDistrictLabel">學校所在地區 *</label>
+            <select id="reg-school-district" class="input-field" required disabled onchange="window.updateRegSchoolOptions && window.updateRegSchoolOptions()">
+              <option value="" data-i18n="auth.selectGradeFirstOption">請先選擇現時年級</option>
+            </select>
+          </div>
+
+          <div id="reg-school-wrap" style="margin-top:10px;">
+            <label id="reg-school-label" style="font-size:13px; font-weight:bold; color:#555;" data-i18n="auth.schoolNameLabel">學校名稱 *</label>
+            <select id="reg-school" class="input-field" required disabled onchange="window.handleRegSchoolSelectChange && window.handleRegSchoolSelectChange()">
+              <option value="" data-i18n="reg.chooseDistrictFirst">請先選擇地區</option>
+            </select>
+            <div id="reg-school-custom-wrap" style="display:none; margin-top:6px;">
+              <input type="text" id="reg-school-custom" class="input-field" placeholder="請輸入學校名稱" data-i18n-placeholder="auth.schoolNameCustomPlaceholder">
+            </div>
+          </div>
+
+          <!-- 「喜愛學科」／「討厭學科」都係跟中學課程（中一至中六）
+               嘅科目嚟設計，大專/大學／其他自修生冇固定嘅中學科目可
+               揀，所以呢兩組淨係揀咗中一至中六先會顯示（見
+               window.updateRegSchoolOptions()）。 -->
+          <div id="reg-fav-wrap" style="margin-top:10px; display:none;">
+            <label style="font-size:13px; font-weight:bold; color:#555;" data-i18n="auth.favSubjectsLabel">喜愛學科（可留白，最多揀 4 科）</label>
+            <div id="reg-fav-picker"></div>
+            <input type="hidden" id="reg-fav">
+          </div>
+
+          <div id="reg-dislike-wrap" style="margin-top:10px; display:none;">
+            <label style="font-size:13px; font-weight:bold; color:#555;" data-i18n="auth.dislikeSubjectsLabel">討厭學科（可留白，最多揀 4 科）</label>
+            <div id="reg-dislike-picker"></div>
+            <input type="hidden" id="reg-dislike">
+          </div>
+        </div>
+
+      <div style="display:flex; gap:8px; margin-top:16px;">
+        <button type="button" class="btn btn-outline" style="flex:1; justify-content:center;" onclick="closeModal('modal-complete-profile')" data-i18n="profileDone.laterBtn">稍後再填</button>
+        <button type="button" id="complete-profile-submit-btn" class="btn btn-primary" style="flex:1; justify-content:center;" onclick="window.submitCompleteProfile && window.submitCompleteProfile()" data-i18n="profileDone.submitBtn">儲存並領取獎勵</button>
+      </div>
+    </div>
+  </div>
+
   <div class="modal-backdrop" id="modal-room-pool-info" style="display:none;">
     <div class="modal-box">
       <div style="text-align:center; margin-bottom:12px;">
@@ -4688,14 +4713,14 @@
   })();
   </script>
 
-  <script src="js/i18n.js?v=1.238.1"></script>
+  <script src="js/i18n.js?v=1.239.0"></script>
 
-  <script src="js/app-features.js?v=1.238.1"></script>
+  <script src="js/app-features.js?v=1.239.0"></script>
 
-  <script type="module" src="js/app-core.js?v=1.238.1"></script>
+  <script type="module" src="js/app-core.js?v=1.239.0"></script>
 
-  <script src="js/room-video.js?v=1.238.1"></script>
-  <script src="js/stream.js?v=1.238.1"></script>
+  <script src="js/room-video.js?v=1.239.0"></script>
+  <script src="js/stream.js?v=1.239.0"></script>
   <!-- 房主退出房間選擇彈窗 -->
   <div class="modal-backdrop" id="modal-host-leave" style="display:none;">
     <div class="modal-box" style="text-align:center;">
@@ -4963,7 +4988,7 @@
     </div>
   </div>
 
-  <script src="js/admin-panel.js?v=1.238.1"></script>
+  <script src="js/admin-panel.js?v=1.239.0"></script>
   <!-- pdf.js：導師教材嘅 PDF 預覽（整份文件／學生視角）同教材卡嘅第一頁
        縮圖，都用呢個 library 自己畫落 <canvas>，唔再靠瀏覽器內建嘅PDF
        viewer（手機Safari個內建viewer塞喺iframe度揭唔到第二頁）。淨係
@@ -4990,7 +5015,7 @@
       return window._pdfJsLoading;
     };
   </script>
-  <script src="js/tutor-panel.js?v=1.238.1"></script>
+  <script src="js/tutor-panel.js?v=1.239.0"></script>
 
 </body>
 </html>
