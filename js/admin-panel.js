@@ -173,12 +173,12 @@
       if (!btn) return;
       if (isOnAdminPage) {
         btn.setAttribute('onclick', "window.location.hash=''");
-        btn.innerHTML = `<svg class="header-admin-icon" aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg><span class="header-admin-text">返回主頁</span>`;
-        btn.setAttribute('aria-label', '返回主頁');
+        btn.innerHTML = `<svg class="header-admin-icon" aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg><span class="header-admin-text">${window.t('html.s58', '返回主頁')}</span>`;
+        btn.setAttribute('aria-label', window.t('html.s58', '返回主頁'));
       } else {
         btn.setAttribute('onclick', "window.location.hash='admin'");
-        btn.innerHTML = `<svg class="header-admin-icon" aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg><span class="header-admin-text">管理後台</span>`;
-        btn.setAttribute('aria-label', '管理後台');
+        btn.innerHTML = `<svg class="header-admin-icon" aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg><span class="header-admin-text">${window.t('html.s1', '管理後台')}</span>`;
+        btn.setAttribute('aria-label', window.t('html.s1', '管理後台'));
       }
     }
     window.setHeaderAdminBtnMode = setHeaderAdminBtnMode;
@@ -221,15 +221,15 @@
       setHeaderAdminBtnMode(true);
 
       const emailTag = document.getElementById('admin-panel-user-email');
-      if (emailTag) emailTag.innerText = `登入身份：${window.currentUser.email}`;
+      if (emailTag) emailTag.innerText = `${window.t('admin.s1', '登入身份：')}${window.currentUser.email}`;
       // 版本資訊（正式網站已收起右下角除錯面板，改為喺呢度顯示）
       const versionTag = document.getElementById('admin-panel-version');
       if (versionTag) {
         const loadEl = document.getElementById('load-timestamp');
         const loadTime = loadEl ? loadEl.innerText : '';
-        versionTag.innerText = `網站版本：${window.APP_VERSION || '未知'}` +
-          (loadTime ? `　載入時間：${loadTime}` : '') +
-          `　環境：${window.IS_PROD_SITE ? '正式網站' : '測試環境'}`;
+        versionTag.innerText = `${window.t('admin.s3', '網站版本：')}${window.APP_VERSION || window.t('admin.s2', '未知')}` +
+          (loadTime ? `　${window.t('admin.s4', '載入時間：')}${loadTime}` : '') +
+          `　${window.t('admin.s7', '環境：')}${window.IS_PROD_SITE ? window.t('admin.s5', '正式網站') : window.t('admin.s6', '測試環境')}`;
       }
 
       // 「🚩 舉報處理」個紅點徽章唔理管理員而家揀緊邊個分頁都要見到，
@@ -272,7 +272,7 @@
       // 防止『support』帳戶用網址hash或者其他方式直接跳去冇按鈕對應
       // 嘅super限定分頁——退返去「數據總覽」並提示一下。
       if (SUPER_ADMIN_ONLY_TABS.includes(tab) && !isCurrentUserSuperAdmin()) {
-        window.showToast('此分頁只限「超級管理員」使用', '🔒');
+        window.showToast(window.t('admin.s8', '此分頁只限「超級管理員」使用'), '🔒');
         tab = 'dashboard';
       }
       currentAdminTab = tab;
@@ -423,7 +423,7 @@
 
       if (!adminGachaDraft) {
         if (!gachaConfigLoaded) {
-          container.innerHTML = '<p style="text-align:center; color:#999; padding:20px;">載入中扭蛋機設定...</p>';
+          container.innerHTML = ('<p style="text-align:center; color:#999; padding:20px;">' + window.t('admin.s9', '載入中扭蛋機設定...') + '</p>');
           return; // Firestore 資料一到，loadGachaConfigFromFirestore() 會自動再 render 多次
         }
         adminGachaDraft = {
@@ -445,14 +445,14 @@
           : `<img src="assets/images/gacha-machine.png" style="width:100%; height:100%; object-fit:contain;">`;
         return `
           <div class="admin-card">
-            <h3 style="font-size:15px; font-weight:bold; color:var(--brand-800); margin-bottom:10px;">預設扭蛋機圖片</h3>
-            <p style="font-size:13px; color:#888; margin-bottom:10px;">這張是預設的扭蛋機外觀圖（不是貼圖）。未在下方「扭蛋系列」表格設定專屬「扭蛋機圖」的系列，會使用這張圖；不上傳則使用網站內建的預設圖。</p>
+            <h3 style="font-size:15px; font-weight:bold; color:var(--brand-800); margin-bottom:10px;">${window.t('admin.s11', '預設扭蛋機圖片')}</h3>
+            <p style="font-size:13px; color:#888; margin-bottom:10px;">${window.t('admin.s12', '這張是預設的扭蛋機外觀圖（不是貼圖）。未在下方「扭蛋系列」表格設定專屬「扭蛋機圖」的系列，會使用這張圖；不上傳則使用網站內建的預設圖。')}</p>
             <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
-              <div id="admin-gacha-machine-thumb" onclick="document.getElementById('admin-gacha-machine-input').click()" title="點擊這裡上傳圖片" style="width:80px; height:80px; border-radius:10px; background:#F6F7FB; border:1px dashed #D2D9E9; display:flex; align-items:center; justify-content:center; cursor:pointer; overflow:hidden;">${previewInner}</div>
+              <div id="admin-gacha-machine-thumb" onclick="document.getElementById('admin-gacha-machine-input').click()" title="${window.t('admin.s13', '點擊這裡上傳圖片')}" style="width:80px; height:80px; border-radius:10px; background:#F6F7FB; border:1px dashed #D2D9E9; display:flex; align-items:center; justify-content:center; cursor:pointer; overflow:hidden;">${previewInner}</div>
               <input type="file" accept="image/*" id="admin-gacha-machine-input" style="display:none;" onchange="adminUploadGachaMachineImage(this)">
               <div style="display:flex; flex-direction:column; gap:6px;">
-                <button type="button" class="btn btn-outline" style="font-size:13px; padding:4px 10px;" onclick="document.getElementById('admin-gacha-machine-input').click()">上傳新圖片</button>
-                ${url ? `<button type="button" class="btn btn-outline" style="font-size:13px; padding:4px 10px;" onclick="adminRemoveGachaMachineImage()">還原做預設圖</button>` : ''}
+                <button type="button" class="btn btn-outline" style="font-size:13px; padding:4px 10px;" onclick="document.getElementById('admin-gacha-machine-input').click()">${window.t('admin.s14', '上傳新圖片')}</button>
+                ${url ? `<button type="button" class="btn btn-outline" style="font-size:13px; padding:4px 10px;" onclick="adminRemoveGachaMachineImage()">${window.t('admin.s10', '還原做預設圖')}</button>` : ''}
               </div>
             </div>
           </div>
@@ -470,34 +470,34 @@
         return `
           <div class="admin-card">
             <details>
-              <summary style="cursor:pointer; font-size:15px; font-weight:bold; color:var(--brand-800);">圖片規格說明（製作或更換圖片前請先閱讀）</summary>
-              <p style="font-size:13px; color:#888; margin:8px 0 0;">以下為扭蛋相關圖片的建議規格。所有圖片均使用 Ottie 的統一畫風：中灰藍色柔和描邊、平塗上色，不可含任何文字、字母或數字。</p>
-              ${sec('一、貼圖圖（每件扭蛋貼圖）',
-                row('尺寸', '正方形 1:1，建議 1024 × 1024 像素') +
-                row('格式', 'PNG') +
-                row('普通', '透明背景，只有 Ottie 及道具，四周留少量空位') +
-                row('稀有', '簡單場景背景（牆壁、地面、一至兩件小物件，淡色），剪裁為圓角正方形，圓角以外為透明') +
-                row('限定', '豐富完整的場景背景（多件道具、燈光效果、顏色較濃），剪裁為圓角正方形，圓角以外為透明') +
-                row('上傳處理', '系統會自動壓縮至最闊 600 像素'))}
-              ${sec('二、扭蛋機圖（每個系列可各自設定）',
-                row('尺寸', '橫向長方形，闊高比 6:5，建議 960 × 800 像素') +
-                row('格式', 'PNG，透明背景') +
-                row('置中', '<b>扭蛋機機身的正中必須位於圖片的正中</b>。如旁邊有 Ottie 等角色，須在另一邊加上相同闊度的透明空位，令機身置中') +
-                row('高度', '扭蛋機（連角色）高度約佔圖片高度 94%，底部貼近圖片下緣') +
-                row('網站顯示', '闊 360 像素（手機畫面較窄時自動縮小）；系列選擇按鈕的縮圖亦會使用此圖') +
-                row('上傳處理', '系統會自動壓縮至最闊 800 像素'))}
-              ${sec('三、背景圖（每個系列可各自設定）',
-                row('尺寸', '橫向 16:9，建議 1376 × 768 或 1920 × 1080 像素') +
-                row('格式', 'JPG') +
-                row('構圖', '畫面正中約 40% 闊度須<b>完全留空</b>（扭蛋機放在此處）；裝飾物件放在左右兩邊') +
-                row('地平線', '地面與牆壁或天空的分界線約在圖片高度 65% 至 75% 的位置，令扭蛋機看起來站在地上') +
-                row('底部', '圖片底部約 15% 保持淺色及簡單，以免遮擋「抽一次」「連續抽十次」按鈕') +
-                row('網站顯示', '電腦版：填滿整個框並貼底顯示，頂部可能被裁走少許。手機版：放大至框高的 140% 並貼底顯示，左右兩邊會被裁走較多，重要物件須放近中間') +
-                row('未上傳時', '使用網站內建的預設背景（assets/images/gacha-bg.jpg）') +
-                row('上傳處理', '系統會自動壓縮至最闊 1600 像素'))}
-              ${sec('四、原始檔存放位置',
-                row('貼圖', 'Desktop/concenmate-app/Ottie Pic/（每個系列一個資料夾，例如「動物連身衣」「書伴日常」）') +
-                row('扭蛋機及背景', 'Desktop/concenmate-app/Ottie Pic/扭蛋機/'))}
+              <summary style="cursor:pointer; font-size:15px; font-weight:bold; color:var(--brand-800);">${window.t('admin.s54', '圖片規格說明（製作或更換圖片前請先閱讀）')}</summary>
+              <p style="font-size:13px; color:#888; margin:8px 0 0;">${window.t('admin.s55', '以下為扭蛋相關圖片的建議規格。所有圖片均使用 Ottie 的統一畫風：中灰藍色柔和描邊、平塗上色，不可含任何文字、字母或數字。')}</p>
+              ${sec(window.t('admin.s15', '一、貼圖圖（每件扭蛋貼圖）'),
+                row(window.t('admin.s16', '尺寸'), window.t('admin.s17', '正方形 1:1，建議 1024 × 1024 像素')) +
+                row(window.t('admin.s18', '格式'), 'PNG') +
+                row(window.t('gacha.rarity.common', '普通'), window.t('admin.s19', '透明背景，只有 Ottie 及道具，四周留少量空位')) +
+                row(window.t('gacha.rarity.rare', '稀有'), window.t('admin.s20', '簡單場景背景（牆壁、地面、一至兩件小物件，淡色），剪裁為圓角正方形，圓角以外為透明')) +
+                row(window.t('gacha.rarity.limited', '限定'), window.t('admin.s21', '豐富完整的場景背景（多件道具、燈光效果、顏色較濃），剪裁為圓角正方形，圓角以外為透明')) +
+                row(window.t('admin.s22', '上傳處理'), window.t('admin.s23', '系統會自動壓縮至最闊 600 像素')))}
+              ${sec(window.t('admin.s24', '二、扭蛋機圖（每個系列可各自設定）'),
+                row(window.t('admin.s16', '尺寸'), window.t('admin.s25', '橫向長方形，闊高比 6:5，建議 960 × 800 像素')) +
+                row(window.t('admin.s18', '格式'), window.t('admin.s26', 'PNG，透明背景')) +
+                row(window.t('admin.s27', '置中'), ('<b>' + window.t('admin.s28', '扭蛋機機身的正中必須位於圖片的正中') + '</b>' + window.t('admin.s29', '。如旁邊有 Ottie 等角色，須在另一邊加上相同闊度的透明空位，令機身置中'))) +
+                row(window.t('admin.s30', '高度'), window.t('admin.s31', '扭蛋機（連角色）高度約佔圖片高度 94%，底部貼近圖片下緣')) +
+                row(window.t('admin.s32', '網站顯示'), window.t('admin.s33', '闊 360 像素（手機畫面較窄時自動縮小）；系列選擇按鈕的縮圖亦會使用此圖')) +
+                row(window.t('admin.s22', '上傳處理'), window.t('admin.s34', '系統會自動壓縮至最闊 800 像素')))}
+              ${sec(window.t('admin.s35', '三、背景圖（每個系列可各自設定）'),
+                row(window.t('admin.s16', '尺寸'), window.t('admin.s36', '橫向 16:9，建議 1376 × 768 或 1920 × 1080 像素')) +
+                row(window.t('admin.s18', '格式'), 'JPG') +
+                row(window.t('admin.s37', '構圖'), (window.t('admin.s38', '畫面正中約 40% 闊度須') + '<b>' + window.t('admin.s39', '完全留空') + '</b>' + window.t('admin.s40', '（扭蛋機放在此處）；裝飾物件放在左右兩邊'))) +
+                row(window.t('admin.s41', '地平線'), window.t('admin.s42', '地面與牆壁或天空的分界線約在圖片高度 65% 至 75% 的位置，令扭蛋機看起來站在地上')) +
+                row(window.t('admin.s43', '底部'), window.t('admin.s44', '圖片底部約 15% 保持淺色及簡單，以免遮擋「抽一次」「連續抽十次」按鈕')) +
+                row(window.t('admin.s32', '網站顯示'), window.t('admin.s45', '電腦版：填滿整個框並貼底顯示，頂部可能被裁走少許。手機版：放大至框高的 140% 並貼底顯示，左右兩邊會被裁走較多，重要物件須放近中間')) +
+                row(window.t('admin.s46', '未上傳時'), window.t('admin.s47', '使用網站內建的預設背景（assets/images/gacha-bg.jpg）')) +
+                row(window.t('admin.s22', '上傳處理'), window.t('admin.s48', '系統會自動壓縮至最闊 1600 像素')))}
+              ${sec(window.t('admin.s49', '四、原始檔存放位置'),
+                row(window.t('admin.s50', '貼圖'), window.t('admin.s51', 'Desktop/concenmate-app/Ottie Pic/（每個系列一個資料夾，例如「動物連身衣」「書伴日常」）')) +
+                row(window.t('admin.s52', '扭蛋機及背景'), window.t('admin.s53', 'Desktop/concenmate-app/Ottie Pic/扭蛋機/')))}
             </details>
           </div>`;
       }
@@ -509,37 +509,37 @@
           return `
           <tr>
             <td style="white-space:nowrap;">
-              <button type="button" class="btn btn-outline" style="padding:1px 7px; font-size:13px;" onclick="adminMoveGachaSeries(${idx},-1)" ${idx === 0 ? 'disabled' : ''}>上移</button>
-              <button type="button" class="btn btn-outline" style="padding:1px 7px; font-size:13px;" onclick="adminMoveGachaSeries(${idx},1)" ${idx === list.length - 1 ? 'disabled' : ''}>下移</button>
+              <button type="button" class="btn btn-outline" style="padding:1px 7px; font-size:13px;" onclick="adminMoveGachaSeries(${idx},-1)" ${idx === 0 ? 'disabled' : ''}>${window.t('admin.s58', '上移')}</button>
+              <button type="button" class="btn btn-outline" style="padding:1px 7px; font-size:13px;" onclick="adminMoveGachaSeries(${idx},1)" ${idx === list.length - 1 ? 'disabled' : ''}>${window.t('admin.s59', '下移')}</button>
             </td>
             <td><input class="admin-input-sm" value="${escapeHtml(se.name || '')}" onchange="adminUpdateGachaSeries(${idx},'name',this.value)"></td>
             <td><input class="admin-input-sm" value="${escapeHtml(se.nameEn || '')}" placeholder="English name" onchange="adminUpdateGachaSeries(${idx},'nameEn',this.value)"></td>
             <td style="text-align:center;"><input type="checkbox" ${se.enabled !== false ? 'checked' : ''} onchange="adminUpdateGachaSeries(${idx},'enabled',this.checked)"></td>
             <td style="text-align:center; color:#555;">${n}</td>
             <td style="white-space:nowrap;">
-              <div onclick="document.getElementById('admin-series-machine-input-${idx}').click()" title="點擊上傳此系列的扭蛋機圖" style="display:inline-flex; width:48px; height:48px; border-radius:8px; background:#F6F7FB; border:1px dashed #D2D9E9; align-items:center; justify-content:center; cursor:pointer; overflow:hidden; vertical-align:middle; font-size:11px; color:#999;">${se.machineImage ? `<img src="${se.machineImage}" style="width:100%; height:100%; object-fit:contain;">` : '上傳'}</div>
+              <div onclick="document.getElementById('admin-series-machine-input-${idx}').click()" title="${window.t('admin.s60', '點擊上傳此系列的扭蛋機圖')}" style="display:inline-flex; width:48px; height:48px; border-radius:8px; background:#F6F7FB; border:1px dashed #D2D9E9; align-items:center; justify-content:center; cursor:pointer; overflow:hidden; vertical-align:middle; font-size:11px; color:#999;">${se.machineImage ? `<img src="${se.machineImage}" style="width:100%; height:100%; object-fit:contain;">` : window.t('admin.s56', '上傳')}</div>
               <input type="file" accept="image/*" id="admin-series-machine-input-${idx}" style="display:none;" onchange="adminUploadSeriesMachineImage(${idx}, this)">
-              ${se.machineImage ? `<button type="button" class="btn btn-outline" style="padding:1px 6px; font-size:12px; vertical-align:middle;" onclick="adminRemoveSeriesMachineImage(${idx})">移除</button>` : ''}
+              ${se.machineImage ? `<button type="button" class="btn btn-outline" style="padding:1px 6px; font-size:12px; vertical-align:middle;" onclick="adminRemoveSeriesMachineImage(${idx})">${window.t('admin.s57', '移除')}</button>` : ''}
             </td>
             <td style="white-space:nowrap;">
-              <div onclick="document.getElementById('admin-series-bg-input-${idx}').click()" title="點擊上傳此系列的背景圖" style="display:inline-flex; width:80px; height:45px; border-radius:8px; background:#F6F7FB; border:1px dashed #D2D9E9; align-items:center; justify-content:center; cursor:pointer; overflow:hidden; vertical-align:middle; font-size:11px; color:#999;">${se.bgImage ? `<img src="${se.bgImage}" style="width:100%; height:100%; object-fit:cover;">` : '上傳'}</div>
+              <div onclick="document.getElementById('admin-series-bg-input-${idx}').click()" title="${window.t('admin.s61', '點擊上傳此系列的背景圖')}" style="display:inline-flex; width:80px; height:45px; border-radius:8px; background:#F6F7FB; border:1px dashed #D2D9E9; align-items:center; justify-content:center; cursor:pointer; overflow:hidden; vertical-align:middle; font-size:11px; color:#999;">${se.bgImage ? `<img src="${se.bgImage}" style="width:100%; height:100%; object-fit:cover;">` : window.t('admin.s56', '上傳')}</div>
               <input type="file" accept="image/*" id="admin-series-bg-input-${idx}" style="display:none;" onchange="adminUploadSeriesBgImage(${idx}, this)">
-              ${se.bgImage ? `<button type="button" class="btn btn-outline" style="padding:1px 6px; font-size:12px; vertical-align:middle;" onclick="adminRemoveSeriesBgImage(${idx})">移除</button>` : ''}
+              ${se.bgImage ? `<button type="button" class="btn btn-outline" style="padding:1px 6px; font-size:12px; vertical-align:middle;" onclick="adminRemoveSeriesBgImage(${idx})">${window.t('admin.s57', '移除')}</button>` : ''}
             </td>
-            <td><button type="button" class="btn btn-red" style="padding:3px 8px; font-size:13px;" onclick="adminRemoveGachaSeries(${idx})">刪除</button></td>
+            <td><button type="button" class="btn btn-red" style="padding:3px 8px; font-size:13px;" onclick="adminRemoveGachaSeries(${idx})">${window.t('qa.delete', '刪除')}</button></td>
           </tr>`;
         }).join('');
         return `
           <div class="admin-card">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:8px;">
-              <h3 style="font-size:15px; font-weight:bold; color:var(--brand-800);">扭蛋系列（共 ${list.length} 個）</h3>
-              <button class="btn btn-outline" style="font-size:13px; padding:4px 10px;" onclick="adminAddGachaSeries()">新增系列</button>
+              <h3 style="font-size:15px; font-weight:bold; color:var(--brand-800);">${window.t('admin.s63', '扭蛋系列（共')} ${list.length} ${window.t('admin.s64', '個）')}</h3>
+              <button class="btn btn-outline" style="font-size:13px; padding:4px 10px;" onclick="adminAddGachaSeries()">${window.t('admin.s65', '新增系列')}</button>
             </div>
-            <p style="font-size:13px; color:#888; margin-bottom:8px;">學生在扭蛋頁面先選擇系列，再抽該系列的貼圖；每個系列有獨立的收集進度。取消「開放扭蛋」後，學生不能再抽該系列，但已收集的貼圖會保留，圖鑑顯示為「已停售」。系列的排列次序即扭蛋頁面的顯示次序。英文名稱留空時，英文介面會顯示中文名稱。「扭蛋機圖」可為每個系列設定專屬的扭蛋機外觀（建議使用透明背景 PNG）；未上傳時使用下方的預設扭蛋機圖。「背景圖」是扭蛋機後面的場景（建議 16:9 橫向圖，中間留空），未上傳時使用網站內建的預設背景。</p>
+            <p style="font-size:13px; color:#888; margin-bottom:8px;">${window.t('admin.s66', '學生在扭蛋頁面先選擇系列，再抽該系列的貼圖；每個系列有獨立的收集進度。取消「開放扭蛋」後，學生不能再抽該系列，但已收集的貼圖會保留，圖鑑顯示為「已停售」。系列的排列次序即扭蛋頁面的顯示次序。英文名稱留空時，英文介面會顯示中文名稱。「扭蛋機圖」可為每個系列設定專屬的扭蛋機外觀（建議使用透明背景 PNG）；未上傳時使用下方的預設扭蛋機圖。「背景圖」是扭蛋機後面的場景（建議 16:9 橫向圖，中間留空），未上傳時使用網站內建的預設背景。')}</p>
             <div style="overflow-x:auto;">
               <table class="admin-table">
-                <thead><tr><th>次序</th><th>中文名稱</th><th>英文名稱</th><th>開放扭蛋</th><th>貼圖數量</th><th>扭蛋機圖</th><th>背景圖</th><th></th></tr></thead>
-                <tbody>${rows || '<tr><td colspan="8" style="text-align:center; color:#999; padding:16px;">未有系列，請點擊「新增系列」</td></tr>'}</tbody>
+                <thead><tr><th>${window.t('admin.s67', '次序')}</th><th>${window.t('admin.s68', '中文名稱')}</th><th>${window.t('admin.s69', '英文名稱')}</th><th>${window.t('admin.s70', '開放扭蛋')}</th><th>${window.t('admin.s71', '貼圖數量')}</th><th>${window.t('admin.s72', '扭蛋機圖')}</th><th>${window.t('admin.s73', '背景圖')}</th><th></th></tr></thead>
+                <tbody>${rows || ('<tr><td colspan="8" style="text-align:center; color:#999; padding:16px;">' + window.t('admin.s62', '未有系列，請點擊「新增系列」') + '</td></tr>')}</tbody>
               </table>
             </div>
           </div>`;
@@ -552,9 +552,9 @@
         const seriesTotals = {};
         allPool.forEach(p => { const k = String(p.seriesId || ''); seriesTotals[k] = (seriesTotals[k] || 0) + (parseFloat(p.weight) || 0); });
         const totalWeight = filter ? (seriesTotals[filter] || 0) : allPool.reduce((s, p) => s + (parseFloat(p.weight) || 0), 0);
-        const seriesOptions = (sel) => `<option value="" ${!sel ? 'selected' : ''}>（未分類）</option>` +
+        const seriesOptions = (sel) => `<option value="" ${!sel ? 'selected' : ''}>${window.t('admin.s74', '（未分類）')}</option>` +
           adminGachaDraft.series.map(se => `<option value="${escapeHtml(String(se.id))}" ${String(sel) === String(se.id) ? 'selected' : ''}>${escapeHtml(se.name || se.id)}</option>`).join('');
-        const rarityOptions = (sel) => [['common', '普通'], ['rare', '稀有'], ['limited', '限定']]
+        const rarityOptions = (sel) => [['common', window.t('gacha.rarity.common', '普通')], ['rare', window.t('gacha.rarity.rare', '稀有')], ['limited', window.t('gacha.rarity.limited', '限定')]]
           .map(([v, l]) => `<option value="${v}" ${(sel || 'common') === v ? 'selected' : ''}>${l}</option>`).join('');
 
         const rows = pool.map((p, idx) => {
@@ -571,9 +571,9 @@
             <td style="text-align:center; color:#888; font-size:13px;">#${p.id}</td>
             <td>
               <div style="display:flex; flex-direction:column; align-items:center; gap:3px;">
-                <div id="${thumbId}" onclick="document.getElementById('${inputId}').click()" title="點擊這裡上傳圖片" style="width:44px; height:44px; border-radius:8px; background:#F6F7FB; border:1px dashed #D2D9E9; display:flex; align-items:center; justify-content:center; cursor:pointer; overflow:hidden;">${thumbInner}</div>
+                <div id="${thumbId}" onclick="document.getElementById('${inputId}').click()" title="${window.t('admin.s13', '點擊這裡上傳圖片')}" style="width:44px; height:44px; border-radius:8px; background:#F6F7FB; border:1px dashed #D2D9E9; display:flex; align-items:center; justify-content:center; cursor:pointer; overflow:hidden;">${thumbInner}</div>
                 <input type="file" accept="image/*" id="${inputId}" style="display:none;" onchange="adminUploadGachaPhoto(${idx},this)">
-                ${p.photo ? `<button type="button" class="btn btn-outline" style="font-size:13px; padding:1px 6px;" onclick="adminRemoveGachaPhoto(${idx})">移除圖片</button>` : ''}
+                ${p.photo ? `<button type="button" class="btn btn-outline" style="font-size:13px; padding:1px 6px;" onclick="adminRemoveGachaPhoto(${idx})">${window.t('admin.s75', '移除圖片')}</button>` : ''}
               </div>
             </td>
             <td><input class="admin-input-sm" value="${escapeHtml(p.name || '')}" onchange="adminUpdateGachaField(${idx},'name',this.value)"></td>
@@ -592,32 +592,32 @@
         return `
           <div class="admin-card">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:8px;">
-              <h3 style="font-size:15px; font-weight:bold; color:var(--brand-800);">貼圖（共 ${allPool.length} 件）</h3>
+              <h3 style="font-size:15px; font-weight:bold; color:var(--brand-800);">${window.t('admin.s78', '貼圖（共')} ${allPool.length} ${window.t('admin.s79', '件）')}</h3>
               <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
-                <select class="admin-input-sm" onchange="adminSetGachaSeriesFilter(this.value)" title="只顯示某個系列">
-                  <option value="" ${!filter ? 'selected' : ''}>顯示全部系列</option>
+                <select class="admin-input-sm" onchange="adminSetGachaSeriesFilter(this.value)" title="${window.t('admin.s80', '只顯示某個系列')}">
+                  <option value="" ${!filter ? 'selected' : ''}>${window.t('admin.s81', '顯示全部系列')}</option>
                   ${adminGachaDraft.series.map(se => `<option value="${escapeHtml(String(se.id))}" ${filter === String(se.id) ? 'selected' : ''}>${escapeHtml(se.name || se.id)}</option>`).join('')}
                 </select>
-                <button class="btn btn-outline" style="font-size:13px; padding:4px 10px;" onclick="adminNormalizeGachaWeights()">調整為剛好 100</button>
-                <button class="btn btn-outline" style="font-size:13px; padding:4px 10px;" onclick="adminRenumberGachaStickers()">重新排序編號</button>
-                <button class="btn btn-outline" style="font-size:13px; padding:4px 10px;" onclick="adminAddGachaPrize()">新增貼圖</button>
+                <button class="btn btn-outline" style="font-size:13px; padding:4px 10px;" onclick="adminNormalizeGachaWeights()">${window.t('admin.s82', '調整為剛好 100')}</button>
+                <button class="btn btn-outline" style="font-size:13px; padding:4px 10px;" onclick="adminRenumberGachaStickers()">${window.t('admin.s83', '重新排序編號')}</button>
+                <button class="btn btn-outline" style="font-size:13px; padding:4px 10px;" onclick="adminAddGachaPrize()">${window.t('admin.s84', '新增貼圖')}</button>
               </div>
             </div>
-            <p style="font-size:13px; color:#888; margin-bottom:8px;">貼圖編號（#id）對應用戶收集圖鑑的位置，刪除貼圖之後編號會留下缺口（例如刪除 #13~#17 之後就由 #12 跳到 #18），這不影響扭蛋／收集功能，純粹是畫面上不美觀。如果想整理，點擊「重新排序編號」會將現存貼圖由上到下重新編為 1、2、3...連續號碼——但要留意：如果已經有真實學生扭過蛋、收藏了某幾張貼圖，重新編號會令他們原有的收藏對應不上新編號（貼圖會「變成另一件」），所以這個按鈕只適合在未有學生正式使用過、或者您願意接受重整所有人收藏記錄的情況下才點擊。</p>
+            <p style="font-size:13px; color:#888; margin-bottom:8px;">${window.t('admin.s85', '貼圖編號（#id）對應用戶收集圖鑑的位置，刪除貼圖之後編號會留下缺口（例如刪除 #13~#17 之後就由 #12 跳到 #18），這不影響扭蛋／收集功能，純粹是畫面上不美觀。如果想整理，點擊「重新排序編號」會將現存貼圖由上到下重新編為 1、2、3...連續號碼——但要留意：如果已經有真實學生扭過蛋、收藏了某幾張貼圖，重新編號會令他們原有的收藏對應不上新編號（貼圖會「變成另一件」），所以這個按鈕只適合在未有學生正式使用過、或者您願意接受重整所有人收藏記錄的情況下才點擊。')}</p>
             <div style="overflow-x:auto;">
               <table class="admin-table">
-                <thead><tr><th>#</th><th>圖片</th><th>中文名稱</th><th>英文名稱</th><th>系列</th><th>稀有度</th><th>機率權重</th><th></th></tr></thead>
-                <tbody>${rows || '<tr><td colspan="8" style="text-align:center; color:#999; padding:16px;">未有貼圖，請點擊「新增貼圖」開始</td></tr>'}</tbody>
+                <thead><tr><th>#</th><th>${window.t('admin.s86', '圖片')}</th><th>${window.t('admin.s68', '中文名稱')}</th><th>${window.t('admin.s69', '英文名稱')}</th><th>${window.t('admin.s87', '系列')}</th><th>${window.t('admin.s88', '稀有度')}</th><th>${window.t('admin.s89', '機率權重')}</th><th></th></tr></thead>
+                <tbody>${rows || ('<tr><td colspan="8" style="text-align:center; color:#999; padding:16px;">' + window.t('admin.s76', '未有貼圖，請點擊「新增貼圖」開始') + '</td></tr>')}</tbody>
               </table>
             </div>
-            <p style="font-size:13px; color:#888; margin-top:8px;">${filter ? '此系列' : '全部'}總權重：<span id="admin-gacha-total">${totalWeight}</span>。學生每次只會在所選系列之內抽，所以「≈ %」是該張貼圖在<b>同一系列內</b>的機率。點擊「調整為剛好 100」會將每個系列各自的權重縮放到合計 100。稀有度只影響標籤及抽中時的提示，實際機率由權重決定。</p>
+            <p style="font-size:13px; color:#888; margin-top:8px;">${filter ? window.t('admin.s77', '此系列') : window.t('room.filterAll', '全部')}${window.t('admin.s90', '總權重：')}<span id="admin-gacha-total">${totalWeight}</span>${window.t('admin.s91', '。學生每次只會在所選系列之內抽，所以「≈ %」是該張貼圖在')}<b>${window.t('admin.s92', '同一系列內')}</b>${window.t('admin.s93', '的機率。點擊「調整為剛好 100」會將每個系列各自的權重縮放到合計 100。稀有度只影響標籤及抽中時的提示，實際機率由權重決定。')}</p>
           </div>
         `;
       }
 
       container.innerHTML = `
         <div class="admin-card">
-          <h3 style="font-size:15px; font-weight:bold; color:var(--brand-800); margin-bottom:10px;">扭蛋收費</h3>
+          <h3 style="font-size:15px; font-weight:bold; color:var(--brand-800); margin-bottom:10px;">${window.t('admin.s94', '扭蛋收費')}</h3>
           <div style="display:flex; gap:16px; flex-wrap:wrap; align-items:center;">
             <label style="font-size:13px; color:#555; display:flex; align-items:center; gap:6px;">抽一次 (PTS)：<input class="admin-input-sm" type="number" min="0" style="width:80px;" value="${adminGachaDraft.costNormal}" onchange="adminGachaDraft.costNormal = parseInt(this.value)||0"></label>
             <label style="font-size:13px; color:#555; display:flex; align-items:center; gap:6px;">連續抽十次 (PTS，一次過 10 抽的總費用)：<input class="admin-input-sm" type="number" min="0" style="width:80px;" value="${adminGachaDraft.costLucky}" onchange="adminGachaDraft.costLucky = parseInt(this.value)||0"></label>
@@ -626,12 +626,12 @@
 
 
         <div class="admin-card">
-          <h3 style="font-size:15px; font-weight:bold; color:var(--brand-800); margin-bottom:6px;">貼圖碎片</h3>
-          <p style="font-size:13px; color:#888; margin:0 0 10px;">學生扭到已擁有的貼圖會自動轉為碎片；碎片可兌換未擁有的貼圖（只限開放中的系列）。</p>
+          <h3 style="font-size:15px; font-weight:bold; color:var(--brand-800); margin-bottom:6px;">${window.t('admin.s95', '貼圖碎片')}</h3>
+          <p style="font-size:13px; color:#888; margin:0 0 10px;">${window.t('admin.s96', '學生扭到已擁有的貼圖會自動轉為碎片；碎片可兌換未擁有的貼圖（只限開放中的系列）。')}</p>
           <table class="admin-table" style="max-width:420px;">
-            <thead><tr><th>稀有度</th><th>重複時得到碎片</th><th>兌換所需碎片</th></tr></thead>
+            <thead><tr><th>${window.t('admin.s88', '稀有度')}</th><th>${window.t('admin.s97', '重複時得到碎片')}</th><th>${window.t('admin.s98', '兌換所需碎片')}</th></tr></thead>
             <tbody>
-              ${[['common','普通'],['rare','稀有'],['limited','限定']].map(([k, label]) => `<tr>
+              ${[['common',window.t('gacha.rarity.common', '普通')],['rare',window.t('gacha.rarity.rare', '稀有')],['limited',window.t('gacha.rarity.limited', '限定')]].map(([k, label]) => `<tr>
                 <td>${label}</td>
                 <td><input class="admin-input-sm" type="number" min="0" max="1000" style="width:70px;" value="${adminGachaDraft.fragmentGain[k]}" onchange="adminGachaDraft.fragmentGain['${k}'] = Math.max(0, parseInt(this.value)||0)"></td>
                 <td><input class="admin-input-sm" type="number" min="1" max="10000" style="width:70px;" value="${adminGachaDraft.fragmentCost[k]}" onchange="adminGachaDraft.fragmentCost['${k}'] = Math.max(1, parseInt(this.value)||1)"></td>
@@ -649,12 +649,12 @@
         ${renderStickerTable()}
 
         <div style="display:flex; gap:8px; justify-content:flex-end;">
-          <button class="btn btn-outline" type="button" onclick="adminResetGachaDraft()">還原未儲存的改動</button>
-          <button class="btn btn-primary" type="button" id="btn-admin-save-gacha" onclick="adminSaveGachaConfig()">儲存全部改動</button>
+          <button class="btn btn-outline" type="button" onclick="adminResetGachaDraft()">${window.t('admin.s99', '還原未儲存的改動')}</button>
+          <button class="btn btn-primary" type="button" id="btn-admin-save-gacha" onclick="adminSaveGachaConfig()">${window.t('admin.s100', '儲存全部改動')}</button>
         </div>
         <div style="margin-top:14px; padding-top:12px; border-top:1px solid var(--brand-200); display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-          <button class="btn btn-outline" type="button" id="btn-admin-compress-gacha" onclick="adminCompressGachaImages()">壓縮現有圖片（加快載入）</button>
-          <span style="font-size:12px; color:#8A94A8;">把已上傳的貼圖、扭蛋機圖及背景圖轉為 WebP 格式，檔案細約九成。執行前請先儲存改動。可重複執行，已壓縮的會略過。</span>
+          <button class="btn btn-outline" type="button" id="btn-admin-compress-gacha" onclick="adminCompressGachaImages()">${window.t('admin.s101', '壓縮現有圖片（加快載入）')}</button>
+          <span style="font-size:12px; color:#8A94A8;">${window.t('admin.s102', '把已上傳的貼圖、扭蛋機圖及背景圖轉為 WebP 格式，檔案細約九成。執行前請先儲存改動。可重複執行，已壓縮的會略過。')}</span>
         </div>
       `;
     }
@@ -702,14 +702,14 @@
       while (used.has(id)) { n++; id = 's' + n; }
       adminGachaDraft.series.push({ id, name: '新系列', nameEn: '', enabled: false, order: adminGachaDraft.series.length + 1 });
       renderAdminGachaTab();
-      window.showToast('已新增系列（預設未開放扭蛋），請點擊「儲存全部改動」', '📦');
+      window.showToast(window.t('admin.s105', '已新增系列（預設未開放扭蛋），請點擊「儲存全部改動」'), '📦');
     };
     window.adminRemoveGachaSeries = async function(idx) {
       if (!adminGachaDraft || !adminGachaDraft.series[idx]) return;
       const se = adminGachaDraft.series[idx];
       const n = adminGachaDraft.stickers.filter(st => String(st.seriesId) === String(se.id)).length;
-      if (n > 0) { window.showToast(`此系列仍有 ${n} 張貼圖，請先將貼圖移到其他系列或刪除`, '⚠️'); return; }
-      if (!(await window.appConfirm(`確定刪除系列「${se.name || se.id}」？`))) return;
+      if (n > 0) { window.showToast(`${window.t('admin.s106', '此系列仍有')} ${n} ${window.t('admin.s107', '張貼圖，請先將貼圖移到其他系列或刪除')}`, '⚠️'); return; }
+      if (!(await window.appConfirm(`${window.t('admin.s108', '確定刪除系列「')}${se.name || se.id}」？`))) return;
       adminGachaDraft.series.splice(idx, 1);
       adminGachaDraft.series.forEach((x, i) => { x.order = i + 1; });
       if (adminGachaSeriesFilter === String(se.id)) adminGachaSeriesFilter = '';
@@ -780,7 +780,7 @@
             if (webp && webp.type === 'image/webp') { resolve({ blob: webp, mimeType: 'image/webp' }); return; }
             canvas.toBlob((blob) => {
               if (blob) resolve({ blob, mimeType: fallbackType });
-              else reject(new Error('圖片轉換失敗'));
+              else reject(new Error(window.t('admin.s109', '圖片轉換失敗')));
             }, fallbackType, quality);
           }, 'image/webp', 0.82);
         };
@@ -809,16 +809,16 @@
       const file = inputEl.files && inputEl.files[0];
       if (!file) return;
       if (!file.type.startsWith('image/')) {
-        window.showToast('請選擇圖片檔案', '⚠️');
+        window.showToast(window.t('admin.s110', '請選擇圖片檔案'), '⚠️');
         return;
       }
       if (!window.storage || !window.storageApi) {
-        window.showToast('Storage 未初始化，請重新整理頁面再試', '⚠️');
+        window.showToast(window.t('admin.s111', 'Storage 未初始化，請重新整理頁面再試'), '⚠️');
         return;
       }
       const sticker = adminGachaDraft.stickers[idx];
       const oldPhoto = sticker.photo;
-      window.showToast('上傳中相片…', '📤');
+      window.showToast(window.t('admin.s112', '上傳中相片…'), '📤');
       try {
         const { blob, mimeType } = await compressImageFileToBlob(file, 600, 0.85);
         const ext = mimeType === 'image/webp' ? 'webp' : (mimeType === 'image/png' ? 'png' : 'jpg');
@@ -828,26 +828,26 @@
         const downloadUrl = await window.storageApi.getDownloadURL(fileRef);
         adminGachaDraft.stickers[idx].photo = downloadUrl;
         renderAdminGachaTab();
-        window.showToast('相片上傳成功，請點擊「儲存全部改動」才會正式生效', '🎉');
+        window.showToast(window.t('admin.s113', '相片上傳成功，請點擊「儲存全部改動」才會正式生效'), '🎉');
         tryDeleteOldGachaStoragePhoto(oldPhoto); // best-effort，唔使等佢完成
       } catch (err) {
-        window.showToast('圖片上傳失敗：' + (err.message || err), '❌');
+        window.showToast(window.t('admin.s114', '圖片上傳失敗：') + (err.message || err), '❌');
       }
     };
 
     // v1.230.7：伺服器把現有扭蛋圖片壓縮成 WebP
     window.adminCompressGachaImages = async function () {
-      if (!(await window.appConfirm('把現有的貼圖、扭蛋機圖及背景圖壓縮為 WebP？未儲存的改動將會被還原。'))) return;
+      if (!(await window.appConfirm(window.t('admin.s115', '把現有的貼圖、扭蛋機圖及背景圖壓縮為 WebP？未儲存的改動將會被還原。')))) return;
       const btn = document.getElementById('btn-admin-compress-gacha');
-      if (btn) { btn.disabled = true; btn.innerText = '壓縮中，約需一分鐘…'; }
+      if (btn) { btn.disabled = true; btn.innerText = window.t('admin.s116', '壓縮中，約需一分鐘…'); }
       try {
         const r = await window.callCloudFunction('compressGachaImages', {});
         adminGachaDraft = null;
-        window.showToast(`完成：已壓縮 ${r.done} 張，略過 ${r.skipped} 張${r.failed ? `，失敗 ${r.failed} 張` : ''}，節省約 ${r.savedMB} MB`, '✅');
+        window.showToast(`${window.t('admin.s119', '完成：已壓縮')} ${r.done} ${window.t('admin.s120', '張，略過')} ${r.skipped} ${window.t('admin.s118', '張')}${r.failed ? `${window.t('admin.s117', '，失敗')} ${r.failed} ${window.t('admin.s118', '張')}` : ''}${window.t('admin.s121', '，節省約')} ${r.savedMB} MB`, '✅');
       } catch (e) {
-        window.showToast('壓縮失敗：' + ((e && e.message) || e), '❌');
+        window.showToast(window.t('admin.s122', '壓縮失敗：') + ((e && e.message) || e), '❌');
       } finally {
-        if (btn) { btn.disabled = false; btn.innerText = '壓縮現有圖片（加快載入）'; }
+        if (btn) { btn.disabled = false; btn.innerText = window.t('admin.s101', '壓縮現有圖片（加快載入）'); }
       }
     };
 
@@ -867,15 +867,15 @@
       const file = inputEl.files && inputEl.files[0];
       if (!file) return;
       if (!file.type.startsWith('image/')) {
-        window.showToast('請選擇圖片檔案', '⚠️');
+        window.showToast(window.t('admin.s110', '請選擇圖片檔案'), '⚠️');
         return;
       }
       if (!window.storage || !window.storageApi) {
-        window.showToast('Storage 未初始化，請重新整理頁面再試', '⚠️');
+        window.showToast(window.t('admin.s111', 'Storage 未初始化，請重新整理頁面再試'), '⚠️');
         return;
       }
       const oldUrl = adminGachaDraft.machineImageUrl;
-      window.showToast('上傳中圖片…', '📤');
+      window.showToast(window.t('admin.s123', '上傳中圖片…'), '📤');
       try {
         const { blob, mimeType } = await compressImageFileToBlob(file, 800, 0.85);
         const ext = mimeType === 'image/webp' ? 'webp' : (mimeType === 'image/png' ? 'png' : 'jpg');
@@ -885,10 +885,10 @@
         const downloadUrl = await window.storageApi.getDownloadURL(fileRef);
         adminGachaDraft.machineImageUrl = downloadUrl;
         renderAdminGachaTab();
-        window.showToast('圖片上傳成功，請點擊「儲存全部改動」才會正式生效', '🎉');
+        window.showToast(window.t('admin.s124', '圖片上傳成功，請點擊「儲存全部改動」才會正式生效'), '🎉');
         tryDeleteOldGachaStoragePhoto(oldUrl); // best-effort，唔使等佢完成
       } catch (err) {
-        window.showToast('圖片上傳失敗：' + (err.message || err), '❌');
+        window.showToast(window.t('admin.s114', '圖片上傳失敗：') + (err.message || err), '❌');
       }
     };
 
@@ -897,11 +897,11 @@
       if (!adminGachaDraft || !adminGachaDraft.series[idx]) return;
       const file = inputEl.files && inputEl.files[0];
       if (!file) return;
-      if (!file.type.startsWith('image/')) { window.showToast('請選擇圖片檔案', '⚠️'); return; }
-      if (!window.storage || !window.storageApi) { window.showToast('Storage 未初始化，請重新整理頁面再試', '⚠️'); return; }
+      if (!file.type.startsWith('image/')) { window.showToast(window.t('admin.s110', '請選擇圖片檔案'), '⚠️'); return; }
+      if (!window.storage || !window.storageApi) { window.showToast(window.t('admin.s111', 'Storage 未初始化，請重新整理頁面再試'), '⚠️'); return; }
       const se = adminGachaDraft.series[idx];
       const oldUrl = se.machineImage;
-      window.showToast('上傳中圖片…', '📤');
+      window.showToast(window.t('admin.s123', '上傳中圖片…'), '📤');
       try {
         const { blob, mimeType } = await compressImageFileToBlob(file, 800, 0.85);
         const ext = mimeType === 'image/webp' ? 'webp' : (mimeType === 'image/png' ? 'png' : 'jpg');
@@ -910,10 +910,10 @@
         await window.storageApi.uploadBytes(fileRef, blob, { contentType: mimeType });
         se.machineImage = await window.storageApi.getDownloadURL(fileRef);
         renderAdminGachaTab();
-        window.showToast('圖片上傳成功，請點擊「儲存全部改動」才會正式生效', '🎉');
+        window.showToast(window.t('admin.s124', '圖片上傳成功，請點擊「儲存全部改動」才會正式生效'), '🎉');
         tryDeleteOldGachaStoragePhoto(oldUrl);
       } catch (err) {
-        window.showToast('圖片上傳失敗：' + (err.message || err), '❌');
+        window.showToast(window.t('admin.s114', '圖片上傳失敗：') + (err.message || err), '❌');
       }
     };
     // 個別系列專屬嘅扭蛋機背景場景圖
@@ -921,11 +921,11 @@
       if (!adminGachaDraft || !adminGachaDraft.series[idx]) return;
       const file = inputEl.files && inputEl.files[0];
       if (!file) return;
-      if (!file.type.startsWith('image/')) { window.showToast('請選擇圖片檔案', '⚠️'); return; }
-      if (!window.storage || !window.storageApi) { window.showToast('Storage 未初始化，請重新整理頁面再試', '⚠️'); return; }
+      if (!file.type.startsWith('image/')) { window.showToast(window.t('admin.s110', '請選擇圖片檔案'), '⚠️'); return; }
+      if (!window.storage || !window.storageApi) { window.showToast(window.t('admin.s111', 'Storage 未初始化，請重新整理頁面再試'), '⚠️'); return; }
       const se = adminGachaDraft.series[idx];
       const oldUrl = se.bgImage;
-      window.showToast('上傳中圖片…', '📤');
+      window.showToast(window.t('admin.s123', '上傳中圖片…'), '📤');
       try {
         const { blob, mimeType } = await compressImageFileToBlob(file, 1600, 0.85);
         const ext = mimeType === 'image/webp' ? 'webp' : (mimeType === 'image/png' ? 'png' : 'jpg');
@@ -934,10 +934,10 @@
         await window.storageApi.uploadBytes(fileRef, blob, { contentType: mimeType });
         se.bgImage = await window.storageApi.getDownloadURL(fileRef);
         renderAdminGachaTab();
-        window.showToast('圖片上傳成功，請點擊「儲存全部改動」才會正式生效', '🎉');
+        window.showToast(window.t('admin.s124', '圖片上傳成功，請點擊「儲存全部改動」才會正式生效'), '🎉');
         tryDeleteOldGachaStoragePhoto(oldUrl);
       } catch (err) {
-        window.showToast('圖片上傳失敗：' + (err.message || err), '❌');
+        window.showToast(window.t('admin.s114', '圖片上傳失敗：') + (err.message || err), '❌');
       }
     };
     window.adminRemoveSeriesBgImage = function(idx) {
@@ -985,7 +985,7 @@
         });
       });
       renderAdminGachaTab();
-      window.showToast(skipped ? '已調整；部分系列權重全部是 0，未有調整' : '已將每個系列的權重調整為合計 100', '⚖️');
+      window.showToast(skipped ? window.t('admin.s125', '已調整；部分系列權重全部是 0，未有調整') : window.t('admin.s126', '已將每個系列的權重調整為合計 100'), '⚖️');
     };
 
     window.adminAddGachaPrize = function() {
@@ -999,7 +999,7 @@
 
     window.adminRemoveGachaPrize = async function(idx) {
       if (!adminGachaDraft) return;
-      if (!(await window.appConfirm('確定刪除這張貼圖？若已經有用戶擁有，其收集紀錄會保留，但在圖鑑中將不再顯示。'))) return;
+      if (!(await window.appConfirm(window.t('admin.s128', '確定刪除這張貼圖？若已經有用戶擁有，其收集紀錄會保留，但在圖鑑中將不再顯示。')))) return;
       adminGachaDraft.stickers.splice(idx, 1);
       renderAdminGachaTab();
     };
@@ -1014,28 +1014,28 @@
     // 未有學生正式扭過蛋）先撳。
     window.adminRenumberGachaStickers = async function() {
       if (!adminGachaDraft || !adminGachaDraft.stickers.length) return;
-      if (!(await window.appConfirm('重新排序編號會將貼紙 id 由 1 開始重新連續編號。\n\n如果已經有真實學生使用這個扭蛋機扭過蛋、收藏了某幾隻貼紙，他們原有的收藏會因為編號改變而對應不上（貼紙會「變成另一隻」）。如果尚未有學生正式使用過，或者你願意接受洗牌整批收藏記錄，才繼續。\n\n確定要重新編號？'))) return;
+      if (!(await window.appConfirm(window.t('admin.s129', '重新排序編號會將貼紙 id 由 1 開始重新連續編號。\n\n如果已經有真實學生使用這個扭蛋機扭過蛋、收藏了某幾隻貼紙，他們原有的收藏會因為編號改變而對應不上（貼紙會「變成另一隻」）。如果尚未有學生正式使用過，或者你願意接受洗牌整批收藏記錄，才繼續。\n\n確定要重新編號？')))) return;
       adminGachaDraft.stickers.forEach((p, i) => { p.id = i + 1; });
       renderAdminGachaTab();
-      window.showToast('已重新排序編號，請點擊「儲存全部改動」才會正式生效', '🔢');
+      window.showToast(window.t('admin.s130', '已重新排序編號，請點擊「儲存全部改動」才會正式生效'), '🔢');
     };
 
     window.adminResetGachaDraft = function() {
       adminGachaDraft = null;
       renderAdminGachaTab();
-      window.showToast('已還原至上次儲存的版本', '↩️');
+      window.showToast(window.t('admin.s131', '已還原至上次儲存的版本'), '↩️');
     };
 
     window.adminSaveGachaConfig = async function() {
       if (!adminGachaDraft || !window.db || !window.fs) return;
       if (adminGachaDraft.stickers.length === 0) {
-        window.showToast('最少要有一張貼圖才可以儲存', '⚠️');
+        window.showToast(window.t('admin.s132', '最少要有一張貼圖才可以儲存'), '⚠️');
         return;
       }
       const openSeries = adminGachaDraft.series.filter(se => se.enabled !== false &&
         adminGachaDraft.stickers.some(st => String(st.seriesId) === String(se.id) && (parseFloat(st.weight) || 0) > 0));
       if (adminGachaDraft.series.length && !openSeries.length) {
-        window.showToast('最少要有一個「開放扭蛋」並且有貼圖的系列', '⚠️');
+        window.showToast(window.t('admin.s133', '最少要有一個「開放扭蛋」並且有貼圖的系列'), '⚠️');
         return;
       }
       const payload = {
@@ -1059,19 +1059,19 @@
       // （例如 stickers/{id} collection）嚟徹底解決呢個大小上限問題。
       const approxBytes = new Blob([JSON.stringify(payload)]).size;
       if (approxBytes > 900000) {
-        window.showToast(`資料太大（約 ${(approxBytes / 1024).toFixed(0)}KB，Firestore 單一文件上限是 1024KB），請為較少貼紙更換圖片，或選擇較小的圖片`, '⚠️');
+        window.showToast(`${window.t('admin.s134', '資料太大（約')} ${(approxBytes / 1024).toFixed(0)}${window.t('admin.s135', 'KB，Firestore 單一文件上限是 1024KB），請為較少貼紙更換圖片，或選擇較小的圖片')}`, '⚠️');
         return;
       }
 
       const btn = document.getElementById('btn-admin-save-gacha');
-      if (btn) { btn.disabled = true; btn.innerText = '儲存中…'; }
+      if (btn) { btn.disabled = true; btn.innerText = window.t('admin.s136', '儲存中…'); }
       try {
         await window.fs.setDoc(window.fs.doc(window.db, 'admin_config', 'gacha'), payload);
-        window.showToast('扭蛋機設定已儲存，即時對所有用戶生效！', '🎉');
+        window.showToast(window.t('admin.s137', '扭蛋機設定已儲存，即時對所有用戶生效！'), '🎉');
       } catch (err) {
-        window.showToast('儲存失敗：' + (err.message || err), '❌');
+        window.showToast(window.t('admin.s138', '儲存失敗：') + (err.message || err), '❌');
       } finally {
-        if (btn) { btn.disabled = false; btn.innerText = '儲存全部改動'; }
+        if (btn) { btn.disabled = false; btn.innerText = window.t('admin.s100', '儲存全部改動'); }
       }
     };
 
@@ -1138,7 +1138,7 @@
         if (typeof window.updateOtterDisplay === 'function') window.updateOtterDisplay();
         if (typeof window.gachaApplyMachineImage === 'function') window.gachaApplyMachineImage();
         if (typeof window.isCurrentUserAdmin === 'function' && window.isCurrentUserAdmin()) {
-          window.showToast('讀取扭蛋機設定失敗（可能是 Firestore 規則未生效）：' + (err.message || err), '⚠️');
+          window.showToast(window.t('admin.s139', '讀取扭蛋機設定失敗（可能是 Firestore 規則未生效）：') + (err.message || err), '⚠️');
         }
       });
     }
@@ -1156,7 +1156,7 @@
       if (!container) return;
       if (!adminLevelDraft) {
         if (!levelConfigLoaded) {
-          container.innerHTML = '<p style="text-align:center; color:#999; padding:20px;">載入中等級系統設定...</p>';
+          container.innerHTML = ('<p style="text-align:center; color:#999; padding:20px;">' + window.t('admin.s140', '載入中等級系統設定...') + '</p>');
           return;
         }
         adminLevelDraft = JSON.parse(JSON.stringify(LEVEL_CONFIG));
@@ -1177,101 +1177,101 @@
           <td style="${td} white-space:nowrap;">
             <img src="${window.stoneSrcForRank ? window.stoneSrcForRank(r) : 'assets/images/stone-1.png'}" id="admin-rank-stone-img-${idx}" alt="" width="26" height="26" style="vertical-align:middle;">
             <select class="admin-input-sm" style="vertical-align:middle; width:auto; min-width:0; max-width:96px;" onchange="adminLevelDraft.ranks[${idx}].stone = parseInt(this.value)||undefined; document.getElementById('admin-rank-stone-img-${idx}').src = 'assets/images/stone-' + (parseInt(this.value) || ${idx + 1 > 5 ? 5 : idx + 1}) + '.png';">
-              <option value="">自動</option>
-              ${['灰石','鵝卵石','雲石','水晶','寶石'].map((nm, k) => `<option value="${k + 1}" ${parseInt(r.stone) === k + 1 ? 'selected' : ''}>${nm}</option>`).join('')}
+              <option value="">${window.t('admin.s141', '自動')}</option>
+              ${[window.t('gacha.stoneGrey', '灰石'),window.t('gacha.stonePebble', '鵝卵石'),window.t('gacha.stoneMarble', '雲石'),window.t('gacha.stoneCrystal', '水晶'),window.t('gacha.stoneGem', '寶石')].map((nm, k) => `<option value="${k + 1}" ${parseInt(r.stone) === k + 1 ? 'selected' : ''}>${nm}</option>`).join('')}
             </select>
           </td>
           <td style="${td} font-weight:700; white-space:nowrap;" id="admin-rank-time-${idx}"></td>
           <td style="${td} white-space:nowrap;" id="admin-rank-d1-${idx}"></td>
           <td style="${td} white-space:nowrap;" id="admin-rank-d3-${idx}"></td>
-          <td style="${td}"><button class="btn btn-red" style="font-size:13px; padding:3px 8px;" onclick="adminRemoveLevelRank(${idx})">刪除</button></td>
+          <td style="${td}"><button class="btn btn-red" style="font-size:13px; padding:3px 8px;" onclick="adminRemoveLevelRank(${idx})">${window.t('qa.delete', '刪除')}</button></td>
         </tr>
         <tr>
           <td colspan="8" style="padding:0 8px 10px;">
-            <input class="admin-input-sm" style="width:100%; box-sizing:border-box;" placeholder="段位說明（用戶點擊等級時彈出視窗顯示）" value="${escapeHtml(r.desc || '')}" oninput="adminLevelDraft.ranks[${idx}].desc = this.value">
+            <input class="admin-input-sm" style="width:100%; box-sizing:border-box;" placeholder="${window.t('admin.s142', '段位說明（用戶點擊等級時彈出視窗顯示）')}" value="${escapeHtml(r.desc || '')}" oninput="adminLevelDraft.ranks[${idx}].desc = this.value">
           </td>
         </tr>
       `).join('');
 
       container.innerHTML = `
         <div class="admin-card">
-          <h3 style="font-size:14px; font-weight:bold; margin-bottom:8px;">升級速度</h3>
+          <h3 style="font-size:14px; font-weight:bold; margin-bottom:8px;">${window.t('admin.s143', '升級速度')}</h3>
           <div style="display:flex; gap:16px; flex-wrap:wrap; margin-bottom:6px;">
             <label style="font-size:13px; color:#555; display:flex; align-items:center; gap:6px;">
-              每溫習 1 分鐘可得 EXP：
+              ${window.t('admin.s144', '每溫習 1 分鐘可得 EXP：')}
               <input class="admin-input-sm" type="number" min="0" step="0.1" style="width:70px;" value="${adminLevelDraft.expPerMinute}" oninput="adminLevelDraft.expPerMinute = parseFloat(this.value)||0; adminRefreshLevelPreview();">
             </label>
             <label style="font-size:13px; color:#555; display:flex; align-items:center; gap:6px;">
-              升級難度係數：
+              ${window.t('admin.s145', '升級難度係數：')}
               <input class="admin-input-sm" type="number" min="1" step="1" style="width:70px;" value="${adminLevelDraft.levelCurveFactor}" oninput="adminLevelDraft.levelCurveFactor = parseFloat(this.value)||10; adminRefreshLevelPreview();">
             </label>
           </div>
-          <p style="font-size:13px; color:#888;">升到第 L 級總共需要的 EXP = 難度係數 × L × (L−1)。係數越大，升級越慢。改動後下面的時間會即時更新。</p>
+          <p style="font-size:13px; color:#888;">${window.t('admin.s146', '升到第 L 級總共需要的 EXP')} = 難度係數 × L × (L−1)。係數越大，升級越慢。改動後下面的時間會即時更新。</p>
         </div>
 
         <div class="admin-card" style="margin-top:12px;">
-          <h3 style="font-size:14px; font-weight:bold; margin-bottom:4px;">段位（由低到高，第一個段位的等級門檻請設為 1）</h3>
-          <p style="font-size:13px; color:#888; margin-bottom:8px;">稱號會顯示在視訊溫習室名牌、排行榜及個人資料。石頭是 Ottie 每 15 分鐘磨好的石頭款式，顯示在名牌、主頁及等級詳情（「自動」即按段位次序配）。「到達需時」按上面的升級速度計算。</p>
+          <h3 style="font-size:14px; font-weight:bold; margin-bottom:4px;">${window.t('admin.s147', '段位（由低到高，第一個段位的等級門檻請設為 1）')}</h3>
+          <p style="font-size:13px; color:#888; margin-bottom:8px;">${window.t('admin.s148', '稱號會顯示在視訊溫習室名牌、排行榜及個人資料。石頭是 Ottie 每 15 分鐘磨好的石頭款式，顯示在名牌、主頁及等級詳情（「自動」即按段位次序配）。「到達需時」按上面的升級速度計算。')}</p>
           <div style="overflow-x:auto;">
             <table style="border-collapse:collapse; font-size:13px; color:var(--brand-800); min-width:740px; width:100%;">
               <thead><tr>
-                <th style="${th}">等級門檻</th><th style="${th}">稱號（中）</th><th style="${th}">稱號（英）</th><th style="${th}">石頭</th>
-                <th style="${th}">到達需時</th><th style="${th}">每日溫 3 小時</th><th style="${th}">每日溫 5 小時</th><th style="${th}"></th>
+                <th style="${th}">${window.t('admin.s149', '等級門檻')}</th><th style="${th}">${window.t('admin.s150', '稱號（中）')}</th><th style="${th}">${window.t('admin.s151', '稱號（英）')}</th><th style="${th}">${window.t('golden.stone', '石頭')}</th>
+                <th style="${th}">${window.t('admin.s152', '到達需時')}</th><th style="${th}">${window.t('admin.s153', '每日溫 3 小時')}</th><th style="${th}">${window.t('admin.s154', '每日溫 5 小時')}</th><th style="${th}"></th>
               </tr></thead>
               <tbody>${rankRows}</tbody>
             </table>
           </div>
-          <button class="btn btn-outline" style="margin-top:6px; font-size:13px;" onclick="adminAddLevelRank()">新增段位</button>
+          <button class="btn btn-outline" style="margin-top:6px; font-size:13px;" onclick="adminAddLevelRank()">${window.t('admin.s155', '新增段位')}</button>
           <details style="margin-top:12px;">
-            <summary style="font-size:13px; font-weight:700; color:var(--brand-600); cursor:pointer;">查看其他等級所需時間</summary>
+            <summary style="font-size:13px; font-weight:700; color:var(--brand-600); cursor:pointer;">${window.t('admin.s156', '查看其他等級所需時間')}</summary>
             <div id="admin-level-preview" style="font-size:13px; margin-top:8px;"></div>
           </details>
         </div>
 
         <div class="admin-card" style="margin-top:12px;">
-          <h3 style="font-size:14px; font-weight:bold; margin-bottom:8px;">升級獎勵</h3>
+          <h3 style="font-size:14px; font-weight:bold; margin-bottom:8px;">${window.t('level.rewardRuleTitle', '升級獎勵')}</h3>
           <div style="display:flex; gap:16px; flex-wrap:wrap; margin-bottom:10px;">
             <label style="font-size:13px; color:#555; display:flex; align-items:center; gap:6px;">
-              每升一級送免費扭蛋券：
-              <input class="admin-input-sm" type="number" min="0" max="10" step="1" style="width:60px;" value="${adminLevelDraft.levelUpTickets ?? 1}" oninput="adminLevelDraft.levelUpTickets = parseInt(this.value)||0"> 張
+              ${window.t('admin.s157', '每升一級送免費扭蛋券：')}
+              <input class="admin-input-sm" type="number" min="0" max="10" step="1" style="width:60px;" value="${adminLevelDraft.levelUpTickets ?? 1}" oninput="adminLevelDraft.levelUpTickets = parseInt(this.value)||0"> ${window.t('admin.s118', '張')}
             </label>
             <label style="font-size:13px; color:#555; display:flex; align-items:center; gap:6px;">
-              每
+              ${window.t('admin.s158', '每')}
               <input class="admin-input-sm" type="number" min="1" max="100" step="1" style="width:60px;" value="${adminLevelDraft.milestoneEvery ?? 5}" oninput="adminLevelDraft.milestoneEvery = parseInt(this.value)||5">
-              級額外送碎片：
-              <input class="admin-input-sm" type="number" min="0" max="1000" step="1" style="width:60px;" value="${adminLevelDraft.milestoneFragments ?? 5}" oninput="adminLevelDraft.milestoneFragments = parseInt(this.value)||0"> 個
+              ${window.t('admin.s159', '級額外送碎片：')}
+              <input class="admin-input-sm" type="number" min="0" max="1000" step="1" style="width:60px;" value="${adminLevelDraft.milestoneFragments ?? 5}" oninput="adminLevelDraft.milestoneFragments = parseInt(this.value)||0"> ${window.t('admin.s160', '個')}
             </label>
           </div>
-          <p style="font-size:13px; color:#888;">用戶溫習時一升級，伺服器就會自動派發。免費扭蛋券可在扭蛋頁單抽一次，不扣積分。每一級只派一次。</p>
+          <p style="font-size:13px; color:#888;">${window.t('admin.s161', '用戶溫習時一升級，伺服器就會自動派發。免費扭蛋券可在扭蛋頁單抽一次，不扣積分。每一級只派一次。')}</p>
         </div>
 
         <div class="admin-card" style="margin-top:12px;">
-          <h3 style="font-size:14px; font-weight:bold; margin-bottom:8px;">溫習黃金時段</h3>
+          <h3 style="font-size:14px; font-weight:bold; margin-bottom:8px;">${window.t('admin.s162', '溫習黃金時段')}</h3>
           <div style="display:flex; gap:16px; flex-wrap:wrap; align-items:center; margin-bottom:10px; font-size:13px; color:#555;">
             <label style="display:flex; align-items:center; gap:6px;">
-              <input type="checkbox" ${gh.enabled ? 'checked' : ''} onchange="adminLevelDraft.goldenHour.enabled = this.checked"> 啟用
+              <input type="checkbox" ${gh.enabled ? 'checked' : ''} onchange="adminLevelDraft.goldenHour.enabled = this.checked"> ${window.t('admin.s163', '啟用')}
             </label>
-            <label style="display:flex; align-items:center; gap:6px;">名稱：
+            <label style="display:flex; align-items:center; gap:6px;">${window.t('admin.s164', '名稱：')}
               <input class="admin-input-sm" style="width:130px;" value="${escapeHtml(gh.title || '')}" oninput="adminLevelDraft.goldenHour.title = this.value">
             </label>
-            <label style="display:flex; align-items:center; gap:6px;">每日
+            <label style="display:flex; align-items:center; gap:6px;">${window.t('admin.s165', '每日')}
               <input class="admin-input-sm" type="time" style="width:auto;" value="${gh.start}" oninput="adminLevelDraft.goldenHour.start = this.value">
-              至
+              ${window.t('admin.s166', '至')}
               <input class="admin-input-sm" type="time" style="width:auto;" value="${gh.end}" oninput="adminLevelDraft.goldenHour.end = this.value">
             </label>
             <label style="display:flex; align-items:center; gap:6px;">EXP ×
               <input class="admin-input-sm" type="number" min="1" max="5" step="0.1" style="width:64px;" value="${gh.expMultiplier}" oninput="adminLevelDraft.goldenHour.expMultiplier = parseFloat(this.value)||1">
             </label>
-            <label style="display:flex; align-items:center; gap:6px;">石頭 ×
+            <label style="display:flex; align-items:center; gap:6px;">${window.t('admin.s167', '石頭 ×')}
               <input class="admin-input-sm" type="number" min="1" max="5" step="0.1" style="width:64px;" value="${gh.stoneMultiplier}" oninput="adminLevelDraft.goldenHour.stoneMultiplier = parseFloat(this.value)||1">
             </label>
           </div>
-          <p style="font-size:13px; color:#888;">以香港時間計算；結束時間早於開始時間代表跨過午夜。時段內每分鐘溫習的 EXP 及石頭進度按倍數計算（倍數可設小數，最多一位，例如 1.5；石頭 ×2 即每 7.5 分鐘一粒），由伺服器計算，用戶改不到。時段內所有用戶頁頂會顯示提示。</p>
+          <p style="font-size:13px; color:#888;">${window.t('admin.s168', '以香港時間計算；結束時間早於開始時間代表跨過午夜。時段內每分鐘溫習的 EXP 及石頭進度按倍數計算（倍數可設小數，最多一位，例如 1.5；石頭 ×2 即每 7.5 分鐘一粒），由伺服器計算，用戶改不到。時段內所有用戶頁頂會顯示提示。')}</p>
         </div>
 
         <div style="margin-top:14px; display:flex; gap:8px; flex-wrap:wrap;">
-          <button class="btn btn-primary" onclick="adminSaveLevelConfig()">儲存全部改動</button>
-          <button class="btn btn-outline" onclick="adminResetLevelDraft()">還原未儲存的改動</button>
+          <button class="btn btn-primary" onclick="adminSaveLevelConfig()">${window.t('admin.s100', '儲存全部改動')}</button>
+          <button class="btn btn-outline" onclick="adminResetLevelDraft()">${window.t('admin.s99', '還原未儲存的改動')}</button>
         </div>
       `;
       adminRefreshLevelPreview();
@@ -1294,15 +1294,15 @@
       const hoursFor = (L) => perMin > 0 ? (f * L * (L - 1)) / perMin / 60 : Infinity;
       const fmtH = (h) => {
         if (!isFinite(h)) return '—';
-        if (h < 1) return `${Math.round(h * 60)} 分鐘`;
-        return `${h < 10 ? h.toFixed(1) : Math.round(h)} 小時`;
+        if (h < 1) return `${Math.round(h * 60)} ${window.t('unit.minutes', '分鐘')}`;
+        return `${h < 10 ? h.toFixed(1) : Math.round(h)} ${window.t('unit.hours', '小時')}`;
       };
-      const fmtDays = (h, perDay) => isFinite(h) ? `約 ${Math.max(1, Math.ceil(h / perDay))} 日` : '—';
+      const fmtDays = (h, perDay) => isFinite(h) ? `${window.t('admin.s169', '約')} ${Math.max(1, Math.ceil(h / perDay))} ${window.t('cal.dow0', '日')}` : '—';
       (adminLevelDraft.ranks || []).forEach((r, idx) => {
         const L = parseInt(r.minLevel) || 1;
         const h = L <= 1 ? 0 : hoursFor(L);
         const set = (id, v) => { const c = document.getElementById(id); if (c) c.innerText = v; };
-        set('admin-rank-time-' + idx, L <= 1 ? '起點' : fmtH(h));
+        set('admin-rank-time-' + idx, L <= 1 ? window.t('admin.s170', '起點') : fmtH(h));
         set('admin-rank-d1-' + idx, L <= 1 ? '—' : fmtDays(h, 3));
         set('admin-rank-d3-' + idx, L <= 1 ? '—' : fmtDays(h, 5));
       });
@@ -1328,13 +1328,13 @@
         <div style="overflow-x:auto;">
           <table style="border-collapse:collapse; font-size:13px; font-weight:normal; color:var(--brand-800); min-width:560px;">
             <thead><tr style="border-bottom:1px solid var(--brand-200); color:#6B7894;">
-              <th style="padding:6px 8px; text-align:left;">等級</th>
-              <th style="padding:6px 8px; text-align:right;">累積 EXP</th>
-              <th style="padding:6px 8px; text-align:right;">累積溫習時間</th>
-              <th style="padding:6px 8px; text-align:right;">比上一行多</th>
-              <th style="padding:6px 8px; text-align:right;">再升一級要</th>
-              <th style="padding:6px 8px; text-align:right;">每日溫 3 小時</th>
-              <th style="padding:6px 8px; text-align:right;">每日溫 5 小時</th>
+              <th style="padding:6px 8px; text-align:left;">${window.t('otter.stat.level', '等級')}</th>
+              <th style="padding:6px 8px; text-align:right;">${window.t('admin.s171', '累積 EXP')}</th>
+              <th style="padding:6px 8px; text-align:right;">${window.t('admin.s172', '累積溫習時間')}</th>
+              <th style="padding:6px 8px; text-align:right;">${window.t('admin.s173', '比上一行多')}</th>
+              <th style="padding:6px 8px; text-align:right;">${window.t('admin.s174', '再升一級要')}</th>
+              <th style="padding:6px 8px; text-align:right;">${window.t('admin.s153', '每日溫 3 小時')}</th>
+              <th style="padding:6px 8px; text-align:right;">${window.t('admin.s154', '每日溫 5 小時')}</th>
             </tr></thead>
             <tbody>${rows}</tbody>
           </table>
@@ -1350,7 +1350,7 @@
 
     window.adminRemoveLevelRank = function(idx) {
       if (!adminLevelDraft) return;
-      if (adminLevelDraft.ranks.length <= 1) { window.showToast('最少需保留一個段位', '⚠️'); return; }
+      if (adminLevelDraft.ranks.length <= 1) { window.showToast(window.t('admin.s176', '最少需保留一個段位'), '⚠️'); return; }
       adminLevelDraft.ranks.splice(idx, 1);
       renderAdminLevelTab();
     };
@@ -1365,7 +1365,7 @@
       const file = inputEl.files && inputEl.files[0];
       if (!file) return;
       if (!file.type.startsWith('image/')) {
-        window.showToast('請選擇圖片檔案', '⚠️');
+        window.showToast(window.t('admin.s110', '請選擇圖片檔案'), '⚠️');
         return;
       }
       try {
@@ -1373,7 +1373,7 @@
         adminLevelDraft.ranks[idx].photo = dataUrl;
         renderAdminLevelTab();
       } catch (err) {
-        window.showToast('圖片讀取失敗，請再試一次', '❌');
+        window.showToast(window.t('admin.s177', '圖片讀取失敗，請再試一次'), '❌');
       }
     };
 
@@ -1385,7 +1385,7 @@
 
     window.adminSaveLevelConfig = async function() {
       if (!adminLevelDraft || !window.db || !window.fs) return;
-      if (!adminLevelDraft.ranks.length) { window.showToast('最少要有一個段位', '❌'); return; }
+      if (!adminLevelDraft.ranks.length) { window.showToast(window.t('admin.s178', '最少要有一個段位'), '❌'); return; }
       const payload = {
         expPerMinute: adminLevelDraft.expPerMinute,
         levelCurveFactor: adminLevelDraft.levelCurveFactor,
@@ -1403,14 +1403,14 @@
       };
       const approxBytes = new Blob([JSON.stringify(payload)]).size;
       if (approxBytes > 900000) {
-        window.showToast(`資料太大（約 ${(approxBytes / 1024).toFixed(0)}KB，Firestore 單一文件上限是 1024KB），請為較少段位更換圖片，或選擇較小的圖片`, '⚠️');
+        window.showToast(`${window.t('admin.s134', '資料太大（約')} ${(approxBytes / 1024).toFixed(0)}${window.t('admin.s179', 'KB，Firestore 單一文件上限是 1024KB），請為較少段位更換圖片，或選擇較小的圖片')}`, '⚠️');
         return;
       }
       try {
         await window.fs.setDoc(window.fs.doc(window.db, 'admin_config', 'levelSystem'), payload);
-        window.showToast('已儲存等級系統設定', '✅');
+        window.showToast(window.t('admin.s180', '已儲存等級系統設定'), '✅');
       } catch (err) {
-        window.showToast('儲存失敗：' + (err.message || err), '❌');
+        window.showToast(window.t('admin.s138', '儲存失敗：') + (err.message || err), '❌');
       }
     };
 
@@ -1444,7 +1444,7 @@
         console.error('讀取等級系統設定失敗:', err);
         levelConfigLoaded = true;
         if (typeof window.isCurrentUserAdmin === 'function' && window.isCurrentUserAdmin()) {
-          window.showToast('讀取等級系統設定失敗（可能是 Firestore 規則未生效）：' + (err.message || err), '⚠️');
+          window.showToast(window.t('admin.s181', '讀取等級系統設定失敗（可能是 Firestore 規則未生效）：') + (err.message || err), '⚠️');
         }
       });
     }
@@ -1461,12 +1461,12 @@
     function renderAdminRoomsTab() {
       const container = document.getElementById('admin-tab-rooms');
       if (!container || !window.db || !window.fs) return;
-      container.innerHTML = '<p style="text-align:center; color:#999; padding:20px;">載入中房間資料...</p>';
+      container.innerHTML = ('<p style="text-align:center; color:#999; padding:20px;">' + window.t('admin.s182', '載入中房間資料...') + '</p>');
 
       if (adminRoomsUnsubscribe) adminRoomsUnsubscribe();
       adminRoomsUnsubscribe = window.fs.onSnapshot(window.fs.collection(window.db, 'rooms'), (snapshot) => {
         if (snapshot.empty) {
-          container.innerHTML = '<div class="admin-card" style="text-align:center; color:#999;">目前沒有任何溫習房</div>';
+          container.innerHTML = ('<div class="admin-card" style="text-align:center; color:#999;">' + window.t('admin.s183', '目前沒有任何溫習房') + '</div>');
           return;
         }
         const rows = snapshot.docs.map(docSnap => {
@@ -1477,11 +1477,11 @@
             <tr>
               <td>${escapeHtml(r.name || '')}</td>
               <td>${escapeHtml(r.subject || '')}</td>
-              <td>${escapeHtml(r.hostName || '匿名')}</td>
+              <td>${escapeHtml(r.hostName || window.t('qa.anonymous', '匿名'))}</td>
               <td>${r.participantCount || 0}/${(typeof window.resolveRoomCapacity === 'function') ? window.resolveRoomCapacity(r) : (window.ROOM_CAPACITY || 4)}</td>
-              <td>${r.duration || 30} 分鐘</td>
+              <td>${r.duration || 30} ${window.t('unit.minutes', '分鐘')}</td>
               <td>${created}</td>
-              <td><button class="btn btn-red" style="font-size:13px; padding:3px 8px;" onclick="adminDeleteRoom('${docSnap.id}', ${window.jsArg(r.name || '')})">強制關閉</button></td>
+              <td><button class="btn btn-red" style="font-size:13px; padding:3px 8px;" onclick="adminDeleteRoom('${docSnap.id}', ${window.jsArg(r.name || '')})">${window.t('admin.s184', '強制關閉')}</button></td>
             </tr>
           `;
         }).join('');
@@ -1489,26 +1489,26 @@
           <div class="admin-card">
             <div style="overflow-x:auto;">
               <table class="admin-table">
-                <thead><tr><th>房間名稱</th><th>科目</th><th>房主</th><th>人數</th><th>目標時間</th><th>建立時間</th><th></th></tr></thead>
+                <thead><tr><th>${window.t('admin.s185', '房間名稱')}</th><th>${window.t('admin.s186', '科目')}</th><th>${window.t('room.hostBadge', '房主')}</th><th>${window.t('admin.s187', '人數')}</th><th>${window.t('admin.s188', '目標時間')}</th><th>${window.t('admin.s189', '建立時間')}</th><th></th></tr></thead>
                 <tbody>${rows}</tbody>
               </table>
             </div>
           </div>
         `;
       }, (err) => {
-        container.innerHTML = `<div class="admin-card" style="color:#c0392b;">載入失敗：${err.message || err}</div>`;
+        container.innerHTML = `<div class="admin-card" style="color:#c0392b;">${window.t('admin.s190', '載入失敗：')}${err.message || err}</div>`;
       });
     }
     window.renderAdminRoomsTab = renderAdminRoomsTab;
 
     window.adminDeleteRoom = async function(roomId, roomName) {
-      if (!(await window.appConfirm(`確定要強制關閉房間「${roomName}」？裡面的同學會即時被移至大廳。`))) return;
+      if (!(await window.appConfirm(`${window.t('admin.s191', '確定要強制關閉房間「')}${roomName}${window.t('admin.s192', '」？裡面的同學會即時被移至大廳。')}`))) return;
       try {
         await window.fs.deleteDoc(window.fs.doc(window.db, 'rooms', roomId));
         await logAdminAction('強制關閉房間', { roomId, roomName });
-        window.showToast('已強制關閉該房間', '🗑️');
+        window.showToast(window.t('admin.s193', '已強制關閉該房間'), '🗑️');
       } catch (err) {
-        window.showToast('操作失敗：' + (err.message || err), '❌');
+        window.showToast(window.t('admin.s194', '操作失敗：') + (err.message || err), '❌');
       }
     };
 
@@ -1516,12 +1516,12 @@
     function renderAdminQaTab() {
       const container = document.getElementById('admin-tab-qa');
       if (!container || !window.db || !window.fs) return;
-      container.innerHTML = '<p style="text-align:center; color:#999; padding:20px;">載入中帖子資料...</p>';
+      container.innerHTML = ('<p style="text-align:center; color:#999; padding:20px;">' + window.t('admin.s195', '載入中帖子資料...') + '</p>');
 
       if (adminQaUnsubscribe) adminQaUnsubscribe();
       adminQaUnsubscribe = window.fs.onSnapshot(window.fs.collection(window.db, 'qa_posts'), (snapshot) => {
         if (snapshot.empty) {
-          container.innerHTML = '<div class="admin-card" style="text-align:center; color:#999;">目前沒有任何提問</div>';
+          container.innerHTML = ('<div class="admin-card" style="text-align:center; color:#999;">' + window.t('admin.s196', '目前沒有任何提問') + '</div>');
           return;
         }
         const docs = snapshot.docs.slice().sort((a, b) => (b.data().createdAt || 0) - (a.data().createdAt || 0));
@@ -1531,9 +1531,9 @@
             <tr>
               <td>${escapeHtml(p.subject || '')}</td>
               <td style="max-width:220px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${escapeHtml(p.title || '')}</td>
-              <td>${escapeHtml(p.authorName || '匿名')}</td>
+              <td>${escapeHtml(p.authorName || window.t('qa.anonymous', '匿名'))}</td>
               <td>${formatTime(p.createdAt)}</td>
-              <td><button class="btn btn-red" style="font-size:13px; padding:3px 8px;" onclick="adminDeleteQaPost('${docSnap.id}')">刪除</button></td>
+              <td><button class="btn btn-red" style="font-size:13px; padding:3px 8px;" onclick="adminDeleteQaPost('${docSnap.id}')">${window.t('qa.delete', '刪除')}</button></td>
             </tr>
           `;
         }).join('');
@@ -1541,20 +1541,20 @@
           <div class="admin-card">
             <div style="overflow-x:auto;">
               <table class="admin-table">
-                <thead><tr><th>科目</th><th>標題</th><th>作者</th><th>發帖時間</th><th></th></tr></thead>
+                <thead><tr><th>${window.t('admin.s186', '科目')}</th><th>${window.t('admin.s197', '標題')}</th><th>${window.t('admin.s198', '作者')}</th><th>${window.t('admin.s199', '發帖時間')}</th><th></th></tr></thead>
                 <tbody>${rows}</tbody>
               </table>
             </div>
           </div>
         `;
       }, (err) => {
-        container.innerHTML = `<div class="admin-card" style="color:#c0392b;">載入失敗：${err.message || err}</div>`;
+        container.innerHTML = `<div class="admin-card" style="color:#c0392b;">${window.t('admin.s190', '載入失敗：')}${err.message || err}</div>`;
       });
     }
     window.renderAdminQaTab = renderAdminQaTab;
 
     window.adminDeleteQaPost = async function(postId) {
-      if (!(await window.appConfirm('確定刪除這個提問？裡面的留言都會一齊清埋。'))) return;
+      if (!(await window.appConfirm(window.t('admin.s200', '確定刪除這個提問？裡面的留言都會一齊清埋。')))) return;
       try {
         // 先刪晒 comments 呢個 subcollection 入面嘅所有文件，先刪返個 post 本身
         // （Firestore 刪除文件唔會自動連 subcollection 一齊刪，要自己手動清）
@@ -1562,9 +1562,9 @@
         const commentsSnap = await window.fs.getDocs(commentsRef);
         await Promise.all(commentsSnap.docs.map(c => window.fs.deleteDoc(c.ref)));
         await window.fs.deleteDoc(window.fs.doc(window.db, 'qa_posts', postId));
-        window.showToast('提問已刪除', '🗑️');
+        window.showToast(window.t('qa.postDeleted', '提問已刪除'), '🗑️');
       } catch (err) {
-        window.showToast('刪除失敗：' + (err.message || err), '❌');
+        window.showToast(window.t('tutor.s15', '刪除失敗：') + (err.message || err), '❌');
       }
     };
 
@@ -1576,9 +1576,9 @@
     // 之前都會冇呢個欄位，顯示「從未登入」（實際意思係「呢個功能推出
     // 之後仲未登入過」，唔係真係話個帳戶未用過）。
     function formatLastLoginDisplay(ts) {
-      if (!ts) return '<span style="color:#bbb; font-size:13px;">從未登入</span>';
+      if (!ts) return ('<span style="color:#bbb; font-size:13px;">' + window.t('admin.s201', '從未登入') + '</span>');
       const d = new Date(ts);
-      if (isNaN(d.getTime())) return '<span style="color:#bbb; font-size:13px;">從未登入</span>';
+      if (isNaN(d.getTime())) return ('<span style="color:#bbb; font-size:13px;">' + window.t('admin.s201', '從未登入') + '</span>');
       const pad = (n) => String(n).padStart(2, '0');
       return `${d.getFullYear()}/${pad(d.getMonth() + 1)}/${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
     }
@@ -1605,7 +1605,7 @@
       if (!adminUsersLastSortedDocs) return;
 
       if (adminUsersLastSortedDocs.length === 0) {
-        container.innerHTML = '<div class="admin-card" style="text-align:center; color:#999;">目前沒有任何用戶</div>';
+        container.innerHTML = ('<div class="admin-card" style="text-align:center; color:#999;">' + window.t('admin.s202', '目前沒有任何用戶') + '</div>');
         return;
       }
 
@@ -1631,7 +1631,7 @@
         return `
           <tr style="${suspended ? 'opacity:.55;' : ''}">
             <td><a href="javascript:void(0)" style="color:var(--brand-700); font-weight:700;" onclick="adminSelectSupportUser('${uid}', true)">${escapeHtml(u.username || '—')}</a>${suspensionLabelHtml(u)}</td>
-            <td>${u.loginId ? escapeHtml(u.loginId) : '<span style="color:#c99; font-size:13px;">未設定</span>'}</td>
+            <td>${u.loginId ? escapeHtml(u.loginId) : ('<span style="color:#c99; font-size:13px;">' + window.t('lb.notSet', '未設定') + '</span>')}</td>
             <td>${escapeHtml(displayEmail)}</td>
             <td>${escapeHtml(u.school || '—')}</td>
             <td>${escapeHtml(u.grade || '—')}</td>
@@ -1640,35 +1640,35 @@
             <td><input class="admin-input-sm" style="width:60px;" value="${(parseFloat(u.hours) || 0).toFixed(1)}" id="admin-user-hours-${uid}"></td>
             <td><input class="admin-input-sm" type="number" style="width:70px;" value="${u.exp || 0}" id="admin-user-exp-${uid}"></td>
             <td style="display:flex; gap:4px; flex-wrap:wrap;">
-              <button class="btn btn-outline" style="font-size:13px; padding:3px 8px;" onclick="adminSaveUserStats('${uid}')">儲存</button>
-              <button class="btn ${suspended ? 'btn-primary' : 'btn-red'}" style="font-size:13px; padding:3px 8px;" onclick="adminToggleSuspendUser('${uid}', ${!suspended})">${suspended ? '解除停權' : '永久停權'}</button>
-              ${u.strikeCount > 0 ? `<button class="btn btn-outline" style="font-size:13px; padding:3px 8px;" onclick="adminResetStrikes('${uid}')">重設違規次數</button>` : ''}
+              <button class="btn btn-outline" style="font-size:13px; padding:3px 8px;" onclick="adminSaveUserStats('${uid}')">${window.t('common.save', '儲存')}</button>
+              <button class="btn ${suspended ? 'btn-primary' : 'btn-red'}" style="font-size:13px; padding:3px 8px;" onclick="adminToggleSuspendUser('${uid}', ${!suspended})">${suspended ? window.t('admin.s203', '解除停權') : window.t('admin.s204', '永久停權')}</button>
+              ${u.strikeCount > 0 ? `<button class="btn btn-outline" style="font-size:13px; padding:3px 8px;" onclick="adminResetStrikes('${uid}')">${window.t('admin.s205', '重設違規次數')}</button>` : ''}
             </td>
           </tr>
         `;
       }).join('');
 
-      const emptyGroupMsg = '<tr><td colspan="10" style="text-align:center; color:#999; padding:16px;">此分類目前沒有用戶</td></tr>';
+      const emptyGroupMsg = ('<tr><td colspan="10" style="text-align:center; color:#999; padding:16px;">' + window.t('admin.s206', '此分類目前沒有用戶') + '</td></tr>');
 
       container.innerHTML = `
         <div class="admin-card">
-          <h3 style="font-size:16px; font-weight:bold; color:var(--brand-800); margin-bottom:6px;">全部用戶</h3>
-          <p style="font-size:13px; color:#888; margin-bottom:10px;">點擊用戶名可在上方查看詳情及處理（補發、驗證、更正出生年月等）。修改積分／時數／EXP 後，請記得逐行點擊「儲存」；EXP 決定用戶的溫習等級與段位，一般毋須人手修改，只有在特殊情況（例如補發）才使用。「停權」會令該用戶下次登入時被強制登出。</p>
+          <h3 style="font-size:16px; font-weight:bold; color:var(--brand-800); margin-bottom:6px;">${window.t('admin.s209', '全部用戶')}</h3>
+          <p style="font-size:13px; color:#888; margin-bottom:10px;">${window.t('admin.s210', '點擊用戶名可在上方查看詳情及處理（補發、驗證、更正出生年月等）。修改積分／時數／EXP 後，請記得逐行點擊「儲存」；EXP 決定用戶的溫習等級與段位，一般毋須人手修改，只有在特殊情況（例如補發）才使用。「停權」會令該用戶下次登入時被強制登出。')}</p>
           <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px;">
-            <button type="button" class="btn ${adminUsersGradeGroup === 'school' ? 'btn-primary' : 'btn-outline'}" style="font-size:13px; padding:5px 12px;" onclick="switchAdminUsersGradeGroup('school')">中學／大專／大學</button>
-            <button type="button" class="btn ${adminUsersGradeGroup === 'other' ? 'btn-primary' : 'btn-outline'}" style="font-size:13px; padding:5px 12px;" onclick="switchAdminUsersGradeGroup('other')">其他／自修生</button>
-            <button type="button" class="btn ${adminUsersGradeGroup === 'admin' ? 'btn-primary' : 'btn-outline'}" style="font-size:13px; padding:5px 12px;" onclick="switchAdminUsersGradeGroup('admin')">管理員</button>
+            <button type="button" class="btn ${adminUsersGradeGroup === 'school' ? 'btn-primary' : 'btn-outline'}" style="font-size:13px; padding:5px 12px;" onclick="switchAdminUsersGradeGroup('school')">${window.t('admin.s211', '中學／大專／大學')}</button>
+            <button type="button" class="btn ${adminUsersGradeGroup === 'other' ? 'btn-primary' : 'btn-outline'}" style="font-size:13px; padding:5px 12px;" onclick="switchAdminUsersGradeGroup('other')">${window.t('admin.s212', '其他／自修生')}</button>
+            <button type="button" class="btn ${adminUsersGradeGroup === 'admin' ? 'btn-primary' : 'btn-outline'}" style="font-size:13px; padding:5px 12px;" onclick="switchAdminUsersGradeGroup('admin')">${window.t('admin.s213', '管理員')}</button>
           </div>
           <div style="overflow-x:auto;">
             <table class="admin-table">
-              <thead><tr><th>用戶名</th><th>帳號 ID</th><th>Email</th><th>學校</th><th>年級</th><th>最後上線</th><th>積分</th><th>時數</th><th>EXP</th><th></th></tr></thead>
+              <thead><tr><th>${window.t('admin.s214', '用戶名')}</th><th>${window.t('auth.accountIdLabel', '帳號 ID')}</th><th>Email</th><th>${window.t('admin.s215', '學校')}</th><th>${window.t('admin.s216', '年級')}</th><th>${window.t('admin.s217', '最後上線')}</th><th>${window.t('home.statPoints', '積分')}</th><th>${window.t('admin.s218', '時數')}</th><th>EXP</th><th></th></tr></thead>
               <tbody>${rows || emptyGroupMsg}</tbody>
             </table>
           </div>
           <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-top:12px; font-size:13px; color:#6B7894;">
-            <span>已載入 ${adminUsersLastSortedDocs.length}${adminUsersTotal != null ? ' / 共 ' + adminUsersTotal : ''} 位用戶</span>
-            ${adminUsersAllLoaded ? '' : '<button type="button" class="btn btn-outline" style="font-size:13px; padding:5px 12px;" onclick="window.adminLoadMoreUsers()">載入更多</button>'}
-            <button type="button" class="btn btn-outline" style="font-size:13px; padding:5px 12px;" onclick="window.adminReloadUsers()">重新整理</button>
+            <span>${window.t('admin.s219', '已載入')} ${adminUsersLastSortedDocs.length}${adminUsersTotal != null ? window.t('admin.s207', ' / 共 ') + adminUsersTotal : ''} ${window.t('admin.s220', '位用戶')}</span>
+            ${adminUsersAllLoaded ? '' : ('<button type="button" class="btn btn-outline" style="font-size:13px; padding:5px 12px;" onclick="window.adminLoadMoreUsers()">' + window.t('admin.s208', '載入更多') + '</button>')}
+            <button type="button" class="btn btn-outline" style="font-size:13px; padding:5px 12px;" onclick="window.adminReloadUsers()">${window.t('admin.s221', '重新整理')}</button>
           </div>
         </div>
       `;
@@ -1715,7 +1715,7 @@
         adminSupportUsersCacheLoading = false;
       } catch (err) {
         const container = document.getElementById('admin-tab-users');
-        if (container) container.innerHTML = `<div class="admin-card" style="color:#c0392b;">載入失敗：${escapeHtml(err.message || err)}</div>`;
+        if (container) container.innerHTML = `<div class="admin-card" style="color:#c0392b;">${window.t('admin.s190', '載入失敗：')}${escapeHtml(err.message || err)}</div>`;
         adminUsersLoading = false;
         return;
       }
@@ -1729,7 +1729,7 @@
       const container = document.getElementById('admin-tab-users');
       if (!container || !window.db || !window.fs) return;
       if (adminUsersUnsubscribe) { adminUsersUnsubscribe(); adminUsersUnsubscribe = null; }
-      container.innerHTML = '<p style="text-align:center; color:#999; padding:20px;">正在載入用戶資料…</p>';
+      container.innerHTML = ('<p style="text-align:center; color:#999; padding:20px;">' + window.t('admin.s222', '正在載入用戶資料…') + '</p>');
       loadAdminUsersPage(true);
     }
     window.renderAdminUsersTab = renderAdminUsersTab;
@@ -1748,20 +1748,20 @@
       try {
         await window.fs.updateDoc(window.fs.doc(window.db, 'users', uid), { points, hours, exp });
         await logAdminAction('更新用戶資料', { uid, points, hours, exp });
-        window.showToast('已更新用戶資料', '✅');
+        window.showToast(window.t('admin.s223', '已更新用戶資料'), '✅');
       } catch (err) {
-        window.showToast('更新失敗：' + (err.message || err), '❌');
+        window.showToast(window.t('tutor.s66', '更新失敗：') + (err.message || err), '❌');
       }
     };
 
     // v1.225.0：停權改由伺服器（moderateUser）處理，永久停權會同時停用登入帳戶
     window.adminToggleSuspendUser = async function(uid, suspend) {
-      if (!(await window.appConfirm(suspend ? '確定永久停用這個帳戶？用戶會即時被登出，並無法再登入。' : '確定解除這個帳戶的停權？'))) return;
+      if (!(await window.appConfirm(suspend ? window.t('admin.s224', '確定永久停用這個帳戶？用戶會即時被登出，並無法再登入。') : window.t('admin.s225', '確定解除這個帳戶的停權？')))) return;
       try {
         await window.callCloudFunction('moderateUser', { uid, action: suspend ? 'permanent' : 'lift', reason: suspend ? '管理員手動停權' : '' });
-        window.showToast(suspend ? '已永久停用該帳戶' : '已解除停權', suspend ? '🚫' : '✅');
+        window.showToast(suspend ? window.t('admin.s226', '已永久停用該帳戶') : window.t('admin.s227', '已解除停權'), suspend ? '🚫' : '✅');
       } catch (err) {
-        window.showToast('操作失敗：' + (window.friendlyErrorText ? window.friendlyErrorText(err) : (err.message || err)), '❌');
+        window.showToast(window.t('admin.s194', '操作失敗：') + (window.friendlyErrorText ? window.friendlyErrorText(err) : (err.message || err)), '❌');
       }
     };
     // ===================== 直播設定（Study with me，v1.226.0） =====================
@@ -1772,7 +1772,7 @@
       const container = document.getElementById('admin-tab-streaming');
       if (!container) return;
       if (!adminStreamingDraft) {
-        container.innerHTML = '<p style="text-align:center; color:#999; padding:20px;">正在載入直播設定…</p>';
+        container.innerHTML = ('<p style="text-align:center; color:#999; padding:20px;">' + window.t('admin.s228', '正在載入直播設定…') + '</p>');
         adminStreamingDraft = Object.assign({}, STREAMING_DEFAULTS);
         try {
           const snap = await window.fs.getDoc(window.fs.doc(window.db, 'admin_config', 'streaming'));
@@ -1792,53 +1792,53 @@
         </label>`;
       container.innerHTML = `
         <div class="admin-card">
-          <h3 style="font-size:16px; font-weight:bold; color:var(--brand-800); margin-bottom:10px;">Study with me 直播</h3>
+          <h3 style="font-size:16px; font-weight:bold; color:var(--brand-800); margin-bottom:10px;">${window.t('admin.s246', 'Study with me 直播')}</h3>
           <label style="display:flex; align-items:center; gap:8px; font-size:14px; margin-bottom:6px; cursor:pointer;">
-            <input type="checkbox" ${d.enabled ? 'checked' : ''} onchange="window.adminUpdateStreamingDraft('enabled', this.checked)"> 開放直播功能（總開關）
+            <input type="checkbox" ${d.enabled ? 'checked' : ''} onchange="window.adminUpdateStreamingDraft('enabled', this.checked)"> ${window.t('admin.s247', '開放直播功能（總開關）')}
           </label>
-          <p style="font-size:13px; color:#888; margin:0; line-height:1.7;">關閉時，功能表的「Study with me」會顯示為灰色，用戶不能點擊，只有管理員可以開播及觀看（供測試之用）；開啟後，所有登入用戶可以觀看，累積溫習日數達標的用戶可以開播。管理員不受開通日數限制。<br>功能表是否顯示「Study with me」，請到「網站內容」→「功能表及圖示」設定。</p>
+          <p style="font-size:13px; color:#888; margin:0; line-height:1.7;">${window.t('admin.s248', '關閉時，功能表的「Study with me」會顯示為灰色，用戶不能點擊，只有管理員可以開播及觀看（供測試之用）；開啟後，所有登入用戶可以觀看，累積溫習日數達標的用戶可以開播。管理員不受開通日數限制。')}<br>${window.t('admin.s249', '功能表是否顯示「Study with me」，請到「網站內容」→「功能表及圖示」設定。')}</p>
         </div>
         <div class="admin-card" style="margin-top:12px;">
-          <h3 style="font-size:14px; font-weight:bold; margin-bottom:10px;">開通資格</h3>
+          <h3 style="font-size:14px; font-weight:bold; margin-bottom:10px;">${window.t('admin.s250', '開通資格')}</h3>
           <div style="display:flex; gap:16px; flex-wrap:wrap;">
-            ${num('requiredDays', '需累積溫習', '日', 0, 365)}
-            ${num('minMinutesPerDay', '每日最少溫習', '分鐘才計一日', 1, 600)}
-            ${num('minStreamAge', '最低開播年齡', '歲', 0, 99)}
+            ${num('requiredDays', window.t('admin.s229', '需累積溫習'), window.t('cal.dow0', '日'), 0, 365)}
+            ${num('minMinutesPerDay', window.t('admin.s230', '每日最少溫習'), window.t('admin.s231', '分鐘才計一日'), 1, 600)}
+            ${num('minStreamAge', window.t('admin.s232', '最低開播年齡'), window.t('admin.s233', '歲'), 0, 99)}
           </div>
-          <p style="font-size:13px; color:#888; margin:8px 0 0;">由伺服器記錄，用戶無法自行修改。首次記錄時會按溫習日曆補回過往日數。<br>年齡按用戶註冊時填寫的出生年月計算（註冊後用戶不能自行修改）；沒有出生年月的帳戶當作未達年齡，可在「日常營運」→「用戶管理」搜尋該用戶代為補填。觀看直播不受年齡限制。設為 0 即不設年齡限制。</p>
+          <p style="font-size:13px; color:#888; margin:8px 0 0;">${window.t('admin.s251', '由伺服器記錄，用戶無法自行修改。首次記錄時會按溫習日曆補回過往日數。')}<br>${window.t('admin.s252', '年齡按用戶註冊時填寫的出生年月計算（註冊後用戶不能自行修改）；沒有出生年月的帳戶當作未達年齡，可在「日常營運」→「用戶管理」搜尋該用戶代為補填。觀看直播不受年齡限制。設為 0 即不設年齡限制。')}</p>
         </div>
         <div class="admin-card" style="margin-top:12px;">
-          <h3 style="font-size:14px; font-weight:bold; margin-bottom:10px;">直播限制及畫質</h3>
+          <h3 style="font-size:14px; font-weight:bold; margin-bottom:10px;">${window.t('admin.s253', '直播限制及畫質')}</h3>
           <div style="display:flex; gap:16px; flex-wrap:wrap;">
-            ${num('maxDurationHours', '每次直播最長', '小時', 1, 12)}
-            ${num('maxConcurrent', '同一時間最多', '個直播', 1, 500)}
-            ${quality('defaultQuality', '一般直播最高畫質')}
-            ${quality('hotQuality', '熱門直播最高畫質')}
+            ${num('maxDurationHours', window.t('admin.s234', '每次直播最長'), window.t('unit.hours', '小時'), 1, 12)}
+            ${num('maxConcurrent', window.t('admin.s235', '同一時間最多'), window.t('admin.s236', '個直播'), 1, 500)}
+            ${quality('defaultQuality', window.t('admin.s237', '一般直播最高畫質'))}
+            ${quality('hotQuality', window.t('admin.s238', '熱門直播最高畫質'))}
           </div>
         </div>
         <div class="admin-card" style="margin-top:12px;">
-          <h3 style="font-size:14px; font-weight:bold; margin-bottom:10px;">熱門直播（轉經 R2）</h3>
+          <h3 style="font-size:14px; font-weight:bold; margin-bottom:10px;">${window.t('admin.s254', '熱門直播（轉經 R2）')}</h3>
           <div style="display:flex; gap:16px; flex-wrap:wrap;">
-            ${num('hotThreshold', '觀眾超過', '人', 5, 10000)}
-            ${num('hotMinutes', '並持續', '分鐘', 1, 60)}
-            ${num('idleShutdownMinutes', '沒有熱門直播', '分鐘後關閉轉換主機', 5, 240)}
+            ${num('hotThreshold', window.t('admin.s239', '觀眾超過'), window.t('admin.s240', '人'), 5, 10000)}
+            ${num('hotMinutes', window.t('admin.s241', '並持續'), window.t('unit.minutes', '分鐘'), 1, 60)}
+            ${num('idleShutdownMinutes', window.t('admin.s242', '沒有熱門直播'), window.t('admin.s243', '分鐘後關閉轉換主機'), 5, 240)}
           </div>
-          <p style="font-size:13px; color:#888; margin:8px 0 0;">直播一經轉經 R2，會維持至直播完結，避免人數在門檻附近上落時不斷切換。</p>
+          <p style="font-size:13px; color:#888; margin:8px 0 0;">${window.t('admin.s255', '直播一經轉經 R2，會維持至直播完結，避免人數在門檻附近上落時不斷切換。')}</p>
         </div>
         <div class="admin-card" style="margin-top:12px;">
-          <h3 style="font-size:14px; font-weight:bold; margin-bottom:10px;">每月預算</h3>
+          <h3 style="font-size:14px; font-weight:bold; margin-bottom:10px;">${window.t('admin.s256', '每月預算')}</h3>
           <div style="display:flex; gap:16px; flex-wrap:wrap;">
-            ${num('monthlyBudgetHkd', '每月上限 HK$', '（包括主機月費）', 0, 1000000)}
+            ${num('monthlyBudgetHkd', window.t('admin.s244', '每月上限 HK$'), window.t('admin.s245', '（包括主機月費）'), 0, 1000000)}
           </div>
-          <p style="font-size:13px; color:#888; margin:8px 0 0;">用到 80%：所有直播最高畫質降至 360p 並通知管理員；用到 100%：暫停開新直播，進行中的直播可繼續。（預算自動控制將於日後版本啟用）</p>
+          <p style="font-size:13px; color:#888; margin:8px 0 0;">${window.t('admin.s257', '用到 80%：所有直播最高畫質降至 360p 並通知管理員；用到 100%：暫停開新直播，進行中的直播可繼續。（預算自動控制將於日後版本啟用）')}</p>
         </div>
         <div class="admin-card" style="margin-top:12px;">
-          <h3 style="font-size:14px; font-weight:bold; margin-bottom:8px;">留言額外過濾字詞</h3>
-          <textarea class="admin-input-sm" rows="4" style="width:100%; font-size:13px;" placeholder="每行一個字詞" oninput="window.adminUpdateStreamingDraft('bannedWordsText', this.value)">${escapeHtml((d.bannedWords || []).join('\n'))}</textarea>
-          <p style="font-size:13px; color:#888; margin:8px 0 0;">系統已內置常見粗口（中文、粵語、英文）及聯絡資料（電話、網址、IG、WhatsApp 等）過濾；這裏可以額外加入字詞，留言中出現會被遮蓋。</p>
+          <h3 style="font-size:14px; font-weight:bold; margin-bottom:8px;">${window.t('admin.s258', '留言額外過濾字詞')}</h3>
+          <textarea class="admin-input-sm" rows="4" style="width:100%; font-size:13px;" placeholder="${window.t('admin.s259', '每行一個字詞')}" oninput="window.adminUpdateStreamingDraft('bannedWordsText', this.value)">${escapeHtml((d.bannedWords || []).join('\n'))}</textarea>
+          <p style="font-size:13px; color:#888; margin:8px 0 0;">${window.t('admin.s260', '系統已內置常見粗口（中文、粵語、英文）及聯絡資料（電話、網址、IG、WhatsApp 等）過濾；這裏可以額外加入字詞，留言中出現會被遮蓋。')}</p>
         </div>
         <div style="text-align:center; margin-top:16px;">
-          <button type="button" class="btn btn-primary" style="padding:12px 32px; font-size:15px;" onclick="window.adminSaveStreamingSettings()">儲存直播設定</button>
+          <button type="button" class="btn btn-primary" style="padding:12px 32px; font-size:15px;" onclick="window.adminSaveStreamingSettings()">${window.t('admin.s261', '儲存直播設定')}</button>
         </div>`;
     }
     window.adminUpdateStreamingDraft = function(key, value) {
@@ -1873,27 +1873,27 @@
         await window.fs.setDoc(window.fs.doc(window.db, 'admin_config', 'streaming'), payload);
         Object.assign(adminStreamingDraft, payload);
         await logAdminAction('修改直播設定', payload);
-        window.showToast('已儲存直播設定（伺服器最多需要 30 秒套用）', '✅');
+        window.showToast(window.t('admin.s262', '已儲存直播設定（伺服器最多需要 30 秒套用）'), '✅');
       } catch (err) {
-        window.showToast('儲存失敗：' + (err.message || err), '❌');
+        window.showToast(window.t('admin.s138', '儲存失敗：') + (err.message || err), '❌');
       }
     };
 
     window.adminResetStrikes = async function(uid) {
-      if (!(await window.appConfirm('確定將這個帳戶的違規次數重設為 0？'))) return;
+      if (!(await window.appConfirm(window.t('admin.s263', '確定將這個帳戶的違規次數重設為 0？')))) return;
       try {
         await window.callCloudFunction('moderateUser', { uid, action: 'resetStrikes' });
-        window.showToast('已重設違規次數', '✅');
+        window.showToast(window.t('admin.s264', '已重設違規次數'), '✅');
       } catch (err) {
-        window.showToast('操作失敗：' + (window.friendlyErrorText ? window.friendlyErrorText(err) : (err.message || err)), '❌');
+        window.showToast(window.t('admin.s194', '操作失敗：') + (window.friendlyErrorText ? window.friendlyErrorText(err) : (err.message || err)), '❌');
       }
     };
     // 用戶列表顯示的停權標籤
     function suspensionLabelHtml(u) {
       const parts = [];
-      if (u.suspended === true) parts.push('已永久停權');
-      else if (typeof u.suspendedUntil === 'number' && u.suspendedUntil > Date.now()) parts.push('停權至 ' + new Date(u.suspendedUntil).toLocaleString('zh-HK', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' }));
-      if (typeof u.strikeCount === 'number' && u.strikeCount > 0) parts.push('違規 ' + u.strikeCount + ' 次');
+      if (u.suspended === true) parts.push(window.t('admin.s265', '已永久停權'));
+      else if (typeof u.suspendedUntil === 'number' && u.suspendedUntil > Date.now()) parts.push(window.t('admin.s266', '停權至 ') + new Date(u.suspendedUntil).toLocaleString('zh-HK', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' }));
+      if (typeof u.strikeCount === 'number' && u.strikeCount > 0) parts.push(window.t('admin.s267', '違規 ') + u.strikeCount + window.t('admin.s268', ' 次'));
       return parts.length ? ` <span style="color:#c0392b; font-size:13px;">（${parts.join('，')}）</span>` : '';
     }
 
@@ -1938,32 +1938,32 @@
       const r = docSnap.data();
       const reportId = docSnap.id;
       const status = r.status || 'pending';
-      const statusLabel = status === 'pending' ? '待處理' : (status === 'dismissed' ? '已駁回' : '已處理');
+      const statusLabel = status === 'pending' ? window.t('admin.s269', '待處理') : (status === 'dismissed' ? window.t('admin.s270', '已駁回') : window.t('admin.s271', '已處理'));
       const statusColor = status === 'pending' ? '#C0524A' : '#999';
       const when = r.createdAt ? new Date(r.createdAt).toLocaleString('zh-HK') : '—';
       const screenshotHtml = r.screenshot
         ? `<img src="${r.screenshot}" style="width:100%; max-width:280px; border-radius:8px; border:1px solid #ddd; margin-top:6px; display:block; cursor:pointer;" onclick="window.open(this.src, '_blank')">`
-        : `<p style="font-size:13px; color:#c99; margin-top:6px;">當時無法取得截圖</p>`;
+        : `<p style="font-size:13px; color:#c99; margin-top:6px;">${window.t('admin.s272', '當時無法取得截圖')}</p>`;
       return `
         <div class="admin-card" style="${status !== 'pending' ? 'opacity:.6;' : ''}">
           <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:6px;">
             <span style="font-weight:700; color:${statusColor}; font-size:13px;">${statusLabel}</span>
             <span style="font-size:13px; color:#999;">${escapeHtml(when)}</span>
           </div>
-          <p style="font-size:13px; margin-bottom:3px;"><b>被舉報：</b>${escapeHtml(r.reportedName || '—')} ${r.reportedLoginId ? '（' + escapeHtml(r.reportedLoginId) + '）' : ''}</p>
+          <p style="font-size:13px; margin-bottom:3px;"><b>${window.t('admin.s281', '被舉報：')}</b>${escapeHtml(r.reportedName || '—')} ${r.reportedLoginId ? '（' + escapeHtml(r.reportedLoginId) + '）' : ''}</p>
           <p style="font-size:13px; color:#888; margin-bottom:3px;">${r.reportedEmail ? escapeHtml(r.reportedEmail) : ''}</p>
-          <p style="font-size:13px; margin-bottom:3px;"><b>舉報人：</b>${escapeHtml(r.reporterName || '—')} ${r.reporterLoginId ? '（' + escapeHtml(r.reporterLoginId) + '）' : ''}</p>
-          <p style="font-size:13px; margin-bottom:3px;"><b>房間：</b>${escapeHtml(r.roomName || r.roomId || '—')}</p>
-          <p style="font-size:13px; margin-bottom:3px;"><b>原因：</b>${escapeHtml(r.reason || '—')}</p>
+          <p style="font-size:13px; margin-bottom:3px;"><b>${window.t('admin.s282', '舉報人：')}</b>${escapeHtml(r.reporterName || '—')} ${r.reporterLoginId ? '（' + escapeHtml(r.reporterLoginId) + '）' : ''}</p>
+          <p style="font-size:13px; margin-bottom:3px;"><b>${window.t('admin.s283', '房間：')}</b>${escapeHtml(r.roomName || r.roomId || '—')}</p>
+          <p style="font-size:13px; margin-bottom:3px;"><b>${window.t('feat.s11', '原因：')}</b>${escapeHtml(r.reason || '—')}</p>
           ${r.notes ? `<p style="font-size:13px; color:#666; background:#F7F5F2; border-radius:6px; padding:6px 8px; margin-bottom:3px;">${escapeHtml(r.notes)}</p>` : ''}
           ${screenshotHtml}
           <div style="display:flex; gap:6px; flex-wrap:wrap; margin-top:10px;">
-            ${status === 'pending' ? `<button class="btn btn-outline" style="font-size:13px; padding:4px 9px;" onclick="window.adminMarkReportStatus('${reportId}', 'dismissed')">駁回（沒問題）</button>` : ''}
-            ${status === 'pending' ? `<button class="btn btn-outline" style="font-size:13px; padding:4px 9px;" onclick="window.adminMarkReportStatus('${reportId}', 'reviewed')">標記已處理</button>` : ''}
-            ${r.reportedUid && status === 'pending' ? `<button class="btn btn-red" style="font-size:13px; padding:4px 9px;" onclick="window.adminStrikeFromReport('${reportId}', '${r.reportedUid}', false)">確認違規並停權</button>` : ''}
-            ${r.reportedUid && status === 'pending' ? `<button class="btn btn-red" style="font-size:13px; padding:4px 9px;" onclick="window.adminStrikeFromReport('${reportId}', '${r.reportedUid}', true)">嚴重違規（永久封號）</button>` : ''}
-            ${r.action ? `<span style="font-size:13px; color:#888; align-self:center;">處理：${r.action === 'permanent' ? '永久封號' : (r.action === 'strike' ? '已按次數停權' : escapeHtml(r.action))}${r.handledBy ? '（' + escapeHtml(r.handledBy) + '）' : ''}</span>` : ''}
-            ${status !== 'pending' ? `<button class="btn btn-outline" style="font-size:13px; padding:4px 9px; color:#999; border-color:#ccc;" onclick="window.adminDeleteReport('${reportId}')">刪除紀錄</button>` : ''}
+            ${status === 'pending' ? `<button class="btn btn-outline" style="font-size:13px; padding:4px 9px;" onclick="window.adminMarkReportStatus('${reportId}', 'dismissed')">${window.t('admin.s273', '駁回（沒問題）')}</button>` : ''}
+            ${status === 'pending' ? `<button class="btn btn-outline" style="font-size:13px; padding:4px 9px;" onclick="window.adminMarkReportStatus('${reportId}', 'reviewed')">${window.t('admin.s274', '標記已處理')}</button>` : ''}
+            ${r.reportedUid && status === 'pending' ? `<button class="btn btn-red" style="font-size:13px; padding:4px 9px;" onclick="window.adminStrikeFromReport('${reportId}', '${r.reportedUid}', false)">${window.t('admin.s275', '確認違規並停權')}</button>` : ''}
+            ${r.reportedUid && status === 'pending' ? `<button class="btn btn-red" style="font-size:13px; padding:4px 9px;" onclick="window.adminStrikeFromReport('${reportId}', '${r.reportedUid}', true)">${window.t('admin.s276', '嚴重違規（永久封號）')}</button>` : ''}
+            ${r.action ? `<span style="font-size:13px; color:#888; align-self:center;">${window.t('admin.s279', '處理：')}${r.action === 'permanent' ? window.t('admin.s277', '永久封號') : (r.action === 'strike' ? window.t('admin.s278', '已按次數停權') : escapeHtml(r.action))}${r.handledBy ? '（' + escapeHtml(r.handledBy) + '）' : ''}</span>` : ''}
+            ${status !== 'pending' ? `<button class="btn btn-outline" style="font-size:13px; padding:4px 9px; color:#999; border-color:#ccc;" onclick="window.adminDeleteReport('${reportId}')">${window.t('admin.s280', '刪除紀錄')}</button>` : ''}
           </div>
         </div>
       `;
@@ -1973,14 +1973,14 @@
       const container = document.getElementById('admin-tab-reports');
       if (!container) return;
       if (adminReportsLoadedDocs.length === 0) {
-        container.innerHTML = moderationSettingsHtml() + '<div class="admin-card" style="text-align:center; color:#999;">目前沒有任何舉報記錄</div>';
+        container.innerHTML = moderationSettingsHtml() + ('<div class="admin-card" style="text-align:center; color:#999;">' + window.t('admin.s284', '目前沒有任何舉報記錄') + '</div>');
         return;
       }
       const cards = adminReportsLoadedDocs.map(buildAdminReportCardHtml).join('');
       const loadMoreHtml = adminReportsAllLoaded
         ? ''
         : `<div style="text-align:center; margin-top:12px;">
-             <button class="btn btn-outline" id="admin-reports-load-more-btn" type="button" onclick="window.adminLoadMoreReports()">載入更多（已顯示 ${adminReportsLoadedDocs.length} 則）</button>
+             <button class="btn btn-outline" id="admin-reports-load-more-btn" type="button" onclick="window.adminLoadMoreReports()">${window.t('admin.s285', '載入更多（已顯示')} ${adminReportsLoadedDocs.length} ${window.t('admin.s286', '則）')}</button>
            </div>`;
       container.innerHTML = `
         ${moderationSettingsHtml()}
@@ -1992,7 +1992,7 @@
     function renderAdminReportsTab() {
       const container = document.getElementById('admin-tab-reports');
       if (!container || !window.db || !window.fs) return;
-      container.innerHTML = '<p style="text-align:center; color:#999; padding:20px;">正在載入舉報記錄…</p>';
+      container.innerHTML = ('<p style="text-align:center; color:#999; padding:20px;">' + window.t('admin.s287', '正在載入舉報記錄…') + '</p>');
       loadModerationRules().then(() => { if (adminReportsLoadedDocs.length || adminReportsAllLoaded) renderAdminReportsListUI(); });
 
       adminReportsLoadedDocs = [];
@@ -2011,7 +2011,7 @@
         if (snapshot.docs.length < ADMIN_REPORTS_PAGE_SIZE) adminReportsAllLoaded = true;
         renderAdminReportsListUI();
       }, (err) => {
-        container.innerHTML = `<div class="admin-card" style="color:#c0392b;">載入失敗：${err.message || err}</div>`;
+        container.innerHTML = `<div class="admin-card" style="color:#c0392b;">${window.t('admin.s190', '載入失敗：')}${err.message || err}</div>`;
       });
     }
     window.renderAdminReportsTab = renderAdminReportsTab;
@@ -2023,7 +2023,7 @@
       const lastDoc = adminReportsLoadedDocs[adminReportsLoadedDocs.length - 1];
       if (!lastDoc) return;
       const btn = document.getElementById('admin-reports-load-more-btn');
-      if (btn) { btn.disabled = true; btn.innerText = '載入中...'; }
+      if (btn) { btn.disabled = true; btn.innerText = window.t('social.loadingWall', '載入中...'); }
       try {
         const q = window.fs.query(
           window.fs.collection(window.db, 'reports'),
@@ -2036,17 +2036,17 @@
         adminReportsLoadedDocs = adminReportsLoadedDocs.concat(snapshot.docs);
         renderAdminReportsListUI();
       } catch (e) {
-        window.showToast('載入更多舉報失敗：' + (e.message || e), '❌');
-        if (btn) { btn.disabled = false; btn.innerText = '載入更多'; }
+        window.showToast(window.t('admin.s288', '載入更多舉報失敗：') + (e.message || e), '❌');
+        if (btn) { btn.disabled = false; btn.innerText = window.t('admin.s208', '載入更多'); }
       }
     };
 
     window.adminMarkReportStatus = async function(reportId, status) {
       try {
         await window.fs.updateDoc(window.fs.doc(window.db, 'reports', reportId), { status });
-        window.showToast(status === 'dismissed' ? '已駁回舉報' : '已標記為已處理', '✅');
+        window.showToast(status === 'dismissed' ? window.t('admin.s289', '已駁回舉報') : window.t('admin.s290', '已標記為已處理'), '✅');
       } catch (err) {
-        window.showToast('更新失敗：' + (err.message || err), '❌');
+        window.showToast(window.t('tutor.s66', '更新失敗：') + (err.message || err), '❌');
       }
     };
 
@@ -2054,17 +2054,17 @@
     window.adminStrikeFromReport = async function(reportId, reportedUid, severe) {
       const m = window.MODERATION_RULES || { firstDays: 3, secondDays: 14 };
       const msg = severe
-        ? '確定屬於嚴重違規？該帳戶會被永久封號，並無法再登入。'
-        : `確定違規屬實？系統會按違規次數處理：第 1 次停權 ${m.firstDays} 日、第 2 次停權 ${m.secondDays} 日、第 3 次永久封號。`;
+        ? window.t('admin.s291', '確定屬於嚴重違規？該帳戶會被永久封號，並無法再登入。')
+        : `${window.t('admin.s292', '確定違規屬實？系統會按違規次數處理：第 1 次停權')} ${m.firstDays} ${window.t('admin.s293', '日、第 2 次停權')} ${m.secondDays} ${window.t('admin.s294', '日、第 3 次永久封號。')}`;
       if (!(await window.appConfirm(msg))) return;
       const doc = adminReportsLoadedDocs.find(x => x.id === reportId);
       const reason = doc && doc.data().reason ? doc.data().reason : '違反使用守則';
       try {
         const res = await window.callCloudFunction('moderateUser', { uid: reportedUid, action: severe ? 'permanent' : 'strike', reportId, reason });
-        if (res && res.permanent) window.showToast(`已永久封號（累計違規 ${res.strikeCount} 次）`, '🚫');
-        else window.showToast(`已停權 ${res.days} 日（第 ${res.strikeCount} 次違規）`, '🚫');
+        if (res && res.permanent) window.showToast(`${window.t('admin.s295', '已永久封號（累計違規')} ${res.strikeCount} ${window.t('admin.s296', '次）')}`, '🚫');
+        else window.showToast(`${window.t('admin.s297', '已停權')} ${res.days} ${window.t('admin.s298', '日（第')} ${res.strikeCount} ${window.t('admin.s299', '次違規）')}`, '🚫');
       } catch (err) {
-        window.showToast('操作失敗：' + (window.friendlyErrorText ? window.friendlyErrorText(err) : (err.message || err)), '❌');
+        window.showToast(window.t('admin.s194', '操作失敗：') + (window.friendlyErrorText ? window.friendlyErrorText(err) : (err.message || err)), '❌');
       }
     };
 
@@ -2085,17 +2085,17 @@
       const canEdit = isCurrentUserSuperAdmin();
       return `
         <div class="admin-card" style="margin-bottom:12px;">
-          <h3 style="font-size:14px; font-weight:bold; margin-bottom:8px;">停權規則</h3>
+          <h3 style="font-size:14px; font-weight:bold; margin-bottom:8px;">${window.t('admin.s300', '停權規則')}</h3>
           <div style="display:flex; gap:16px; flex-wrap:wrap; align-items:center; font-size:13px; color:#555; margin-bottom:8px;">
-            <label style="display:flex; align-items:center; gap:6px;">第 1 次違規停權
-              <input class="admin-input-sm" type="number" min="1" max="365" step="1" style="width:64px;" id="admin-mod-first" value="${m.firstDays}" ${canEdit ? '' : 'disabled'}> 日
+            <label style="display:flex; align-items:center; gap:6px;">${window.t('admin.s301', '第 1 次違規停權')}
+              <input class="admin-input-sm" type="number" min="1" max="365" step="1" style="width:64px;" id="admin-mod-first" value="${m.firstDays}" ${canEdit ? '' : 'disabled'}> ${window.t('cal.dow0', '日')}
             </label>
-            <label style="display:flex; align-items:center; gap:6px;">第 2 次違規停權
-              <input class="admin-input-sm" type="number" min="1" max="365" step="1" style="width:64px;" id="admin-mod-second" value="${m.secondDays}" ${canEdit ? '' : 'disabled'}> 日
+            <label style="display:flex; align-items:center; gap:6px;">${window.t('admin.s302', '第 2 次違規停權')}
+              <input class="admin-input-sm" type="number" min="1" max="365" step="1" style="width:64px;" id="admin-mod-second" value="${m.secondDays}" ${canEdit ? '' : 'disabled'}> ${window.t('cal.dow0', '日')}
             </label>
-            ${canEdit ? '<button class="btn btn-primary" style="font-size:13px; padding:4px 10px;" onclick="window.adminSaveModerationRules()">儲存</button>' : ''}
+            ${canEdit ? ('<button class="btn btn-primary" style="font-size:13px; padding:4px 10px;" onclick="window.adminSaveModerationRules()">' + window.t('common.save', '儲存') + '</button>') : ''}
           </div>
-          <p style="font-size:13px; color:#888; margin:0;">第 3 次違規或嚴重違規（例如性騷擾、向未成年人提出不當要求、威脅）會永久封號，並停用登入帳戶。只有經管理員確認的舉報才會計入違規次數；停權期間用戶無法登入，到期自動解除。</p>
+          <p style="font-size:13px; color:#888; margin:0;">${window.t('admin.s303', '第 3 次違規或嚴重違規（例如性騷擾、向未成年人提出不當要求、威脅）會永久封號，並停用登入帳戶。只有經管理員確認的舉報才會計入違規次數；停權期間用戶無法登入，到期自動解除。')}</p>
         </div>`;
     }
     window.adminSaveModerationRules = async function() {
@@ -2105,21 +2105,21 @@
         await window.fs.setDoc(window.fs.doc(window.db, 'admin_config', 'moderation'), { firstDays: first, secondDays: second, updatedAt: Date.now() });
         window.MODERATION_RULES = { firstDays: first, secondDays: second };
         await logAdminAction('修改停權規則', { firstDays: first, secondDays: second });
-        window.showToast('已儲存停權規則', '✅');
+        window.showToast(window.t('admin.s304', '已儲存停權規則'), '✅');
       } catch (err) {
-        window.showToast('儲存失敗：' + (err.message || err), '❌');
+        window.showToast(window.t('admin.s138', '儲存失敗：') + (err.message || err), '❌');
       }
     };
 
     // 淨係已經處理完（已駁回／已處理）嘅舉報先俾刪，pending 嘅唔會出呢粒掣，
     // 避免管理員手快手滑刪走仲未跟進嘅證據
     window.adminDeleteReport = async function(reportId) {
-      if (!(await window.appConfirm('確定刪除這一則已處理的舉報紀錄？連同截圖一併刪除，刪除後將無法復原。'))) return;
+      if (!(await window.appConfirm(window.t('admin.s305', '確定刪除這一則已處理的舉報紀錄？連同截圖一併刪除，刪除後將無法復原。')))) return;
       try {
         await window.fs.deleteDoc(window.fs.doc(window.db, 'reports', reportId));
-        window.showToast('已刪除舉報紀錄', '🗑️');
+        window.showToast(window.t('admin.s306', '已刪除舉報紀錄'), '🗑️');
       } catch (err) {
-        window.showToast('刪除失敗：' + (err.message || err), '❌');
+        window.showToast(window.t('tutor.s15', '刪除失敗：') + (err.message || err), '❌');
       }
     };
 
@@ -2140,17 +2140,17 @@
     // 名，但已經涵蓋所有「可自訂圖示」，唔止側邊欄。
     const NAV_ICON_ITEMS = [
       // v1.210.0：預設圖示改為線條 SVG（見 index.html 嘅 window.cmNavSvg），唔再用 emoji
-      { key: 'home', label: '主頁' },
-      { key: 'room', label: '視訊溫習室' },
-      { key: 'qa', label: '疑難解答區' },
-      { key: 'vip', label: '教材中心' },
-      { key: 'store', label: '時數扭蛋機' },
-      { key: 'leaderboard', label: '溫習排行榜' },
-      { key: 'social', label: '書伴廣場' },
-      { key: 'diary', label: '溫習日記' },
-      { key: 'verification', label: '學生身份驗證' },
-      { key: 'tutorMaterials', label: '管理教材（導師）' },
-      { key: 'roomLock', label: '房間密碼鎖（房內查看密碼按鈕）' }
+      { key: 'home', label: window.t('nav.home', '主頁') },
+      { key: 'room', label: window.t('nav.room', '視訊溫習室') },
+      { key: 'qa', label: window.t('nav.qa', '疑難解答區') },
+      { key: 'vip', label: window.t('nav.vip', '教材中心') },
+      { key: 'store', label: window.t('nav.store', '時數扭蛋機') },
+      { key: 'leaderboard', label: window.t('nav.leaderboard', '溫習排行榜') },
+      { key: 'social', label: window.t('nav.social', '書伴廣場') },
+      { key: 'diary', label: window.t('nav.diary', '溫習日記') },
+      { key: 'verification', label: window.t('nav.verification', '學生身份驗證') },
+      { key: 'tutorMaterials', label: window.t('admin.s307', '管理教材（導師）') },
+      { key: 'roomLock', label: window.t('admin.s308', '房間密碼鎖（房內查看密碼按鈕）') }
     ];
 
     // 全站共用嘅「目前生效緊嘅圖示連結」——冇自訂圖嘅 key 就唔會出現喺
@@ -2181,7 +2181,7 @@
 
       if (!adminNavIconsDraft) {
         if (!navIconsConfigLoaded) {
-          container.innerHTML = '<p style="text-align:center; color:#999; padding:20px;">載入中圖示設定...</p>';
+          container.innerHTML = ('<p style="text-align:center; color:#999; padding:20px;">' + window.t('admin.s309', '載入中圖示設定...') + '</p>');
           return; // Firestore 資料一到，loadNavIconsFromFirestore() 會自動再 render 多次
         }
         adminNavIconsDraft = Object.assign({}, window.NAV_ICON_URLS);
@@ -2196,12 +2196,12 @@
           : `<span style="color:var(--brand-600); display:inline-flex;">${typeof window.cmNavSvg === 'function' ? window.cmNavSvg(item.key) : ''}</span>`;
         return `
           <div style="display:flex; align-items:center; gap:14px; padding:10px 0; border-bottom:1px solid #F0F0F0;">
-            <div id="${thumbId}" onclick="document.getElementById('${inputId}').click()" title="點擊這裡上傳圖片" style="width:52px; height:52px; border-radius:10px; background:#F6F7FB; border:1px dashed #D2D9E9; display:flex; align-items:center; justify-content:center; cursor:pointer; overflow:hidden; flex-shrink:0;">${thumbInner}</div>
+            <div id="${thumbId}" onclick="document.getElementById('${inputId}').click()" title="${window.t('admin.s13', '點擊這裡上傳圖片')}" style="width:52px; height:52px; border-radius:10px; background:#F6F7FB; border:1px dashed #D2D9E9; display:flex; align-items:center; justify-content:center; cursor:pointer; overflow:hidden; flex-shrink:0;">${thumbInner}</div>
             <input type="file" accept="image/*" id="${inputId}" style="display:none;" onchange="adminUploadNavIcon('${item.key}',this)">
             <div style="flex:1; font-size:14px; font-weight:600; color:#333;">${escapeHtml(item.label)}</div>
             <div style="display:flex; gap:6px;">
-              <button type="button" class="btn btn-outline" style="font-size:13px; padding:4px 10px;" onclick="document.getElementById('${inputId}').click()">上傳圖片</button>
-              ${url ? `<button type="button" class="btn btn-outline" style="font-size:13px; padding:4px 10px;" onclick="adminRemoveNavIcon('${item.key}')">還原做預設圖示</button>` : ''}
+              <button type="button" class="btn btn-outline" style="font-size:13px; padding:4px 10px;" onclick="document.getElementById('${inputId}').click()">${window.t('admin.s311', '上傳圖片')}</button>
+              ${url ? `<button type="button" class="btn btn-outline" style="font-size:13px; padding:4px 10px;" onclick="adminRemoveNavIcon('${item.key}')">${window.t('admin.s310', '還原做預設圖示')}</button>` : ''}
             </div>
           </div>
         `;
@@ -2209,12 +2209,12 @@
 
       container.innerHTML = `
         <div class="admin-card">
-          <h3 style="font-size:15px; font-weight:bold; color:var(--brand-800); margin-bottom:6px;">側邊欄功能圖示</h3>
-          <p style="font-size:13px; color:#888; margin-bottom:6px;">將側邊欄「主頁、視訊溫習室」等 8 個分頁按鈕原本的 emoji 圖示，換成自訂上傳的圖片。上傳新圖會即時取代畫面上顯示的圖示，未上傳過的項目則繼續使用預設 emoji。</p>
+          <h3 style="font-size:15px; font-weight:bold; color:var(--brand-800); margin-bottom:6px;">${window.t('admin.s312', '側邊欄功能圖示')}</h3>
+          <p style="font-size:13px; color:#888; margin-bottom:6px;">${window.t('admin.s313', '將側邊欄「主頁、視訊溫習室」等 8 個分頁按鈕原本的 emoji 圖示，換成自訂上傳的圖片。上傳新圖會即時取代畫面上顯示的圖示，未上傳過的項目則繼續使用預設 emoji。')}</p>
           ${rows}
           <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:14px;">
-            <button class="btn btn-outline" type="button" onclick="adminResetNavIconsDraft()">還原未儲存的改動</button>
-            <button class="btn btn-primary" type="button" onclick="adminSaveNavIconsConfig()">儲存全部改動</button>
+            <button class="btn btn-outline" type="button" onclick="adminResetNavIconsDraft()">${window.t('admin.s99', '還原未儲存的改動')}</button>
+            <button class="btn btn-primary" type="button" onclick="adminSaveNavIconsConfig()">${window.t('admin.s100', '儲存全部改動')}</button>
           </div>
         </div>
       `;
@@ -2226,15 +2226,15 @@
       const file = inputEl.files && inputEl.files[0];
       if (!file) return;
       if (!file.type.startsWith('image/')) {
-        window.showToast('請選擇圖片檔案', '⚠️');
+        window.showToast(window.t('admin.s110', '請選擇圖片檔案'), '⚠️');
         return;
       }
       if (!window.storage || !window.storageApi) {
-        window.showToast('Storage 未初始化，請重新整理頁面再試', '⚠️');
+        window.showToast(window.t('admin.s111', 'Storage 未初始化，請重新整理頁面再試'), '⚠️');
         return;
       }
       const oldUrl = adminNavIconsDraft[key];
-      window.showToast('上傳中圖片…', '📤');
+      window.showToast(window.t('admin.s123', '上傳中圖片…'), '📤');
       try {
         const { blob, mimeType } = await compressImageFileToBlob(file, 128, 0.85);
         const ext = mimeType === 'image/webp' ? 'webp' : (mimeType === 'image/png' ? 'png' : 'jpg');
@@ -2244,10 +2244,10 @@
         const downloadUrl = await window.storageApi.getDownloadURL(fileRef);
         adminNavIconsDraft[key] = downloadUrl;
         renderAdminNavIconsTab();
-        window.showToast('圖片上傳成功，請點擊「儲存全部改動」才會正式生效', '🎉');
+        window.showToast(window.t('admin.s124', '圖片上傳成功，請點擊「儲存全部改動」才會正式生效'), '🎉');
         tryDeleteOldGachaStoragePhoto(oldUrl); // best-effort，唔使等佢完成（呢個函式其實通用，唔止扭蛋貼紙先用得）
       } catch (err) {
-        window.showToast('圖片上傳失敗：' + (err.message || err), '❌');
+        window.showToast(window.t('admin.s114', '圖片上傳失敗：') + (err.message || err), '❌');
       }
     };
 
@@ -2268,9 +2268,9 @@
       if (!adminNavIconsDraft) return;
       try {
         await window.fs.setDoc(window.fs.doc(window.db, 'admin_config', 'navIcons'), adminNavIconsDraft);
-        window.showToast('圖示設定已儲存，全站即時生效', '🎉');
+        window.showToast(window.t('admin.s314', '圖示設定已儲存，全站即時生效'), '🎉');
       } catch (err) {
-        window.showToast('儲存失敗：' + (err.message || err), '❌');
+        window.showToast(window.t('admin.s138', '儲存失敗：') + (err.message || err), '❌');
       }
     };
 
@@ -2347,7 +2347,7 @@
       const a = docSnap.data();
       const uid = docSnap.id;
       const status = a.status || 'pending';
-      const statusLabel = status === 'pending' ? '待審批' : (status === 'approved' ? '已批准' : '已駁回');
+      const statusLabel = status === 'pending' ? window.t('admin.s315', '待審批') : (status === 'approved' ? window.t('admin.s316', '已批准') : window.t('admin.s270', '已駁回'));
       const statusColor = status === 'pending' ? '#C0524A' : (status === 'approved' ? '#2F6B3A' : '#999');
       const when = a.submittedAt ? new Date(a.submittedAt).toLocaleString('zh-HK') : '—';
       const subjectsHtml = (a.subjectsIntended || [])
@@ -2359,16 +2359,16 @@
             <span style="font-weight:700; color:${statusColor}; font-size:13px;">${statusLabel}</span>
             <span style="font-size:13px; color:#999;">${escapeHtml(when)}</span>
           </div>
-          <p style="font-size:13px; margin-bottom:3px;"><b>顯示名稱：</b>${escapeHtml(a.displayName || '—')}</p>
-          <p style="font-size:13px; color:#666; margin-bottom:3px;">${escapeHtml(a.bio || '（未填寫自我介紹）')}</p>
-          <p style="font-size:13px; margin-bottom:3px;">${subjectsHtml || '（未填寫科目）'}</p>
-          <p style="font-size:13px; color:#888; margin-bottom:3px;"><b>聯絡方式：</b>${escapeHtml(a.contactInfo || '—')}</p>
+          <p style="font-size:13px; margin-bottom:3px;"><b>${window.t('admin.s322', '顯示名稱：')}</b>${escapeHtml(a.displayName || '—')}</p>
+          <p style="font-size:13px; color:#666; margin-bottom:3px;">${escapeHtml(a.bio || window.t('admin.s317', '（未填寫自我介紹）'))}</p>
+          <p style="font-size:13px; margin-bottom:3px;">${subjectsHtml || window.t('admin.s318', '（未填寫科目）')}</p>
+          <p style="font-size:13px; color:#888; margin-bottom:3px;"><b>${window.t('admin.s323', '聯絡方式：')}</b>${escapeHtml(a.contactInfo || '—')}</p>
           <p style="font-size:12px; color:#aaa; margin-bottom:3px;">${escapeHtml(uid)}</p>
-          ${status === 'rejected' && a.rejectionReason ? `<p style="font-size:13px; color:#8a2f2f; background:#FBEAEA; border-radius:6px; padding:6px 8px; margin-bottom:3px;">駁回原因：${escapeHtml(a.rejectionReason)}</p>` : ''}
+          ${status === 'rejected' && a.rejectionReason ? `<p style="font-size:13px; color:#8a2f2f; background:#FBEAEA; border-radius:6px; padding:6px 8px; margin-bottom:3px;">${window.t('admin.s319', '駁回原因：')}${escapeHtml(a.rejectionReason)}</p>` : ''}
           ${status === 'pending' ? `
             <div style="display:flex; gap:6px; flex-wrap:wrap; margin-top:10px;">
-              <button class="btn btn-primary" style="font-size:13px; padding:4px 9px;" onclick="window.adminApproveTutorApp('${uid}')">批准</button>
-              <button class="btn btn-outline" style="font-size:13px; padding:4px 9px;" onclick="window.adminRejectTutorApp('${uid}')">駁回</button>
+              <button class="btn btn-primary" style="font-size:13px; padding:4px 9px;" onclick="window.adminApproveTutorApp('${uid}')">${window.t('admin.s320', '批准')}</button>
+              <button class="btn btn-outline" style="font-size:13px; padding:4px 9px;" onclick="window.adminRejectTutorApp('${uid}')">${window.t('admin.s321', '駁回')}</button>
             </div>
           ` : ''}
         </div>
@@ -2379,7 +2379,7 @@
       const t = docSnap.data();
       const uid = docSnap.id;
       const status = t.status || 'active';
-      const statusLabel = status === 'active' ? '正常' : '已停權';
+      const statusLabel = status === 'active' ? window.t('admin.s324', '正常') : window.t('admin.s297', '已停權');
       const statusColor = status === 'active' ? '#2F6B3A' : '#C0524A';
       const subjectsHtml = (t.subjectsIntended || [])
         .map(s => `<span class="tag" style="background:#F6F7FB; color:#29395C; margin-right:4px;">${escapeHtml(s)}</span>`)
@@ -2395,8 +2395,8 @@
           <p style="font-size:13px; margin-bottom:3px;">${subjectsHtml}</p>
           <div style="display:flex; gap:6px; flex-wrap:wrap; margin-top:10px;">
             ${status === 'active'
-              ? `<button class="btn btn-red" style="font-size:13px; padding:4px 9px;" onclick="window.adminSuspendTutor('${uid}')">停權</button>`
-              : `<button class="btn btn-outline" style="font-size:13px; padding:4px 9px;" onclick="window.adminReinstateTutor('${uid}')">解除停權</button>`}
+              ? `<button class="btn btn-red" style="font-size:13px; padding:4px 9px;" onclick="window.adminSuspendTutor('${uid}')">${window.t('admin.s325', '停權')}</button>`
+              : `<button class="btn btn-outline" style="font-size:13px; padding:4px 9px;" onclick="window.adminReinstateTutor('${uid}')">${window.t('admin.s203', '解除停權')}</button>`}
           </div>
         </div>
       `;
@@ -2411,27 +2411,27 @@
 
       const pendingHtml = pendingApps.length
         ? pendingApps.map(buildAdminTutorAppCardHtml).join('')
-        : '<div class="admin-card" style="text-align:center; color:#999;">目前沒有待審批的導師申請</div>';
+        : ('<div class="admin-card" style="text-align:center; color:#999;">' + window.t('admin.s326', '目前沒有待審批的導師申請') + '</div>');
 
       const tutorsHtml = adminTutorsList.length
         ? adminTutorsList.map(buildAdminTutorCardHtml).join('')
-        : '<div class="admin-card" style="text-align:center; color:#999;">目前還沒有任何已批准的導師</div>';
+        : ('<div class="admin-card" style="text-align:center; color:#999;">' + window.t('admin.s327', '目前還沒有任何已批准的導師') + '</div>');
 
       const historyHtml = otherApps.length ? otherApps.map(buildAdminTutorAppCardHtml).join('') : '';
 
       container.innerHTML = `
-        <h4 style="font-size:14px; font-weight:bold; color:var(--brand-800); margin:4px 0 8px;">待審批申請</h4>
+        <h4 style="font-size:14px; font-weight:bold; color:var(--brand-800); margin:4px 0 8px;">${window.t('admin.s329', '待審批申請')}</h4>
         ${pendingHtml}
-        <h4 style="font-size:14px; font-weight:bold; color:var(--brand-800); margin:18px 0 8px;">導師名單</h4>
+        <h4 style="font-size:14px; font-weight:bold; color:var(--brand-800); margin:18px 0 8px;">${window.t('admin.s330', '導師名單')}</h4>
         ${tutorsHtml}
-        ${historyHtml ? `<h4 style="font-size:14px; font-weight:bold; color:var(--brand-800); margin:18px 0 8px;">申請歷史（已批准／已駁回）</h4>${historyHtml}` : ''}
+        ${historyHtml ? `<h4 style="font-size:14px; font-weight:bold; color:var(--brand-800); margin:18px 0 8px;">${window.t('admin.s328', '申請歷史（已批准／已駁回）')}</h4>${historyHtml}` : ''}
       `;
     }
 
     function renderAdminTutorsTab() {
       const container = document.getElementById('admin-tab-tutors');
       if (!container || !window.db || !window.fs) return;
-      container.innerHTML = '<p style="text-align:center; color:#999; padding:20px;">載入中導師申請...</p>';
+      container.innerHTML = ('<p style="text-align:center; color:#999; padding:20px;">' + window.t('admin.s331', '載入中導師申請...') + '</p>');
 
       if (adminTutorAppsUnsubscribe) adminTutorAppsUnsubscribe();
       if (adminTutorsListUnsubscribe) adminTutorsListUnsubscribe();
@@ -2447,7 +2447,7 @@
         adminTutorApps = snapshot.docs;
         renderAdminTutorsListUI();
       }, (err) => {
-        container.innerHTML = `<div class="admin-card" style="color:#c0392b;">載入導師申請失敗：${err.message || err}</div>`;
+        container.innerHTML = `<div class="admin-card" style="color:#c0392b;">${window.t('admin.s332', '載入導師申請失敗：')}${err.message || err}</div>`;
       });
 
       const tutorsQ = window.fs.query(
@@ -2465,36 +2465,36 @@
     window.renderAdminTutorsTab = renderAdminTutorsTab;
 
     window.adminApproveTutorApp = async function(uid) {
-      if (!(await window.appConfirm('確定批准這個導師申請？批准之後該用戶會立即獲得導師身份。'))) return;
+      if (!(await window.appConfirm(window.t('admin.s333', '確定批准這個導師申請？批准之後該用戶會立即獲得導師身份。')))) return;
       try {
         await window.callCloudFunction('approveTutorApplication', { targetUid: uid });
         await logAdminAction('批准導師申請', { uid });
-        window.showToast('已批准導師申請', '✅');
+        window.showToast(window.t('admin.s334', '已批准導師申請'), '✅');
       } catch (err) {
-        window.showToast('批准失敗：' + (err.message || err), '❌');
+        window.showToast(window.t('admin.s335', '批准失敗：') + (err.message || err), '❌');
       }
     };
 
     window.adminRejectTutorApp = async function(uid) {
-      const reason = (await window.appPrompt('駁回原因（會顯示給申請人查看，可以留空）：', ''));
+      const reason = (await window.appPrompt(window.t('admin.s336', '駁回原因（會顯示給申請人查看，可以留空）：'), ''));
       if (reason === null) return; // 撳咗取消
       try {
         await window.callCloudFunction('rejectTutorApplication', { targetUid: uid, rejectionReason: reason });
         await logAdminAction('駁回導師申請', { uid, reason });
-        window.showToast('已駁回導師申請', '🗂️');
+        window.showToast(window.t('admin.s337', '已駁回導師申請'), '🗂️');
       } catch (err) {
-        window.showToast('駁回失敗：' + (err.message || err), '❌');
+        window.showToast(window.t('admin.s338', '駁回失敗：') + (err.message || err), '❌');
       }
     };
 
     window.adminSuspendTutor = async function(uid) {
-      if (!(await window.appConfirm('確定停權這位導師？其已上架的筆記會自動下架，但已購買的學生保留下載權。'))) return;
+      if (!(await window.appConfirm(window.t('admin.s339', '確定停權這位導師？其已上架的筆記會自動下架，但已購買的學生保留下載權。')))) return;
       try {
         await window.callCloudFunction('suspendTutor', { targetUid: uid });
         await logAdminAction('停權導師', { uid });
-        window.showToast('已停權該導師', '🚫');
+        window.showToast(window.t('admin.s340', '已停權該導師'), '🚫');
       } catch (err) {
-        window.showToast('停權失敗：' + (err.message || err), '❌');
+        window.showToast(window.t('admin.s341', '停權失敗：') + (err.message || err), '❌');
       }
     };
 
@@ -2502,9 +2502,9 @@
       try {
         await window.callCloudFunction('reinstateTutor', { targetUid: uid });
         await logAdminAction('解除導師停權', { uid });
-        window.showToast('已解除停權', '✅');
+        window.showToast(window.t('admin.s227', '已解除停權'), '✅');
       } catch (err) {
-        window.showToast('解除停權失敗：' + (err.message || err), '❌');
+        window.showToast(window.t('admin.s342', '解除停權失敗：') + (err.message || err), '❌');
       }
     };
 
@@ -2526,50 +2526,50 @@
     // 睇得明呢個欄位對應緊個網站邊一句字，唔影響實際儲存結構。
     const LANDING_FIELD_GROUPS = [
       {
-        title: '導覽列',
+        title: window.t('admin.s343', '導覽列'),
         fields: [
-          { key: 'landing.navLogin', label: '「登入」按鈕文字' },
-          { key: 'landing.registerBtn', label: '「註冊帳號」按鈕文字（頂部導覽／主橫幅／底部行動呼籲共用同一句，改一次三處一齊變）' }
+          { key: 'landing.navLogin', label: window.t('admin.s344', '「登入」按鈕文字') },
+          { key: 'landing.registerBtn', label: window.t('admin.s345', '「註冊帳號」按鈕文字（頂部導覽／主橫幅／底部行動呼籲共用同一句，改一次三處一齊變）') }
         ]
       },
       {
-        title: '主橫幅',
+        title: window.t('admin.s346', '主橫幅'),
         fields: [
-          { key: 'landing.heroH1Line1', label: '主標題　第一行' },
-          { key: 'landing.heroH1Line2', label: '主標題　第二行' },
-          { key: 'landing.heroSub', label: '說明文字' },
-          { key: 'landing.subjectChinese', label: '科目裝飾格：中文' },
-          { key: 'landing.subjectEnglish', label: '科目裝飾格：英文' },
-          { key: 'landing.subjectMath', label: '科目裝飾格：數學' }
+          { key: 'landing.heroH1Line1', label: window.t('admin.s347', '主標題　第一行') },
+          { key: 'landing.heroH1Line2', label: window.t('admin.s348', '主標題　第二行') },
+          { key: 'landing.heroSub', label: window.t('admin.s349', '說明文字') },
+          { key: 'landing.subjectChinese', label: window.t('admin.s350', '科目裝飾格：中文') },
+          { key: 'landing.subjectEnglish', label: window.t('admin.s351', '科目裝飾格：英文') },
+          { key: 'landing.subjectMath', label: window.t('admin.s352', '科目裝飾格：數學') }
         ]
       },
       {
-        title: '「三個核心」介紹區',
+        title: window.t('admin.s353', '「三個核心」介紹區'),
         fields: [
-          { key: 'landing.stepsEyebrow', label: '小標籤' },
-          { key: 'landing.stepsH2', label: '大標題' },
-          { key: 'landing.stepsSub', label: '說明文字' },
-          { key: 'landing.step1Title', label: '第一步　標題' },
-          { key: 'landing.step1Desc', label: '第一步　說明' },
-          { key: 'landing.step2Title', label: '第二步　標題' },
-          { key: 'landing.step2Desc', label: '第二步　說明' },
-          { key: 'landing.step3Title', label: '第三步　標題' },
-          { key: 'landing.step3Desc', label: '第三步　說明' }
+          { key: 'landing.stepsEyebrow', label: window.t('admin.s354', '小標籤') },
+          { key: 'landing.stepsH2', label: window.t('admin.s355', '大標題') },
+          { key: 'landing.stepsSub', label: window.t('admin.s349', '說明文字') },
+          { key: 'landing.step1Title', label: window.t('admin.s356', '第一步　標題') },
+          { key: 'landing.step1Desc', label: window.t('admin.s357', '第一步　說明') },
+          { key: 'landing.step2Title', label: window.t('admin.s358', '第二步　標題') },
+          { key: 'landing.step2Desc', label: window.t('admin.s359', '第二步　說明') },
+          { key: 'landing.step3Title', label: window.t('admin.s360', '第三步　標題') },
+          { key: 'landing.step3Desc', label: window.t('admin.s361', '第三步　說明') }
         ]
       },
       {
-        title: '行動呼籲區',
+        title: window.t('admin.s362', '行動呼籲區'),
         fields: [
-          { key: 'landing.ctaH2', label: '大標題' },
-          { key: 'landing.ctaSub', label: '說明文字' }
+          { key: 'landing.ctaH2', label: window.t('admin.s355', '大標題') },
+          { key: 'landing.ctaSub', label: window.t('admin.s349', '說明文字') }
         ]
       },
       {
-        title: '頁尾',
+        title: window.t('admin.s363', '頁尾'),
         fields: [
-          { key: 'landing.footerCopyright', label: '版權文字' },
-          { key: 'landing.footerTerms', label: '「服務條款」連結文字' },
-          { key: 'landing.footerPrivacy', label: '「私隱政策」連結文字' }
+          { key: 'landing.footerCopyright', label: window.t('admin.s364', '版權文字') },
+          { key: 'landing.footerTerms', label: window.t('admin.s365', '「服務條款」連結文字') },
+          { key: 'landing.footerPrivacy', label: window.t('admin.s366', '「私隱政策」連結文字') }
         ]
       }
     ];
@@ -2587,11 +2587,11 @@
           <h3 style="font-size:15px; font-weight:bold; color:var(--brand-800); margin-bottom:10px;">${title}</h3>
           <p style="font-size:13px; color:#888; margin-bottom:10px;">${desc}</p>
           <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
-            <div id="admin-landing-${imgKey}-thumb" onclick="document.getElementById('admin-landing-${imgKey}-input').click()" title="點擊這裡上傳圖片" style="width:80px; height:80px; border-radius:10px; background:#F6F7FB; border:1px dashed #D2D9E9; display:flex; align-items:center; justify-content:center; cursor:pointer; overflow:hidden;">${previewInner}</div>
+            <div id="admin-landing-${imgKey}-thumb" onclick="document.getElementById('admin-landing-${imgKey}-input').click()" title="${window.t('admin.s13', '點擊這裡上傳圖片')}" style="width:80px; height:80px; border-radius:10px; background:#F6F7FB; border:1px dashed #D2D9E9; display:flex; align-items:center; justify-content:center; cursor:pointer; overflow:hidden;">${previewInner}</div>
             <input type="file" accept="image/*" id="admin-landing-${imgKey}-input" style="display:none;" onchange="adminUploadLandingImage('${imgKey}', this)">
             <div style="display:flex; flex-direction:column; gap:6px;">
-              <button type="button" class="btn btn-outline" style="font-size:13px; padding:4px 10px;" onclick="document.getElementById('admin-landing-${imgKey}-input').click()">上傳新圖片</button>
-              ${url ? `<button type="button" class="btn btn-outline" style="font-size:13px; padding:4px 10px;" onclick="adminRemoveLandingImage('${imgKey}')">還原做預設圖</button>` : ''}
+              <button type="button" class="btn btn-outline" style="font-size:13px; padding:4px 10px;" onclick="document.getElementById('admin-landing-${imgKey}-input').click()">${window.t('admin.s14', '上傳新圖片')}</button>
+              ${url ? `<button type="button" class="btn btn-outline" style="font-size:13px; padding:4px 10px;" onclick="adminRemoveLandingImage('${imgKey}')">${window.t('admin.s10', '還原做預設圖')}</button>` : ''}
             </div>
           </div>
         </div>
@@ -2604,7 +2604,7 @@
 
       if (!adminLandingDraft) {
         if (!landingConfigLoaded) {
-          container.innerHTML = '<p style="text-align:center; color:#999; padding:20px;">載入中 Landing page 設定...</p>';
+          container.innerHTML = ('<p style="text-align:center; color:#999; padding:20px;">' + window.t('admin.s367', '載入中 Landing page 設定...') + '</p>');
           return; // Firestore 資料一到，loadLandingContentFromFirestore() 會自動再 render 多次
         }
         const texts = {};
@@ -2634,13 +2634,13 @@
             <div style="margin-bottom:16px; padding-bottom:14px; border-bottom:1px solid #EEF3FA;">
               <p style="font-size:13px; font-weight:bold; color:var(--brand-700); margin-bottom:6px;">${f.label}</p>
               <div style="display:grid; grid-template-columns:1fr; gap:6px;">
-                <label style="font-size:12px; color:#999;">繁體中文
+                <label style="font-size:12px; color:#999;">${window.t('admin.s368', '繁體中文')}
                   <textarea rows="1" style="width:100%; font-size:14px; padding:6px 8px; border:1px solid #DCE5F4; border-radius:6px; font-family:inherit; resize:vertical;" oninput="adminUpdateLandingText('${f.key}','zh-Hant',this.value)">${v['zh-Hant']}</textarea>
                 </label>
                 <label style="font-size:12px; color:#999;">English
                   <textarea rows="1" style="width:100%; font-size:14px; padding:6px 8px; border:1px solid #DCE5F4; border-radius:6px; font-family:inherit; resize:vertical;" oninput="adminUpdateLandingText('${f.key}','en',this.value)">${v['en']}</textarea>
                 </label>
-                <label style="font-size:12px; color:#999;">廣東話
+                <label style="font-size:12px; color:#999;">${window.t('admin.s369', '廣東話')}
                   <textarea rows="1" style="width:100%; font-size:14px; padding:6px 8px; border:1px solid #DCE5F4; border-radius:6px; font-family:inherit; resize:vertical;" oninput="adminUpdateLandingText('${f.key}','yue',this.value)">${v['yue']}</textarea>
                 </label>
               </div>
@@ -2656,12 +2656,12 @@
       }).join('');
 
       container.innerHTML = `
-        <p style="font-size:13px; color:#888; margin-bottom:14px;">這裏的文字是未登入訪客打開網站時首先看到的首頁內容，三種語言可以分開修改。修改後點擊最底的「儲存全部改動」，即時全站生效（包括未登入的訪客），毋須修改程式。</p>
-        ${renderAdminLandingImageCard('navLogoUrl', '主橫幅 Logo', '顯示喺 Landing page 主橫幅左上方嘅大 Logo（建議用透明背景 PNG，闊度約 600px 以上）。', 'assets/images/logo-hero.png')}
-        ${renderAdminLandingImageCard('heroImageUrl', '主橫幅吉祥物圖', '顯示在主橫幅中間的 Ottiee 吉祥物圖案。', 'assets/images/ottie-wave.png')}
+        <p style="font-size:13px; color:#888; margin-bottom:14px;">${window.t('admin.s374', '這裏的文字是未登入訪客打開網站時首先看到的首頁內容，三種語言可以分開修改。修改後點擊最底的「儲存全部改動」，即時全站生效（包括未登入的訪客），毋須修改程式。')}</p>
+        ${renderAdminLandingImageCard('navLogoUrl', window.t('admin.s370', '主橫幅 Logo'), window.t('admin.s371', '顯示喺 Landing page 主橫幅左上方嘅大 Logo（建議用透明背景 PNG，闊度約 600px 以上）。'), 'assets/images/logo-hero.png')}
+        ${renderAdminLandingImageCard('heroImageUrl', window.t('admin.s372', '主橫幅吉祥物圖'), window.t('admin.s373', '顯示在主橫幅中間的 Ottiee 吉祥物圖案。'), 'assets/images/ottie-wave.png')}
         ${groupsHtml}
         <div style="text-align:center; margin-top:10px;">
-          <button type="button" class="btn btn-primary" id="btn-admin-save-landing" style="padding:12px 32px; font-size:15px;" onclick="adminSaveLandingContent()">儲存全部改動</button>
+          <button type="button" class="btn btn-primary" id="btn-admin-save-landing" style="padding:12px 32px; font-size:15px;" onclick="adminSaveLandingContent()">${window.t('admin.s100', '儲存全部改動')}</button>
         </div>
       `;
     }
@@ -2677,15 +2677,15 @@
       const file = inputEl.files && inputEl.files[0];
       if (!file) return;
       if (!file.type.startsWith('image/')) {
-        window.showToast('請選擇圖片檔案', '⚠️');
+        window.showToast(window.t('admin.s110', '請選擇圖片檔案'), '⚠️');
         return;
       }
       if (!window.storage || !window.storageApi) {
-        window.showToast('Storage 未初始化，請重新整理頁面再試', '⚠️');
+        window.showToast(window.t('admin.s111', 'Storage 未初始化，請重新整理頁面再試'), '⚠️');
         return;
       }
       const oldUrl = adminLandingDraft.images[imgKey];
-      window.showToast('上傳中圖片…', '📤');
+      window.showToast(window.t('admin.s123', '上傳中圖片…'), '📤');
       try {
         const { blob, mimeType } = await compressImageFileToBlob(file, 600, 0.9);
         const ext = mimeType === 'image/webp' ? 'webp' : (mimeType === 'image/png' ? 'png' : 'jpg');
@@ -2695,10 +2695,10 @@
         const downloadUrl = await window.storageApi.getDownloadURL(fileRef);
         adminLandingDraft.images[imgKey] = downloadUrl;
         renderAdminLandingTab();
-        window.showToast('圖片上傳成功，請點擊「儲存全部改動」才會正式生效', '🎉');
+        window.showToast(window.t('admin.s124', '圖片上傳成功，請點擊「儲存全部改動」才會正式生效'), '🎉');
         tryDeleteOldGachaStoragePhoto(oldUrl); // best-effort，呢個函式其實通用，唔止扭蛋貼紙先用得
       } catch (err) {
-        window.showToast('圖片上傳失敗：' + (err.message || err), '❌');
+        window.showToast(window.t('admin.s114', '圖片上傳失敗：') + (err.message || err), '❌');
       }
     };
 
@@ -2719,14 +2719,14 @@
         updatedBy: window.currentUser ? window.currentUser.email : null
       };
       const btn = document.getElementById('btn-admin-save-landing');
-      if (btn) { btn.disabled = true; btn.innerText = '儲存中…'; }
+      if (btn) { btn.disabled = true; btn.innerText = window.t('admin.s136', '儲存中…'); }
       try {
         await window.fs.setDoc(window.fs.doc(window.db, 'admin_config', 'landingContent'), payload);
-        window.showToast('Landing page 設定已儲存，即時對所有訪客生效！', '🎉');
+        window.showToast(window.t('admin.s375', 'Landing page 設定已儲存，即時對所有訪客生效！'), '🎉');
       } catch (err) {
-        window.showToast('儲存失敗：' + (err.message || err), '❌');
+        window.showToast(window.t('admin.s138', '儲存失敗：') + (err.message || err), '❌');
       } finally {
-        if (btn) { btn.disabled = false; btn.innerText = '儲存全部改動'; }
+        if (btn) { btn.disabled = false; btn.innerText = window.t('admin.s100', '儲存全部改動'); }
       }
     };
 
@@ -2781,7 +2781,7 @@
         console.error('讀取 Landing page 設定失敗:', err);
         landingConfigLoaded = true; // 唔好卡死喺「載入中...」畫面，起碼俾程式碼入面寫死嘅預設值可以用
         if (typeof window.isCurrentUserAdmin === 'function' && window.isCurrentUserAdmin()) {
-          window.showToast('讀取 Landing page 設定失敗（可能是 Firestore 規則未生效）：' + (err.message || err), '⚠️');
+          window.showToast(window.t('admin.s376', '讀取 Landing page 設定失敗（可能是 Firestore 規則未生效）：') + (err.message || err), '⚠️');
         }
       });
     }
@@ -2809,7 +2809,7 @@
 
       if (!adminScoringDraft) {
         if (!scoringConfigLoaded) {
-          container.innerHTML = '<p style="text-align:center; color:#999; padding:20px;">正在載入計分規則…</p>';
+          container.innerHTML = ('<p style="text-align:center; color:#999; padding:20px;">' + window.t('admin.s377', '正在載入計分規則…') + '</p>');
           return; // Firestore 資料一到，loadScoringRulesFromFirestore() 會自動再 render 多次
         }
         adminScoringDraft = {
@@ -2820,19 +2820,19 @@
 
       container.innerHTML = `
         <div class="admin-card">
-          <h3 style="font-size:16px; font-weight:bold; color:var(--brand-800); margin-bottom:14px;">計分規則</h3>
-          <p style="font-size:13px; color:#888; margin-bottom:16px;">這裏的數值會即時影響全站學生在視訊溫習室可獲得的 PTS，修改後請先核對清楚再儲存。</p>
+          <h3 style="font-size:16px; font-weight:bold; color:var(--brand-800); margin-bottom:14px;">${window.t('admin.s378', '計分規則')}</h3>
+          <p style="font-size:13px; color:#888; margin-bottom:16px;">${window.t('admin.s379', '這裏的數值會即時影響全站學生在視訊溫習室可獲得的 PTS，修改後請先核對清楚再儲存。')}</p>
           <div style="margin-bottom:18px;">
-            <label style="font-size:13px; font-weight:bold; color:var(--brand-700); display:block; margin-bottom:6px;">每專注溫習 1 分鐘可獲得的 PTS</label>
+            <label style="font-size:13px; font-weight:bold; color:var(--brand-700); display:block; margin-bottom:6px;">${window.t('admin.s380', '每專注溫習 1 分鐘可獲得的 PTS')}</label>
             <input type="number" min="1" step="1" value="${adminScoringDraft.ptsPerMinute}" style="width:120px; font-size:15px; padding:8px 10px; border:1px solid #DCE5F4; border-radius:6px;" oninput="adminUpdateScoringDraft('ptsPerMinute', this.value)">
           </div>
           <div style="margin-bottom:10px;">
-            <label style="font-size:13px; font-weight:bold; color:var(--brand-700); display:block; margin-bottom:6px;">確認「仍在學習」彈窗後額外可獲得的 PTS</label>
+            <label style="font-size:13px; font-weight:bold; color:var(--brand-700); display:block; margin-bottom:6px;">${window.t('admin.s381', '確認「仍在學習」彈窗後額外可獲得的 PTS')}</label>
             <input type="number" min="1" step="1" value="${adminScoringDraft.presenceCheckBonus}" style="width:120px; font-size:15px; padding:8px 10px; border:1px solid #DCE5F4; border-radius:6px;" oninput="adminUpdateScoringDraft('presenceCheckBonus', this.value)">
           </div>
         </div>
         <div style="text-align:center; margin-top:16px;">
-          <button type="button" class="btn btn-primary" id="btn-admin-save-scoring" style="padding:12px 32px; font-size:15px;" onclick="adminSaveScoringRules()">儲存計分規則</button>
+          <button type="button" class="btn btn-primary" id="btn-admin-save-scoring" style="padding:12px 32px; font-size:15px;" onclick="adminSaveScoringRules()">${window.t('admin.s382', '儲存計分規則')}</button>
         </div>
       `;
     }
@@ -2847,7 +2847,7 @@
     window.adminSaveScoringRules = async function() {
       if (!adminScoringDraft) return;
       if (!(adminScoringDraft.ptsPerMinute > 0) || !(adminScoringDraft.presenceCheckBonus > 0)) {
-        window.showToast('兩個數值都要大於 0', '⚠️');
+        window.showToast(window.t('admin.s383', '兩個數值都要大於 0'), '⚠️');
         return;
       }
       const payload = {
@@ -2857,14 +2857,14 @@
         updatedBy: window.currentUser ? window.currentUser.email : null
       };
       const btn = document.getElementById('btn-admin-save-scoring');
-      if (btn) { btn.disabled = true; btn.innerText = '儲存中…'; }
+      if (btn) { btn.disabled = true; btn.innerText = window.t('admin.s136', '儲存中…'); }
       try {
         await window.fs.setDoc(window.fs.doc(window.db, 'admin_config', 'scoringRules'), payload);
-        window.showToast('計分規則已儲存，即時對所有用戶生效！（伺服器端最多需要30秒追上最新設定）', '🎉');
+        window.showToast(window.t('admin.s384', '計分規則已儲存，即時對所有用戶生效！（伺服器端最多需要30秒追上最新設定）'), '🎉');
       } catch (err) {
-        window.showToast('儲存失敗：' + (err.message || err), '❌');
+        window.showToast(window.t('admin.s138', '儲存失敗：') + (err.message || err), '❌');
       } finally {
-        if (btn) { btn.disabled = false; btn.innerText = '儲存計分規則'; }
+        if (btn) { btn.disabled = false; btn.innerText = window.t('admin.s382', '儲存計分規則'); }
       }
     };
 
@@ -2890,7 +2890,7 @@
         console.error('讀取計分規則設定失敗:', err);
         scoringConfigLoaded = true;
         if (typeof window.isCurrentUserAdmin === 'function' && window.isCurrentUserAdmin()) {
-          window.showToast('讀取計分規則設定失敗（可能是 Firestore 規則未生效）：' + (err.message || err), '⚠️');
+          window.showToast(window.t('admin.s385', '讀取計分規則設定失敗（可能是 Firestore 規則未生效）：') + (err.message || err), '⚠️');
         }
       });
     }
@@ -2915,7 +2915,7 @@
 
       if (!adminRoomSettingsDraft) {
         if (!roomSettingsConfigLoaded) {
-          container.innerHTML = '<p style="text-align:center; color:#999; padding:20px;">載入中房間設定...</p>';
+          container.innerHTML = ('<p style="text-align:center; color:#999; padding:20px;">' + window.t('admin.s386', '載入中房間設定...') + '</p>');
           return; // Firestore 資料一到，loadRoomSettingsFromFirestore() 會自動再 render 多次
         }
         const s = window.ROOM_SETTINGS || {};
@@ -2936,35 +2936,35 @@
       container.innerHTML = `
         <div id="admin-scoring-section"></div>
         <div class="admin-card" style="margin-top:24px;">
-          <h3 style="font-size:16px; font-weight:bold; color:var(--brand-800); margin-bottom:14px;">人數上限選項</h3>
-          <p style="font-size:13px; color:#888; margin-bottom:16px;">學生建立溫習房時可選擇的人數上限（只有 2 人房及 4 人房兩種，因為視訊畫面只支援這兩種排列）。</p>
+          <h3 style="font-size:16px; font-weight:bold; color:var(--brand-800); margin-bottom:14px;">${window.t('admin.s389', '人數上限選項')}</h3>
+          <p style="font-size:13px; color:#888; margin-bottom:16px;">${window.t('admin.s390', '學生建立溫習房時可選擇的人數上限（只有 2 人房及 4 人房兩種，因為視訊畫面只支援這兩種排列）。')}</p>
           <label style="display:flex; align-items:center; gap:8px; font-size:14px; margin-bottom:10px; cursor:pointer;">
-            <input type="checkbox" ${d.capacity2Enabled ? 'checked' : ''} onchange="adminUpdateRoomSettingsDraft('capacity2Enabled', this.checked)"> 開放「2 人房」選項
+            <input type="checkbox" ${d.capacity2Enabled ? 'checked' : ''} onchange="adminUpdateRoomSettingsDraft('capacity2Enabled', this.checked)"> ${window.t('admin.s391', '開放「2 人房」選項')}
           </label>
           <label style="display:flex; align-items:center; gap:8px; font-size:14px; margin-bottom:16px; cursor:pointer;">
-            <input type="checkbox" ${d.capacity4Enabled ? 'checked' : ''} onchange="adminUpdateRoomSettingsDraft('capacity4Enabled', this.checked)"> 開放「4 人房」選項
+            <input type="checkbox" ${d.capacity4Enabled ? 'checked' : ''} onchange="adminUpdateRoomSettingsDraft('capacity4Enabled', this.checked)"> ${window.t('admin.s392', '開放「4 人房」選項')}
           </label>
           <div>
-            <label style="font-size:13px; font-weight:bold; color:var(--brand-700); display:block; margin-bottom:6px;">預設人數上限（開啟表格時預先選取）</label>
+            <label style="font-size:13px; font-weight:bold; color:var(--brand-700); display:block; margin-bottom:6px;">${window.t('admin.s393', '預設人數上限（開啟表格時預先選取）')}</label>
             <select style="width:160px; font-size:15px; padding:8px 10px; border:1px solid #DCE5F4; border-radius:6px;" onchange="adminUpdateRoomSettingsDraft('defaultCapacity', this.value)">
-              ${capacityChoicesNow.map(n => `<option value="${n}" ${d.defaultCapacity === n ? 'selected' : ''}>${n} 人房</option>`).join('') || '<option value="">（請先開放最少一個選項）</option>'}
+              ${capacityChoicesNow.map(n => `<option value="${n}" ${d.defaultCapacity === n ? 'selected' : ''}>${n} ${window.t('admin.s387', '人房')}</option>`).join('') || ('<option value="">' + window.t('admin.s388', '（請先開放最少一個選項）') + '</option>')}
             </select>
           </div>
         </div>
         <div class="admin-card" style="margin-top:16px;">
-          <h3 style="font-size:16px; font-weight:bold; color:var(--brand-800); margin-bottom:14px;">預計溫習時間選項</h3>
-          <p style="font-size:13px; color:#888; margin-bottom:16px;">此時間只會顯示在公開大廳的房間列表，供其他同學參考，房間不會因時間到而自動結束。可自由增減分鐘選項。</p>
+          <h3 style="font-size:16px; font-weight:bold; color:var(--brand-800); margin-bottom:14px;">${window.t('admin.s394', '預計溫習時間選項')}</h3>
+          <p style="font-size:13px; color:#888; margin-bottom:16px;">${window.t('admin.s395', '此時間只會顯示在公開大廳的房間列表，供其他同學參考，房間不會因時間到而自動結束。可自由增減分鐘選項。')}</p>
           <div style="margin-bottom:16px;">
-            <label style="font-size:13px; font-weight:bold; color:var(--brand-700); display:block; margin-bottom:6px;">分鐘選項（以逗號分隔，例如：15, 30, 40, 45, 60）</label>
+            <label style="font-size:13px; font-weight:bold; color:var(--brand-700); display:block; margin-bottom:6px;">${window.t('admin.s396', '分鐘選項（以逗號分隔，例如：15, 30, 40, 45, 60）')}</label>
             <input type="text" value="${d.durationOptionsText}" style="width:100%; max-width:420px; font-size:15px; padding:8px 10px; border:1px solid #DCE5F4; border-radius:6px;" oninput="adminUpdateRoomSettingsDraft('durationOptionsText', this.value)">
           </div>
           <div>
-            <label style="font-size:13px; font-weight:bold; color:var(--brand-700); display:block; margin-bottom:6px;">預設溫習時間（分鐘，開啟表格時預先選取）</label>
+            <label style="font-size:13px; font-weight:bold; color:var(--brand-700); display:block; margin-bottom:6px;">${window.t('admin.s397', '預設溫習時間（分鐘，開啟表格時預先選取）')}</label>
             <input type="number" min="1" step="1" value="${d.defaultDuration}" style="width:160px; font-size:15px; padding:8px 10px; border:1px solid #DCE5F4; border-radius:6px;" oninput="adminUpdateRoomSettingsDraft('defaultDuration', this.value)">
           </div>
         </div>
         <div style="text-align:center; margin-top:16px;">
-          <button type="button" class="btn btn-primary" id="btn-admin-save-roomsettings" style="padding:12px 32px; font-size:15px;" onclick="adminSaveRoomSettings()">儲存房間設定</button>
+          <button type="button" class="btn btn-primary" id="btn-admin-save-roomsettings" style="padding:12px 32px; font-size:15px;" onclick="adminSaveRoomSettings()">${window.t('admin.s398', '儲存房間設定')}</button>
         </div>
       `;
       renderAdminScoringTab();
@@ -2992,7 +2992,7 @@
       const d = adminRoomSettingsDraft;
 
       if (!d.capacity2Enabled && !d.capacity4Enabled) {
-        window.showToast('「2 人房」和「4 人房」不可以同時關閉，最少要開放一個', '⚠️');
+        window.showToast(window.t('admin.s399', '「2 人房」和「4 人房」不可以同時關閉，最少要開放一個'), '⚠️');
         return;
       }
 
@@ -3005,7 +3005,7 @@
       )).sort((a, b) => a - b);
 
       if (durationOptions.length === 0) {
-        window.showToast('最少要有一個有效的溫習時間選項（正整數分鐘數）', '⚠️');
+        window.showToast(window.t('admin.s400', '最少要有一個有效的溫習時間選項（正整數分鐘數）'), '⚠️');
         return;
       }
 
@@ -3025,14 +3025,14 @@
         updatedBy: window.currentUser ? window.currentUser.email : null
       };
       const btn = document.getElementById('btn-admin-save-roomsettings');
-      if (btn) { btn.disabled = true; btn.innerText = '儲存中…'; }
+      if (btn) { btn.disabled = true; btn.innerText = window.t('admin.s136', '儲存中…'); }
       try {
         await window.fs.setDoc(window.fs.doc(window.db, 'admin_config', 'roomSettings'), payload);
-        window.showToast('房間設定已儲存，即時對所有用戶生效！', '🎉');
+        window.showToast(window.t('admin.s401', '房間設定已儲存，即時對所有用戶生效！'), '🎉');
       } catch (err) {
-        window.showToast('儲存失敗：' + (err.message || err), '❌');
+        window.showToast(window.t('admin.s138', '儲存失敗：') + (err.message || err), '❌');
       } finally {
-        if (btn) { btn.disabled = false; btn.innerText = '儲存全部改動'; }
+        if (btn) { btn.disabled = false; btn.innerText = window.t('admin.s100', '儲存全部改動'); }
       }
     };
 
@@ -3061,7 +3061,7 @@
         console.error('讀取房間設定失敗:', err);
         roomSettingsConfigLoaded = true;
         if (typeof window.isCurrentUserAdmin === 'function' && window.isCurrentUserAdmin()) {
-          window.showToast('讀取房間設定失敗（可能是 Firestore 規則未生效）：' + (err.message || err), '⚠️');
+          window.showToast(window.t('admin.s402', '讀取房間設定失敗（可能是 Firestore 規則未生效）：') + (err.message || err), '⚠️');
         }
       });
     }
@@ -3081,11 +3081,11 @@
     let antiIdleConfigLoaded = false;
 
     const ANTI_IDLE_FIELDS = [
-      { key: 'presenceCheckIntervalMin', label: '「仍在溫習緊？」確認彈窗，相隔幾多分鐘出現一次' },
-      { key: 'presenceResponseMin', label: '彈窗出現之後，幾多分鐘內未確認就會暫停計分' },
-      { key: 'micOpenLimitMin', label: '每次開咪，最多可以連續開幾多分鐘' },
-      { key: 'micCooldownMin', label: '開咪撞到上限之後，要冷卻（鎖住咪掣）幾多分鐘先可以再開' },
-      { key: 'micIdleResetMin', label: '主動關咪、未撞到上限嘅情況下，連續幾多分鐘冇再開咪就當完全休息返、重新計過開咪時限' }
+      { key: 'presenceCheckIntervalMin', label: window.t('admin.s403', '「仍在溫習緊？」確認彈窗，相隔幾多分鐘出現一次') },
+      { key: 'presenceResponseMin', label: window.t('admin.s404', '彈窗出現之後，幾多分鐘內未確認就會暫停計分') },
+      { key: 'micOpenLimitMin', label: window.t('admin.s405', '每次開咪，最多可以連續開幾多分鐘') },
+      { key: 'micCooldownMin', label: window.t('admin.s406', '開咪撞到上限之後，要冷卻（鎖住咪掣）幾多分鐘先可以再開') },
+      { key: 'micIdleResetMin', label: window.t('admin.s407', '主動關咪、未撞到上限嘅情況下，連續幾多分鐘冇再開咪就當完全休息返、重新計過開咪時限') }
     ];
 
     function renderAdminAntiIdleTab() {
@@ -3094,7 +3094,7 @@
 
       if (!adminAntiIdleDraft) {
         if (!antiIdleConfigLoaded) {
-          container.innerHTML = '<p style="text-align:center; color:#999; padding:20px;">載入中防掛機參數設定...</p>';
+          container.innerHTML = ('<p style="text-align:center; color:#999; padding:20px;">' + window.t('admin.s408', '載入中防掛機參數設定...') + '</p>');
           return; // Firestore 資料一到，loadAntiIdleRulesFromFirestore() 會自動再 render 多次
         }
         const r = window.ANTI_IDLE_RULES || {};
@@ -3110,17 +3110,17 @@
       const d = adminAntiIdleDraft;
       container.innerHTML = `
         <div class="admin-card">
-          <h3 style="font-size:16px; font-weight:bold; color:var(--brand-800); margin-bottom:14px;">視訊溫習室防掛機參數</h3>
-          <p style="font-size:13px; color:#888; margin-bottom:16px;">這組數值用作防止學生掛機或開着鏡頭不理會而賺取積分，單位均為「分鐘」，請核實後才儲存。已在房內的學生不會即時生效，要待下次入房或開咪時才套用新數值。</p>
+          <h3 style="font-size:16px; font-weight:bold; color:var(--brand-800); margin-bottom:14px;">${window.t('admin.s409', '視訊溫習室防掛機參數')}</h3>
+          <p style="font-size:13px; color:#888; margin-bottom:16px;">${window.t('admin.s410', '這組數值用作防止學生掛機或開着鏡頭不理會而賺取積分，單位均為「分鐘」，請核實後才儲存。已在房內的學生不會即時生效，要待下次入房或開咪時才套用新數值。')}</p>
           ${ANTI_IDLE_FIELDS.map(f => `
             <div style="margin-bottom:16px;">
               <label style="font-size:13px; font-weight:bold; color:var(--brand-700); display:block; margin-bottom:6px;">${f.label}</label>
-              <input type="number" min="1" step="1" value="${d[f.key]}" style="width:120px; font-size:15px; padding:8px 10px; border:1px solid #DCE5F4; border-radius:6px;" oninput="adminUpdateAntiIdleDraft('${f.key}', this.value)"> 分鐘
+              <input type="number" min="1" step="1" value="${d[f.key]}" style="width:120px; font-size:15px; padding:8px 10px; border:1px solid #DCE5F4; border-radius:6px;" oninput="adminUpdateAntiIdleDraft('${f.key}', this.value)"> ${window.t('unit.minutes', '分鐘')}
             </div>
           `).join('')}
         </div>
         <div style="text-align:center; margin-top:16px;">
-          <button type="button" class="btn btn-primary" id="btn-admin-save-antiidle" style="padding:12px 32px; font-size:15px;" onclick="adminSaveAntiIdleRules()">儲存全部改動</button>
+          <button type="button" class="btn btn-primary" id="btn-admin-save-antiidle" style="padding:12px 32px; font-size:15px;" onclick="adminSaveAntiIdleRules()">${window.t('admin.s100', '儲存全部改動')}</button>
         </div>
       `;
     }
@@ -3137,7 +3137,7 @@
       const d = adminAntiIdleDraft;
       const allValid = ANTI_IDLE_FIELDS.every(f => d[f.key] > 0);
       if (!allValid) {
-        window.showToast('所有數值都要大於 0', '⚠️');
+        window.showToast(window.t('admin.s411', '所有數值都要大於 0'), '⚠️');
         return;
       }
       const payload = {
@@ -3150,14 +3150,14 @@
         updatedBy: window.currentUser ? window.currentUser.email : null
       };
       const btn = document.getElementById('btn-admin-save-antiidle');
-      if (btn) { btn.disabled = true; btn.innerText = '儲存中…'; }
+      if (btn) { btn.disabled = true; btn.innerText = window.t('admin.s136', '儲存中…'); }
       try {
         await window.fs.setDoc(window.fs.doc(window.db, 'admin_config', 'antiIdleRules'), payload);
-        window.showToast('防掛機參數已儲存，即時對所有用戶生效（已在房內的學生要下次入房或開啟麥克風後才會套用新數值）！', '🎉');
+        window.showToast(window.t('admin.s412', '防掛機參數已儲存，即時對所有用戶生效（已在房內的學生要下次入房或開啟麥克風後才會套用新數值）！'), '🎉');
       } catch (err) {
-        window.showToast('儲存失敗：' + (err.message || err), '❌');
+        window.showToast(window.t('admin.s138', '儲存失敗：') + (err.message || err), '❌');
       } finally {
-        if (btn) { btn.disabled = false; btn.innerText = '儲存全部改動'; }
+        if (btn) { btn.disabled = false; btn.innerText = window.t('admin.s100', '儲存全部改動'); }
       }
     };
 
@@ -3181,7 +3181,7 @@
         console.error('讀取防掛機參數設定失敗:', err);
         antiIdleConfigLoaded = true;
         if (typeof window.isCurrentUserAdmin === 'function' && window.isCurrentUserAdmin()) {
-          window.showToast('讀取防掛機參數設定失敗（可能是 Firestore 規則未生效）：' + (err.message || err), '⚠️');
+          window.showToast(window.t('admin.s413', '讀取防掛機參數設定失敗（可能是 Firestore 規則未生效）：') + (err.message || err), '⚠️');
         }
       });
     }
@@ -3200,14 +3200,14 @@
     // 器端計數，唔使下載晒成批文件，比較慳。
     // v1.200.0：為所有現有用戶補建 publicProfiles（其他用戶睇資料卡用）。
     window.adminBackfillPublicProfiles = async function(btn) {
-      if (!(await window.appConfirm('確定要為所有用戶同步公開資料卡？用戶較多時可能需要一至兩分鐘。'))) return;
+      if (!(await window.appConfirm(window.t('admin.s414', '確定要為所有用戶同步公開資料卡？用戶較多時可能需要一至兩分鐘。')))) return;
       const original = btn ? btn.innerText : '';
-      if (btn) { btn.disabled = true; btn.innerText = '同步中…'; }
+      if (btn) { btn.disabled = true; btn.innerText = window.t('admin.s415', '同步中…'); }
       try {
         const result = await window.callCloudFunction('backfillPublicProfiles', {});
-        window.showToast(`已同步 ${result && result.count != null ? result.count : 0} 位用戶的公開資料`, '✅');
+        window.showToast(`${window.t('admin.s416', '已同步')} ${result && result.count != null ? result.count : 0} ${window.t('admin.s417', '位用戶的公開資料')}`, '✅');
       } catch (e) {
-        window.showToast('同步失敗：' + (e.message || e), '❌');
+        window.showToast(window.t('admin.s418', '同步失敗：') + (e.message || e), '❌');
       } finally {
         if (btn) { btn.disabled = false; btn.innerText = original; }
       }
@@ -3283,11 +3283,11 @@
         return;
       }
       if (adminDashboardLoading && !adminDashboardStats) {
-        container.innerHTML = '<p style="text-align:center; color:#999; padding:20px;">載入中數據總覽...</p>';
+        container.innerHTML = ('<p style="text-align:center; color:#999; padding:20px;">' + window.t('admin.s419', '載入中數據總覽...') + '</p>');
         return;
       }
       if (adminDashboardStats && adminDashboardStats.error) {
-        container.innerHTML = `<div class="admin-card" style="color:#c0392b;">載入失敗：${escapeHtml(adminDashboardStats.error)}</div>`;
+        container.innerHTML = `<div class="admin-card" style="color:#c0392b;">${window.t('admin.s190', '載入失敗：')}${escapeHtml(adminDashboardStats.error)}</div>`;
         return;
       }
 
@@ -3296,24 +3296,24 @@
       const refreshingNow = adminDashboardLoading;
 
       const cards = [
-        { label: '總註冊用戶', value: s.totalUsers },
-        { label: '今日新註冊', value: s.newToday },
-        { label: '本週新註冊', value: s.newThisWeek },
-        { label: '今日活躍用戶（有登入）', value: s.activeToday },
-        { label: '目前溫習房間數', value: s.roomCount },
-        { label: '現存總 PTS（已扣除兌換）', value: s.totalPoints.toLocaleString('zh-HK') },
-        { label: '累積總溫習時數', value: s.totalHours.toLocaleString('zh-HK') + ' 小時' },
-        { label: '導師帳戶數', value: s.tutorCount },
-        { label: '停權帳戶數', value: s.suspendedCount },
-        { label: '待處理舉報', value: s.pendingReports },
-        { label: '待審批導師申請', value: s.pendingTutorApps }
+        { label: window.t('admin.s420', '總註冊用戶'), value: s.totalUsers },
+        { label: window.t('admin.s421', '今日新註冊'), value: s.newToday },
+        { label: window.t('admin.s422', '本週新註冊'), value: s.newThisWeek },
+        { label: window.t('admin.s423', '今日活躍用戶（有登入）'), value: s.activeToday },
+        { label: window.t('admin.s424', '目前溫習房間數'), value: s.roomCount },
+        { label: window.t('admin.s425', '現存總 PTS（已扣除兌換）'), value: s.totalPoints.toLocaleString('zh-HK') },
+        { label: window.t('admin.s426', '累積總溫習時數'), value: s.totalHours.toLocaleString('zh-HK') + window.t('admin.s427', ' 小時') },
+        { label: window.t('admin.s428', '導師帳戶數'), value: s.tutorCount },
+        { label: window.t('admin.s429', '停權帳戶數'), value: s.suspendedCount },
+        { label: window.t('admin.s430', '待處理舉報'), value: s.pendingReports },
+        { label: window.t('admin.s431', '待審批導師申請'), value: s.pendingTutorApps }
       ];
 
       container.innerHTML = `
         <div class="admin-card" style="margin-bottom:16px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
-          <p style="font-size:13px; color:#888; margin:0;">數據截至：${lastUpdateText}（讀取當刻的快照，不會自動更新；如需最新數字，請點擊右邊的按鈕）</p>
-          <button type="button" class="btn btn-outline" style="font-size:13px; padding:6px 14px;" ${refreshingNow ? 'disabled' : ''} onclick="window.adminRefreshDashboard()">${refreshingNow ? '更新中…' : '重新整理'}</button>
-          <button type="button" class="btn btn-outline" style="font-size:13px; padding:6px 14px;" onclick="window.adminBackfillPublicProfiles(this)" title="為所有用戶建立／更新公開資料卡（用戶名、頭像、學校等）。系統更新後執行一次即可，重複執行亦無影響。">同步公開資料</button>
+          <p style="font-size:13px; color:#888; margin:0;">${window.t('admin.s433', '數據截至：')}${lastUpdateText}${window.t('admin.s434', '（讀取當刻的快照，不會自動更新；如需最新數字，請點擊右邊的按鈕）')}</p>
+          <button type="button" class="btn btn-outline" style="font-size:13px; padding:6px 14px;" ${refreshingNow ? 'disabled' : ''} onclick="window.adminRefreshDashboard()">${refreshingNow ? window.t('admin.s432', '更新中…') : window.t('admin.s221', '重新整理')}</button>
+          <button type="button" class="btn btn-outline" style="font-size:13px; padding:6px 14px;" onclick="window.adminBackfillPublicProfiles(this)" title="${window.t('admin.s435', '為所有用戶建立／更新公開資料卡（用戶名、頭像、學校等）。系統更新後執行一次即可，重複執行亦無影響。')}">${window.t('admin.s436', '同步公開資料')}</button>
         </div>
         <div class="admin-stat-grid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:14px;">
           ${cards.map(c => `
@@ -3347,7 +3347,7 @@
 
       if (!adminAnnouncementDraft) {
         if (!announcementConfigLoaded) {
-          container.innerHTML = '<p style="text-align:center; color:#999; padding:20px;">載入中全站公告設定...</p>';
+          container.innerHTML = ('<p style="text-align:center; color:#999; padding:20px;">' + window.t('admin.s437', '載入中全站公告設定...') + '</p>');
           return; // Firestore 資料一到，loadSiteAnnouncementFromFirestore() 會自動再 render 多次
         }
         const a = window.SITE_ANNOUNCEMENT_RAW || {};
@@ -3364,40 +3364,40 @@
 
       const d = adminAnnouncementDraft;
       const typeOptions = [
-        { v: 'info', label: '📘 一般資訊（藍色）' },
-        { v: 'warning', label: '📙 注意事項（橙黃色）' },
-        { v: 'urgent', label: '📕 緊急／重要（紅色）' }
+        { v: 'info', label: window.t('admin.s438', '📘 一般資訊（藍色）') },
+        { v: 'warning', label: window.t('admin.s439', '📙 注意事項（橙黃色）') },
+        { v: 'urgent', label: window.t('admin.s440', '📕 緊急／重要（紅色）') }
       ];
 
       container.innerHTML = `
         <div class="admin-card">
-          <h3 style="font-size:16px; font-weight:bold; color:var(--brand-800); margin-bottom:14px;">全站公告橫幅</h3>
-          <p style="font-size:13px; color:#888; margin-bottom:16px;">顯示於整個網站最頂部（登入前首頁及登入後主應用均會看到）。訪客可以點擊關閉，關閉後除非公告文字有所修改，否則不會再次顯示。</p>
+          <h3 style="font-size:16px; font-weight:bold; color:var(--brand-800); margin-bottom:14px;">${window.t('admin.s441', '全站公告橫幅')}</h3>
+          <p style="font-size:13px; color:#888; margin-bottom:16px;">${window.t('admin.s442', '顯示於整個網站最頂部（登入前首頁及登入後主應用均會看到）。訪客可以點擊關閉，關閉後除非公告文字有所修改，否則不會再次顯示。')}</p>
           <label style="display:flex; align-items:center; gap:8px; font-size:14px; margin-bottom:18px; cursor:pointer;">
-            <input type="checkbox" ${d.enabled ? 'checked' : ''} onchange="adminUpdateAnnouncementDraft('enabled', this.checked)"> 開啟公告橫幅
+            <input type="checkbox" ${d.enabled ? 'checked' : ''} onchange="adminUpdateAnnouncementDraft('enabled', this.checked)"> ${window.t('admin.s443', '開啟公告橫幅')}
           </label>
           <div style="margin-bottom:18px;">
-            <label style="font-size:13px; font-weight:bold; color:var(--brand-700); display:block; margin-bottom:6px;">顏色／緊急程度</label>
+            <label style="font-size:13px; font-weight:bold; color:var(--brand-700); display:block; margin-bottom:6px;">${window.t('admin.s444', '顏色／緊急程度')}</label>
             <select style="width:220px; font-size:15px; padding:8px 10px; border:1px solid #DCE5F4; border-radius:6px;" onchange="adminUpdateAnnouncementDraft('type', this.value)">
               ${typeOptions.map(o => `<option value="${o.v}" ${d.type === o.v ? 'selected' : ''}>${o.label}</option>`).join('')}
             </select>
           </div>
           <div style="margin-bottom:14px;">
-            <label style="font-size:13px; font-weight:bold; color:var(--brand-700); display:block; margin-bottom:6px;">公告內容（繁體中文）</label>
+            <label style="font-size:13px; font-weight:bold; color:var(--brand-700); display:block; margin-bottom:6px;">${window.t('admin.s445', '公告內容（繁體中文）')}</label>
             <textarea rows="2" style="width:100%; max-width:560px; font-size:15px; padding:8px 10px; border:1px solid #DCE5F4; border-radius:6px; font-family:inherit;" oninput="adminUpdateAnnouncementMessage('zh-Hant', this.value)">${escapeHtml(d.message['zh-Hant'])}</textarea>
           </div>
           <div style="margin-bottom:14px;">
-            <label style="font-size:13px; font-weight:bold; color:var(--brand-700); display:block; margin-bottom:6px;">公告內容（English）</label>
+            <label style="font-size:13px; font-weight:bold; color:var(--brand-700); display:block; margin-bottom:6px;">${window.t('admin.s446', '公告內容（English）')}</label>
             <textarea rows="2" style="width:100%; max-width:560px; font-size:15px; padding:8px 10px; border:1px solid #DCE5F4; border-radius:6px; font-family:inherit;" oninput="adminUpdateAnnouncementMessage('en', this.value)">${escapeHtml(d.message['en'])}</textarea>
           </div>
           <div>
-            <label style="font-size:13px; font-weight:bold; color:var(--brand-700); display:block; margin-bottom:6px;">公告內容（廣東話）</label>
+            <label style="font-size:13px; font-weight:bold; color:var(--brand-700); display:block; margin-bottom:6px;">${window.t('admin.s447', '公告內容（廣東話）')}</label>
             <textarea rows="2" style="width:100%; max-width:560px; font-size:15px; padding:8px 10px; border:1px solid #DCE5F4; border-radius:6px; font-family:inherit;" oninput="adminUpdateAnnouncementMessage('yue', this.value)">${escapeHtml(d.message['yue'])}</textarea>
           </div>
-          <p style="font-size:13px; color:#999; margin-top:6px;">如某種語言留空，選擇該語言的訪客會自動顯示繁體中文版本。</p>
+          <p style="font-size:13px; color:#999; margin-top:6px;">${window.t('admin.s448', '如某種語言留空，選擇該語言的訪客會自動顯示繁體中文版本。')}</p>
         </div>
         <div style="text-align:center; margin-top:16px;">
-          <button type="button" class="btn btn-primary" id="btn-admin-save-announcement" style="padding:12px 32px; font-size:15px;" onclick="adminSaveAnnouncement()">儲存全部改動</button>
+          <button type="button" class="btn btn-primary" id="btn-admin-save-announcement" style="padding:12px 32px; font-size:15px;" onclick="adminSaveAnnouncement()">${window.t('admin.s100', '儲存全部改動')}</button>
         </div>
       `;
     }
@@ -3417,7 +3417,7 @@
       if (!adminAnnouncementDraft) return;
       const d = adminAnnouncementDraft;
       if (d.enabled && !d.message['zh-Hant'].trim()) {
-        window.showToast('開啟公告橫幅之前，最少要填寫繁體中文版本的內容', '⚠️');
+        window.showToast(window.t('admin.s449', '開啟公告橫幅之前，最少要填寫繁體中文版本的內容'), '⚠️');
         return;
       }
       const payload = {
@@ -3432,14 +3432,14 @@
         updatedBy: window.currentUser ? window.currentUser.email : null
       };
       const btn = document.getElementById('btn-admin-save-announcement');
-      if (btn) { btn.disabled = true; btn.innerText = '儲存中…'; }
+      if (btn) { btn.disabled = true; btn.innerText = window.t('admin.s136', '儲存中…'); }
       try {
         await window.fs.setDoc(window.fs.doc(window.db, 'admin_config', 'announcement'), payload);
-        window.showToast('全站公告已儲存，即時對所有訪客生效！', '🎉');
+        window.showToast(window.t('admin.s450', '全站公告已儲存，即時對所有訪客生效！'), '🎉');
       } catch (err) {
-        window.showToast('儲存失敗：' + (err.message || err), '❌');
+        window.showToast(window.t('admin.s138', '儲存失敗：') + (err.message || err), '❌');
       } finally {
-        if (btn) { btn.disabled = false; btn.innerText = '儲存全部改動'; }
+        if (btn) { btn.disabled = false; btn.innerText = window.t('admin.s100', '儲存全部改動'); }
       }
     };
 
@@ -3578,62 +3578,62 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:8px; margin-bottom:12px;">
             <h3 style="font-size:17px; font-weight:bold; color:var(--brand-800); margin:0;">${escapeHtml(d.username || '—')}${suspensionLabelHtml(d)}</h3>
             <div style="display:flex; gap:6px; flex-wrap:wrap;">
-              ${d.strikeCount > 0 ? `<button type="button" class="btn btn-outline" style="font-size:13px; padding:4px 10px;" onclick="adminResetStrikes('${uid}')">重設違規次數</button>` : ''}
-              <button type="button" class="btn ${suspended ? 'btn-primary' : 'btn-red'}" style="font-size:13px; padding:4px 10px;" onclick="adminToggleSuspendUser('${uid}', ${!suspended})">${suspended ? '解除停權' : '永久停權'}</button>
+              ${d.strikeCount > 0 ? `<button type="button" class="btn btn-outline" style="font-size:13px; padding:4px 10px;" onclick="adminResetStrikes('${uid}')">${window.t('admin.s205', '重設違規次數')}</button>` : ''}
+              <button type="button" class="btn ${suspended ? 'btn-primary' : 'btn-red'}" style="font-size:13px; padding:4px 10px;" onclick="adminToggleSuspendUser('${uid}', ${!suspended})">${suspended ? window.t('admin.s203', '解除停權') : window.t('admin.s204', '永久停權')}</button>
             </div>
           </div>
           <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(160px, 1fr)); gap:10px; font-size:13px; color:#555; margin-bottom:18px;">
-            <div><b>帳號ID：</b>${escapeHtml(d.loginId || '未設定')}</div>
-            <div><b>合資格溫習日數：</b>${typeof d.qualifiedDays === 'number' ? d.qualifiedDays + ' 日' : '未開始記錄'}</div>
+            <div><b>${window.t('admin.s463', '帳號ID：')}</b>${escapeHtml(d.loginId || window.t('lb.notSet', '未設定'))}</div>
+            <div><b>${window.t('admin.s464', '合資格溫習日數：')}</b>${typeof d.qualifiedDays === 'number' ? d.qualifiedDays + window.t('admin.s451', ' 日') : window.t('admin.s452', '未開始記錄')}</div>
             <div><b>Email：</b>${escapeHtml(displayEmail)}</div>
-            <div><b>學校：</b>${escapeHtml(d.school || '—')}</div>
-            <div><b>年級：</b>${escapeHtml(d.grade || '—')}</div>
-            <div><b>身份：</b>${d.accountType === 'tutor' ? '導師' : '學生'}</div>
-            <div><b>學校電郵：</b>${d.schoolEmailStatus === 'verified' && !d.schoolEmail ? '已驗證（管理員代設）' : d.schoolEmail ? escapeHtml(d.schoolEmail) + '（' + ({ verified: '已驗證', pendingDomain: '待審批學校', rejected: '已拒絕', revoked: '已取消' }[d.schoolEmailStatus] || '—') + '）' : '未驗證'}</div>
-            <div><b>本學年已確認學歷：</b>${typeof d.educationConfirmedYear === 'number' ? d.educationConfirmedYear + '/' + String(d.educationConfirmedYear + 1).slice(-2) : '未確認'}</div>
-            <div><b>出生年月：</b>${d.birthYear ? escapeHtml(String(d.birthYear)) + ' 年' + (d.birthMonth ? ' ' + escapeHtml(String(d.birthMonth)) + ' 月' : '') : '未填寫'}</div>
-            <div><b>現存 PTS：</b>${d.points || 0}</div>
-            <div><b>累積時數：</b>${(parseFloat(d.hours) || 0).toFixed(1)}</div>
+            <div><b>${window.t('admin.s465', '學校：')}</b>${escapeHtml(d.school || '—')}</div>
+            <div><b>${window.t('admin.s466', '年級：')}</b>${escapeHtml(d.grade || '—')}</div>
+            <div><b>${window.t('admin.s467', '身份：')}</b>${d.accountType === 'tutor' ? window.t('tutorview.defaultName', '導師') : window.t('admin.s453', '學生')}</div>
+            <div><b>${window.t('admin.s468', '學校電郵：')}</b>${d.schoolEmailStatus === 'verified' && !d.schoolEmail ? window.t('admin.s454', '已驗證（管理員代設）') : d.schoolEmail ? escapeHtml(d.schoolEmail) + '（' + ({ verified: window.t('profile.emailVerifiedBadge', '已驗證'), pendingDomain: window.t('admin.s455', '待審批學校'), rejected: window.t('admin.s456', '已拒絕'), revoked: window.t('admin.s457', '已取消') }[d.schoolEmailStatus] || '—') + '）' : window.t('profile.emailNotVerifiedBadge', '未驗證')}</div>
+            <div><b>${window.t('admin.s469', '本學年已確認學歷：')}</b>${typeof d.educationConfirmedYear === 'number' ? d.educationConfirmedYear + '/' + String(d.educationConfirmedYear + 1).slice(-2) : window.t('admin.s458', '未確認')}</div>
+            <div><b>${window.t('admin.s470', '出生年月：')}</b>${d.birthYear ? escapeHtml(String(d.birthYear)) + window.t('admin.s459', ' 年') + (d.birthMonth ? ' ' + escapeHtml(String(d.birthMonth)) + window.t('admin.s460', ' 月') : '') : window.t('common.notFilled', '未填寫')}</div>
+            <div><b>${window.t('admin.s471', '現存 PTS：')}</b>${d.points || 0}</div>
+            <div><b>${window.t('myacc.hoursLabel', '累積時數：')}</b>${(parseFloat(d.hours) || 0).toFixed(1)}</div>
             <div><b>EXP：</b>${d.exp || 0}</div>
-            <div><b>註冊時間：</b>${createdDisplay}</div>
-            <div><b>最後上線：</b>${lastLoginDisplay}</div>
+            <div><b>${window.t('admin.s472', '註冊時間：')}</b>${createdDisplay}</div>
+            <div><b>${window.t('admin.s473', '最後上線：')}</b>${lastLoginDisplay}</div>
           </div>
 
           <div style="border-top:1px solid #F0F0F0; padding-top:14px; margin-bottom:14px;">
-            <h4 style="font-size:14px; font-weight:bold; color:var(--brand-700); margin-bottom:8px;">補發／扣減 PTS</h4>
-            <p style="font-size:13px; color:#999; margin-bottom:8px;">正數為補發，負數為扣減（例如處理爭議或錯誤發放）。</p>
+            <h4 style="font-size:14px; font-weight:bold; color:var(--brand-700); margin-bottom:8px;">${window.t('admin.s474', '補發／扣減 PTS')}</h4>
+            <p style="font-size:13px; color:#999; margin-bottom:8px;">${window.t('admin.s475', '正數為補發，負數為扣減（例如處理爭議或錯誤發放）。')}</p>
             <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
               <input type="number" step="1" value="${adminSupportPointsGrantAmount}" style="width:120px; font-size:15px; padding:8px 10px; border:1px solid #DCE5F4; border-radius:6px;" oninput="adminUpdateSupportPointsAmount(this.value)">
-              <button type="button" class="btn btn-primary" style="font-size:13px; padding:6px 16px;" onclick="adminGrantSupportPoints('${uid}')">確認</button>
+              <button type="button" class="btn btn-primary" style="font-size:13px; padding:6px 16px;" onclick="adminGrantSupportPoints('${uid}')">${window.t('admin.s476', '確認')}</button>
             </div>
           </div>
 
           <div style="border-top:1px solid #F0F0F0; padding-top:14px; margin-bottom:14px;">
-            <h4 style="font-size:14px; font-weight:bold; color:var(--brand-700); margin-bottom:8px;">學校電郵驗證（管理員代為處理）</h4>
-            <p style="font-size:13px; color:#999; margin-bottom:8px;">只用於測試，或已用其他方式核實學生身份的特殊個案。中學生帳戶仍須同時符合：學歷為中學生、未滿 20 歲、已確認本學年學歷。</p>
+            <h4 style="font-size:14px; font-weight:bold; color:var(--brand-700); margin-bottom:8px;">${window.t('admin.s477', '學校電郵驗證（管理員代為處理）')}</h4>
+            <p style="font-size:13px; color:#999; margin-bottom:8px;">${window.t('admin.s478', '只用於測試，或已用其他方式核實學生身份的特殊個案。中學生帳戶仍須同時符合：學歷為中學生、未滿 20 歲、已確認本學年學歷。')}</p>
             <div style="display:flex; gap:8px; flex-wrap:wrap;">
               ${d.schoolEmailStatus === 'verified'
-                ? `<button type="button" class="btn btn-outline" style="font-size:13px; padding:6px 16px;" onclick="adminSetSchoolVerified('${uid}', false)">取消學校電郵驗證</button>`
-                : `<button type="button" class="btn btn-primary" style="font-size:13px; padding:6px 16px;" onclick="adminSetSchoolVerified('${uid}', true)">設為已驗證</button>`}
+                ? `<button type="button" class="btn btn-outline" style="font-size:13px; padding:6px 16px;" onclick="adminSetSchoolVerified('${uid}', false)">${window.t('admin.s461', '取消學校電郵驗證')}</button>`
+                : `<button type="button" class="btn btn-primary" style="font-size:13px; padding:6px 16px;" onclick="adminSetSchoolVerified('${uid}', true)">${window.t('admin.s462', '設為已驗證')}</button>`}
             </div>
           </div>
 
           <div style="border-top:1px solid #F0F0F0; padding-top:14px; margin-bottom:14px;">
-            <h4 style="font-size:14px; font-weight:bold; color:var(--brand-700); margin-bottom:8px;">更正出生年月</h4>
-            <p style="font-size:13px; color:#999; margin-bottom:8px;">用戶不能自行修改出生年月；如用戶電郵要求補填或更正，請先核實後在此修改。直播的最低開播年齡以此計算。</p>
+            <h4 style="font-size:14px; font-weight:bold; color:var(--brand-700); margin-bottom:8px;">${window.t('admin.s479', '更正出生年月')}</h4>
+            <p style="font-size:13px; color:#999; margin-bottom:8px;">${window.t('admin.s480', '用戶不能自行修改出生年月；如用戶電郵要求補填或更正，請先核實後在此修改。直播的最低開播年齡以此計算。')}</p>
             <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-              <input id="admin-birth-year-${uid}" type="number" min="1930" max="${new Date().getFullYear()}" step="1" placeholder="年份" value="${d.birthYear || ''}" style="width:110px; font-size:15px; padding:8px 10px; border:1px solid #DCE5F4; border-radius:6px;"> 年
-              <input id="admin-birth-month-${uid}" type="number" min="1" max="12" step="1" placeholder="月份" value="${d.birthMonth || ''}" style="width:80px; font-size:15px; padding:8px 10px; border:1px solid #DCE5F4; border-radius:6px;"> 月
-              <button type="button" class="btn btn-primary" style="font-size:13px; padding:6px 16px;" onclick="adminSetBirthDate('${uid}')">儲存</button>
+              <input id="admin-birth-year-${uid}" type="number" min="1930" max="${new Date().getFullYear()}" step="1" placeholder="${window.t('admin.s481', '年份')}" value="${d.birthYear || ''}" style="width:110px; font-size:15px; padding:8px 10px; border:1px solid #DCE5F4; border-radius:6px;"> ${window.t('auth.yearOption', '年')}
+              <input id="admin-birth-month-${uid}" type="number" min="1" max="12" step="1" placeholder="${window.t('admin.s482', '月份')}" value="${d.birthMonth || ''}" style="width:80px; font-size:15px; padding:8px 10px; border:1px solid #DCE5F4; border-radius:6px;"> ${window.t('auth.monthOption', '月')}
+              <button type="button" class="btn btn-primary" style="font-size:13px; padding:6px 16px;" onclick="adminSetBirthDate('${uid}')">${window.t('common.save', '儲存')}</button>
             </div>
           </div>
 
           <div style="border-top:1px solid #F0F0F0; padding-top:14px;">
-            <h4 style="font-size:14px; font-weight:bold; color:var(--brand-700); margin-bottom:8px;">補發貼紙</h4>
+            <h4 style="font-size:14px; font-weight:bold; color:var(--brand-700); margin-bottom:8px;">${window.t('admin.s483', '補發貼紙')}</h4>
             <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
               <select style="font-size:15px; padding:8px 10px; border:1px solid #DCE5F4; border-radius:6px; max-width:240px;" onchange="adminUpdateSupportStickerDraft('stickerId', this.value)">${stickerOptions}</select>
               <input type="number" min="1" step="1" value="${adminSupportStickerGrantDraft.qty}" style="width:90px; font-size:15px; padding:8px 10px; border:1px solid #DCE5F4; border-radius:6px;" oninput="adminUpdateSupportStickerDraft('qty', this.value)">
-              <button type="button" class="btn btn-primary" style="font-size:13px; padding:6px 16px;" onclick="adminGrantSupportSticker('${uid}')">確認</button>
+              <button type="button" class="btn btn-primary" style="font-size:13px; padding:6px 16px;" onclick="adminGrantSupportSticker('${uid}')">${window.t('admin.s476', '確認')}</button>
             </div>
           </div>
         </div>
@@ -3649,7 +3649,7 @@
         return;
       }
       if (adminSupportUsersCacheLoading && !adminSupportUsersCache) {
-        container.innerHTML = '<p style="text-align:center; color:#999; padding:20px;">載入中用戶資料...</p>';
+        container.innerHTML = ('<p style="text-align:center; color:#999; padding:20px;">' + window.t('admin.s484', '載入中用戶資料...') + '</p>');
         return;
       }
 
@@ -3660,19 +3660,19 @@
 
       container.innerHTML = `
         <div class="admin-card" style="margin-bottom:16px;">
-          <h3 style="font-size:16px; font-weight:bold; color:var(--brand-800); margin-bottom:10px;">搜尋用戶</h3>
+          <h3 style="font-size:16px; font-weight:bold; color:var(--brand-800); margin-bottom:10px;">${window.t('admin.s486', '搜尋用戶')}</h3>
           <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
           <form style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;" onsubmit="event.preventDefault(); adminUpdateSupportQuery(document.getElementById('admin-support-q').value);">
-            <input id="admin-support-q" type="search" enterkeyhint="search" placeholder="輸入帳號 ID／用戶名／電郵（開頭相符即可）" value="${escapeHtml(adminSupportQuery)}" style="flex:1; min-width:220px; font-size:15px; padding:8px 10px; border:1px solid #DCE5F4; border-radius:6px;">
-            <button type="submit" class="btn btn-primary" style="font-size:14px; padding:7px 18px;">搜尋</button>
+            <input id="admin-support-q" type="search" enterkeyhint="search" placeholder="${window.t('admin.s487', '輸入帳號 ID／用戶名／電郵（開頭相符即可）')}" value="${escapeHtml(adminSupportQuery)}" style="flex:1; min-width:220px; font-size:15px; padding:8px 10px; border:1px solid #DCE5F4; border-radius:6px;">
+            <button type="submit" class="btn btn-primary" style="font-size:14px; padding:7px 18px;">${window.t('social.searchBtn', '搜尋')}</button>
           </form>
-          <p style="font-size:13px; color:#999; margin-top:8px;">輸入帳號 ID、用戶名或電郵的開頭（或完整 UID），然後按「搜尋」或 Enter。</p>
+          <p style="font-size:13px; color:#999; margin-top:8px;">${window.t('admin.s488', '輸入帳號 ID、用戶名或電郵的開頭（或完整 UID），然後按「搜尋」或 Enter。')}</p>
           ${q ? `
             <div style="margin-top:12px; max-height:260px; overflow-y:auto;">
-              ${matches.length === 0 ? '<p style="color:#999; font-size:13px;">找不到相關用戶</p>' : matches.map(u => `
+              ${matches.length === 0 ? ('<p style="color:#999; font-size:13px;">' + window.t('admin.s485', '找不到相關用戶') + '</p>') : matches.map(u => `
                 <div style="padding:8px 10px; border-bottom:1px solid #F0F0F0; cursor:pointer; ${adminSupportSelectedUid === u.uid ? 'background:var(--brand-50);' : ''}" onclick="adminSelectSupportUser('${u.uid}')">
                   <b>${escapeHtml(u.data.username || '—')}</b>
-                  <span style="color:#888; font-size:13px;"> ／ ${escapeHtml(u.data.loginId || '未設定')} ／ ${escapeHtml(u.data.contactEmail || u.data.email || '—')}</span>
+                  <span style="color:#888; font-size:13px;"> ／ ${escapeHtml(u.data.loginId || window.t('lb.notSet', '未設定'))} ／ ${escapeHtml(u.data.contactEmail || u.data.email || '—')}</span>
                 </div>
               `).join('')}
             </div>
@@ -3726,7 +3726,7 @@
     // v1.228.4：管理員代用戶補填／更正出生年月（用戶自己改不到，見 firestore.rules selfUserUpdateOk）
     // v1.229.2：管理員代為設定學校電郵驗證（測試或特殊個案）
     window.adminSetSchoolVerified = async function(uid, on) {
-      if (!(await window.appConfirm(on ? '確定將這位用戶的學校電郵設為已驗證？請確認已用其他方式核實其中學生身份。' : '確定取消這位用戶的學校電郵驗證？對方將不能再進入中學生溫習室。'))) return;
+      if (!(await window.appConfirm(on ? window.t('admin.s489', '確定將這位用戶的學校電郵設為已驗證？請確認已用其他方式核實其中學生身份。') : window.t('admin.s490', '確定取消這位用戶的學校電郵驗證？對方將不能再進入中學生溫習室。')))) return;
       try {
         const upd = on
           ? { schoolEmailStatus: 'verified', schoolEmailVerifiedAt: Date.now(), schoolEmailManualBy: (window.currentUser && window.currentUser.loginId) || null }
@@ -3735,10 +3735,10 @@
         await logAdminAction(on ? '代設學校電郵已驗證' : '取消學校電郵驗證', { uid });
         const cached = adminSupportUsersCache && adminSupportUsersCache.find(u => u.uid === uid);
         if (cached) Object.assign(cached.data, upd);
-        window.showToast('已更新', '✅');
+        window.showToast(window.t('admin.s491', '已更新'), '✅');
         renderAdminSupportTab();
       } catch (err) {
-        window.showToast('更新失敗：' + (err.message || err), '❌');
+        window.showToast(window.t('tutor.s66', '更新失敗：') + (err.message || err), '❌');
       }
     };
 
@@ -3746,31 +3746,31 @@
       const y = parseInt((document.getElementById('admin-birth-year-' + uid) || {}).value, 10);
       const m = parseInt((document.getElementById('admin-birth-month-' + uid) || {}).value, 10);
       const thisYear = new Date().getFullYear();
-      if (!(y >= 1930 && y <= thisYear) || !(m >= 1 && m <= 12)) { window.showToast('請輸入有效的年份及月份', '⚠️'); return; }
-      if (!(await window.appConfirm(`確定將這位用戶的出生年月設為 ${y} 年 ${m} 月？`))) return;
+      if (!(y >= 1930 && y <= thisYear) || !(m >= 1 && m <= 12)) { window.showToast(window.t('admin.s492', '請輸入有效的年份及月份'), '⚠️'); return; }
+      if (!(await window.appConfirm(`${window.t('admin.s493', '確定將這位用戶的出生年月設為')} ${y} ${window.t('auth.yearOption', '年')} ${m} ${window.t('admin.s494', '月？')}`))) return;
       try {
         await window.fs.updateDoc(window.fs.doc(window.db, 'users', uid), { birthYear: y, birthMonth: m });
         await logAdminAction('更正出生年月', { uid, birthYear: y, birthMonth: m });
         const cached = adminSupportUsersCache && adminSupportUsersCache.find(u => u.uid === uid);
         if (cached) { cached.data.birthYear = y; cached.data.birthMonth = m; }
-        window.showToast('已更新出生年月', '✅');
+        window.showToast(window.t('admin.s495', '已更新出生年月'), '✅');
         renderAdminSupportTab();
       } catch (err) {
-        window.showToast('更新失敗：' + (err.message || err), '❌');
+        window.showToast(window.t('tutor.s66', '更新失敗：') + (err.message || err), '❌');
       }
     };
 
     window.adminGrantSupportPoints = async function(uid) {
       const amount = adminSupportPointsGrantAmount;
       if (!amount) {
-        window.showToast('請輸入不是 0 的數值', '⚠️');
+        window.showToast(window.t('admin.s496', '請輸入不是 0 的數值'), '⚠️');
         return;
       }
-      if (!(await window.appConfirm(`確定為這位用戶${amount > 0 ? '補發' : '扣減'} ${Math.abs(amount)} PTS？`))) return;
+      if (!(await window.appConfirm(`${window.t('admin.s499', '確定為這位用戶')}${amount > 0 ? window.t('admin.s497', '補發') : window.t('admin.s498', '扣減')} ${Math.abs(amount)} PTS？`))) return;
       try {
         await window.fs.updateDoc(window.fs.doc(window.db, 'users', uid), { points: window.fs.increment(amount) });
         await logAdminAction('補發／扣減PTS', { uid, amount });
-        window.showToast(`已${amount > 0 ? '補發' : '扣減'} ${Math.abs(amount)} PTS`, '✅');
+        window.showToast(`${window.t('admin.s500', '已')}${amount > 0 ? window.t('admin.s497', '補發') : window.t('admin.s498', '扣減')} ${Math.abs(amount)} PTS`, '✅');
         adminSupportPointsGrantAmount = 0;
         // 更新返cache入面嗰份本地資料，等卡片即刻反映新數值，唔使成頁
         // 重新載入先至見到最新數字
@@ -3778,7 +3778,7 @@
         if (cached) cached.data.points = (cached.data.points || 0) + amount;
         renderAdminSupportTab();
       } catch (err) {
-        window.showToast('操作失敗：' + (err.message || err), '❌');
+        window.showToast(window.t('admin.s194', '操作失敗：') + (err.message || err), '❌');
       }
     };
 
@@ -3795,21 +3795,21 @@
     window.adminGrantSupportSticker = async function(uid) {
       const { stickerId, qty } = adminSupportStickerGrantDraft;
       if (!stickerId || !(qty > 0)) {
-        window.showToast('請揀返貼紙同數量', '⚠️');
+        window.showToast(window.t('admin.s501', '請揀返貼紙同數量'), '⚠️');
         return;
       }
       const sticker = GACHA_STICKERS.find(s => s.id === stickerId);
-      if (!(await window.appConfirm(`確定為這位用戶補發 ${qty} 張「${sticker ? sticker.name : '#' + stickerId}」？`))) return;
+      if (!(await window.appConfirm(`${window.t('admin.s502', '確定為這位用戶補發')} ${qty} ${window.t('admin.s503', '張「')}${sticker ? sticker.name : '#' + stickerId}」？`))) return;
       try {
         const payload = {};
         payload['ownedStickers.' + stickerId] = window.fs.increment(qty);
         await window.fs.updateDoc(window.fs.doc(window.db, 'users', uid), payload);
         await logAdminAction('補發貼紙', { uid, stickerId, qty });
-        window.showToast(`已補發 ${qty} 張貼紙`, '✅');
+        window.showToast(`${window.t('admin.s504', '已補發')} ${qty} ${window.t('admin.s505', '張貼紙')}`, '✅');
         adminSupportStickerGrantDraft.qty = 1;
         renderAdminSupportTab();
       } catch (err) {
-        window.showToast('操作失敗：' + (err.message || err), '❌');
+        window.showToast(window.t('admin.s194', '操作失敗：') + (err.message || err), '❌');
       }
     };
 
@@ -3846,12 +3846,12 @@
       const container = document.getElementById('admin-tab-adminlist');
       if (!container) return;
       if (!isCurrentUserSuperAdmin()) {
-        container.innerHTML = '<div class="admin-card" style="color:#c0392b;">只有「超級管理員」可以查看此頁。</div>';
+        container.innerHTML = ('<div class="admin-card" style="color:#c0392b;">' + window.t('admin.s506', '只有「超級管理員」可以查看此頁。') + '</div>');
         return;
       }
       if (!adminAdminListDraft) {
         if (!adminListConfigLoaded) {
-          container.innerHTML = '<p style="text-align:center; color:#999; padding:20px;">載入中管理員名單...</p>';
+          container.innerHTML = ('<p style="text-align:center; color:#999; padding:20px;">' + window.t('admin.s507', '載入中管理員名單...') + '</p>');
           ensureAdminListLoaded();
           return;
         }
@@ -3861,42 +3861,42 @@
 
       const rows = d.entries.map((e, idx) => `
         <tr>
-          <td>${escapeHtml(e.loginId)}${e.loginId === myLoginId ? ' <span style="color:#999; font-size:12px;">（你自己）</span>' : ''}</td>
+          <td>${escapeHtml(e.loginId)}${e.loginId === myLoginId ? (' <span style="color:#999; font-size:12px;">' + window.t('admin.s508', '（你自己）') + '</span>') : ''}</td>
           <td>
             <select style="font-size:14px; padding:5px 8px; border:1px solid #DCE5F4; border-radius:6px;" onchange="adminUpdateAdminListRole(${idx}, this.value)">
-              <option value="super" ${e.role === 'super' ? 'selected' : ''}>超級管理員</option>
-              <option value="support" ${e.role === 'support' ? 'selected' : ''}>客服／支援管理員</option>
+              <option value="super" ${e.role === 'super' ? 'selected' : ''}>${window.t('admin.s509', '超級管理員')}</option>
+              <option value="support" ${e.role === 'support' ? 'selected' : ''}>${window.t('admin.s510', '客服／支援管理員')}</option>
             </select>
           </td>
-          <td><button class="btn btn-red" style="font-size:13px; padding:3px 8px;" onclick="adminRemoveAdminListEntry(${idx})">移除</button></td>
+          <td><button class="btn btn-red" style="font-size:13px; padding:3px 8px;" onclick="adminRemoveAdminListEntry(${idx})">${window.t('admin.s57', '移除')}</button></td>
         </tr>
       `).join('');
 
       container.innerHTML = `
         <div class="admin-card" style="margin-bottom:16px;">
-          <h3 style="font-size:16px; font-weight:bold; color:var(--brand-800); margin-bottom:10px;">管理員名單</h3>
-          <p style="font-size:13px; color:#888; margin-bottom:10px;"><b>超級管理員</b>可以使用全部分頁及設定；<b>客服／支援管理員</b>只會看到日常客服及巡查所需的分頁（數據總覽、用戶管理、舉報處理、導師申請、學校電郵審批、溫習室監察、疑難解答區管理），看不到網站設定（扭蛋機、計分規則等）及這兩個管治分頁。</p>
-          <p style="font-size:13px; color:#c17a2e; margin-bottom:14px;">注意：此分級主要是後台介面層面的限制（控制可以看到及點擊哪些分頁），部分設定另有資料庫規則保護，但並非完整的防內部人員保安措施，適合互相信任的小團隊使用。</p>
+          <h3 style="font-size:16px; font-weight:bold; color:var(--brand-800); margin-bottom:10px;">${window.t('html.s54', '管理員名單')}</h3>
+          <p style="font-size:13px; color:#888; margin-bottom:10px;"><b>${window.t('admin.s509', '超級管理員')}</b>${window.t('admin.s512', '可以使用全部分頁及設定；')}<b>${window.t('admin.s510', '客服／支援管理員')}</b>${window.t('admin.s513', '只會看到日常客服及巡查所需的分頁（數據總覽、用戶管理、舉報處理、導師申請、學校電郵審批、溫習室監察、疑難解答區管理），看不到網站設定（扭蛋機、計分規則等）及這兩個管治分頁。')}</p>
+          <p style="font-size:13px; color:#c17a2e; margin-bottom:14px;">${window.t('admin.s514', '注意：此分級主要是後台介面層面的限制（控制可以看到及點擊哪些分頁），部分設定另有資料庫規則保護，但並非完整的防內部人員保安措施，適合互相信任的小團隊使用。')}</p>
           <div style="overflow-x:auto;">
             <table class="admin-table">
-              <thead><tr><th>帳號ID</th><th>權限等級</th><th></th></tr></thead>
-              <tbody>${rows || '<tr><td colspan="3" style="text-align:center; color:#999;">未有任何管理員</td></tr>'}</tbody>
+              <thead><tr><th>${window.t('admin.s515', '帳號ID')}</th><th>${window.t('admin.s516', '權限等級')}</th><th></th></tr></thead>
+              <tbody>${rows || ('<tr><td colspan="3" style="text-align:center; color:#999;">' + window.t('admin.s511', '未有任何管理員') + '</td></tr>')}</tbody>
             </table>
           </div>
         </div>
         <div class="admin-card" style="margin-bottom:16px;">
-          <h3 style="font-size:15px; font-weight:bold; color:var(--brand-800); margin-bottom:10px;">新增管理員</h3>
+          <h3 style="font-size:15px; font-weight:bold; color:var(--brand-800); margin-bottom:10px;">${window.t('admin.s517', '新增管理員')}</h3>
           <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
-            <input type="text" placeholder="帳號 ID（即用戶登入用的 ID，不是電郵）" value="${escapeHtml(d.newLoginId)}" style="flex:1; min-width:220px; font-size:15px; padding:8px 10px; border:1px solid #DCE5F4; border-radius:6px;" oninput="adminUpdateAdminListNewField('newLoginId', this.value)">
+            <input type="text" placeholder="${window.t('admin.s518', '帳號 ID（即用戶登入用的 ID，不是電郵）')}" value="${escapeHtml(d.newLoginId)}" style="flex:1; min-width:220px; font-size:15px; padding:8px 10px; border:1px solid #DCE5F4; border-radius:6px;" oninput="adminUpdateAdminListNewField('newLoginId', this.value)">
             <select style="font-size:15px; padding:8px 10px; border:1px solid #DCE5F4; border-radius:6px;" onchange="adminUpdateAdminListNewField('newRole', this.value)">
-              <option value="super" ${d.newRole === 'super' ? 'selected' : ''}>超級管理員</option>
-              <option value="support" ${d.newRole === 'support' ? 'selected' : ''}>客服／支援管理員</option>
+              <option value="super" ${d.newRole === 'super' ? 'selected' : ''}>${window.t('admin.s509', '超級管理員')}</option>
+              <option value="support" ${d.newRole === 'support' ? 'selected' : ''}>${window.t('admin.s510', '客服／支援管理員')}</option>
             </select>
-            <button type="button" class="btn btn-outline" style="font-size:13px; padding:6px 16px;" onclick="adminAddAdminListEntry()">加入</button>
+            <button type="button" class="btn btn-outline" style="font-size:13px; padding:6px 16px;" onclick="adminAddAdminListEntry()">${window.t('room.inviteJoinBtn', '加入')}</button>
           </div>
         </div>
         <div style="text-align:center;">
-          <button type="button" class="btn btn-primary" id="btn-admin-save-adminlist" style="padding:12px 32px; font-size:15px;" onclick="adminSaveAdminList()">儲存全部改動</button>
+          <button type="button" class="btn btn-primary" id="btn-admin-save-adminlist" style="padding:12px 32px; font-size:15px;" onclick="adminSaveAdminList()">${window.t('admin.s100', '儲存全部改動')}</button>
         </div>
       `;
     }
@@ -3909,7 +3909,7 @@
 
     window.adminRemoveAdminListEntry = async function(idx) {
       if (!adminAdminListDraft || !adminAdminListDraft.entries[idx]) return;
-      if (!(await window.appConfirm(`確定要移除「${adminAdminListDraft.entries[idx].loginId}」的管理員身份？`))) return;
+      if (!(await window.appConfirm(`${window.t('admin.s519', '確定要移除「')}${adminAdminListDraft.entries[idx].loginId}${window.t('admin.s520', '」的管理員身份？')}`))) return;
       adminAdminListDraft.entries.splice(idx, 1);
       renderAdminAdminListTab();
     };
@@ -3922,9 +3922,9 @@
     window.adminAddAdminListEntry = function() {
       if (!adminAdminListDraft) return;
       const loginId = (adminAdminListDraft.newLoginId || '').trim();
-      if (!loginId) { window.showToast('請輸入帳號ID', '⚠️'); return; }
+      if (!loginId) { window.showToast(window.t('admin.s521', '請輸入帳號ID'), '⚠️'); return; }
       if (adminAdminListDraft.entries.some(e => e.loginId === loginId)) {
-        window.showToast('此帳號已在管理員名單內', '⚠️');
+        window.showToast(window.t('admin.s522', '此帳號已在管理員名單內'), '⚠️');
         return;
       }
       adminAdminListDraft.entries.push({ loginId, role: adminAdminListDraft.newRole || 'support' });
@@ -3936,21 +3936,21 @@
       if (!adminAdminListDraft) return;
       const entries = adminAdminListDraft.entries;
       if (entries.length === 0) {
-        window.showToast('管理員名單不可以清空，否則將無法再進入管理後台', '⚠️');
+        window.showToast(window.t('admin.s523', '管理員名單不可以清空，否則將無法再進入管理後台'), '⚠️');
         return;
       }
       const superCount = entries.filter(e => e.role === 'super').length;
       if (superCount === 0) {
-        window.showToast('最少要有一位「超級管理員」，否則沒有人可以再管理這份名單', '⚠️');
+        window.showToast(window.t('admin.s524', '最少要有一位「超級管理員」，否則沒有人可以再管理這份名單'), '⚠️');
         return;
       }
       const myLoginId = window.currentUser && window.currentUser.loginId;
       const stillAdmin = entries.some(e => e.loginId === myLoginId);
       const stillSuper = entries.some(e => e.loginId === myLoginId && e.role === 'super');
       if (!stillAdmin) {
-        if (!(await window.appConfirm('儲存後你將移除自己的管理員身份，並即時無法再進入管理後台。確定要這樣做嗎？'))) return;
+        if (!(await window.appConfirm(window.t('admin.s525', '儲存後你將移除自己的管理員身份，並即時無法再進入管理後台。確定要這樣做嗎？')))) return;
       } else if (!stillSuper) {
-        if (!(await window.appConfirm('儲存後你將會降為「客服／支援管理員」，並立即無法查看此頁及其他設定分頁。確定要這樣做嗎？'))) return;
+        if (!(await window.appConfirm(window.t('admin.s526', '儲存後你將會降為「客服／支援管理員」，並立即無法查看此頁及其他設定分頁。確定要這樣做嗎？')))) return;
       }
 
       const ids = entries.map(e => e.loginId);
@@ -3959,16 +3959,16 @@
       const payload = { ids, roles, updatedAt: Date.now(), updatedBy: window.currentUser ? window.currentUser.email : null };
 
       const btn = document.getElementById('btn-admin-save-adminlist');
-      if (btn) { btn.disabled = true; btn.innerText = '儲存中…'; }
+      if (btn) { btn.disabled = true; btn.innerText = window.t('admin.s136', '儲存中…'); }
       try {
         await window.fs.setDoc(window.fs.doc(window.db, 'admin_config', 'adminIds'), payload);
         await logAdminAction('更新管理員名單', { ids, roles });
-        window.showToast('管理員名單已儲存！', '🎉');
+        window.showToast(window.t('admin.s527', '管理員名單已儲存！'), '🎉');
         if (typeof window.loadAdminIdsFromFirestore === 'function') window.loadAdminIdsFromFirestore();
       } catch (err) {
-        window.showToast('儲存失敗：' + (err.message || err), '❌');
+        window.showToast(window.t('admin.s138', '儲存失敗：') + (err.message || err), '❌');
       } finally {
-        if (btn) { btn.disabled = false; btn.innerText = '儲存全部改動'; }
+        if (btn) { btn.disabled = false; btn.innerText = window.t('admin.s100', '儲存全部改動'); }
       }
     };
 
@@ -4002,7 +4002,7 @@
       const container = document.getElementById('admin-tab-auditlog');
       if (!container) return;
       if (!isCurrentUserSuperAdmin()) {
-        container.innerHTML = '<div class="admin-card" style="color:#c0392b;">只有「超級管理員」可以查看此頁。</div>';
+        container.innerHTML = ('<div class="admin-card" style="color:#c0392b;">' + window.t('admin.s506', '只有「超級管理員」可以查看此頁。') + '</div>');
         return;
       }
       if (!adminAuditLogEntries && !adminAuditLogLoading) {
@@ -4010,7 +4010,7 @@
         return;
       }
       if (adminAuditLogLoading && !adminAuditLogEntries) {
-        container.innerHTML = '<p style="text-align:center; color:#999; padding:20px;">載入中操作紀錄...</p>';
+        container.innerHTML = ('<p style="text-align:center; color:#999; padding:20px;">' + window.t('admin.s528', '載入中操作紀錄...') + '</p>');
         return;
       }
       const rows = adminAuditLogEntries.map(e => {
@@ -4022,14 +4022,14 @@
 
       container.innerHTML = `
         <div class="admin-card" style="margin-bottom:16px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
-          <p style="font-size:13px; color:#888; margin:0;">顯示最近 ${adminAuditLogEntries.length} 筆重要操作紀錄（停權、補發分數／貼紙、強制關房、導師審批、管理員名單異動等）。清單於打開或重新整理此頁時讀取，如需最新紀錄，請點擊右邊的按鈕。</p>
-          <button type="button" class="btn btn-outline" style="font-size:13px; padding:6px 14px;" onclick="window.adminRefreshAuditLog()">重新整理</button>
+          <p style="font-size:13px; color:#888; margin:0;">${window.t('admin.s530', '顯示最近')} ${adminAuditLogEntries.length} ${window.t('admin.s531', '筆重要操作紀錄（停權、補發分數／貼紙、強制關房、導師審批、管理員名單異動等）。清單於打開或重新整理此頁時讀取，如需最新紀錄，請點擊右邊的按鈕。')}</p>
+          <button type="button" class="btn btn-outline" style="font-size:13px; padding:6px 14px;" onclick="window.adminRefreshAuditLog()">${window.t('admin.s221', '重新整理')}</button>
         </div>
         <div class="admin-card">
           <div style="overflow-x:auto;">
             <table class="admin-table">
-              <thead><tr><th>時間</th><th>管理員</th><th>操作</th><th>詳情</th></tr></thead>
-              <tbody>${rows || '<tr><td colspan="4" style="text-align:center; color:#999;">暫時未有任何紀錄</td></tr>'}</tbody>
+              <thead><tr><th>${window.t('admin.s532', '時間')}</th><th>${window.t('admin.s213', '管理員')}</th><th>${window.t('admin.s533', '操作')}</th><th>${window.t('admin.s534', '詳情')}</th></tr></thead>
+              <tbody>${rows || ('<tr><td colspan="4" style="text-align:center; color:#999;">' + window.t('admin.s529', '暫時未有任何紀錄') + '</td></tr>')}</tbody>
             </table>
           </div>
         </div>
@@ -4108,42 +4108,42 @@
       const container = document.getElementById('admin-tab-subjects');
       if (!container) return;
       if (!isCurrentUserSuperAdmin()) {
-        container.innerHTML = '<div class="admin-card" style="color:#c0392b;">只有「超級管理員」可以查看此頁。</div>';
+        container.innerHTML = ('<div class="admin-card" style="color:#c0392b;">' + window.t('admin.s506', '只有「超級管理員」可以查看此頁。') + '</div>');
         return;
       }
       if (!subjectListConfigLoaded) {
-        container.innerHTML = '<p style="text-align:center; color:#999; padding:20px;">載入中科目清單...</p>';
+        container.innerHTML = ('<p style="text-align:center; color:#999; padding:20px;">' + window.t('admin.s535', '載入中科目清單...') + '</p>');
         return;
       }
       const addedNames = new Set(((window.ADMIN_SUBJECT_LIST_RAW && window.ADMIN_SUBJECT_LIST_RAW.subjects) || []).map((s) => s.name));
       const rows = (window.TUTOR_DSE_SUBJECTS || []).filter((s) => s !== '其他（自行輸入）').map((s) => {
         const isAdded = addedNames.has(s);
         const enName = (window.DSE_SUBJECT_EN_NAMES && window.DSE_SUBJECT_EN_NAMES[s]) || '—';
-        return `<tr><td>${escapeHtml(s)}</td><td style="color:#888;">${escapeHtml(enName)}</td><td>${isAdded ? '<span style="color:#3F588F;">後台新增</span>' : '<span style="color:#999;">內建</span>'}</td></tr>`;
+        return `<tr><td>${escapeHtml(s)}</td><td style="color:#888;">${escapeHtml(enName)}</td><td>${isAdded ? ('<span style="color:#3F588F;">' + window.t('admin.s536', '後台新增') + '</span>') : ('<span style="color:#999;">' + window.t('admin.s537', '內建') + '</span>')}</td></tr>`;
       }).join('');
 
       container.innerHTML = `
         <div class="admin-card" style="margin-bottom:16px;">
-          <p style="font-size:13px; color:#888; margin:0;">此處顯示全站使用的 HKDSE 科目清單（用於導師「想教的科目」及教材管理「新增科目」）。為免影響已使用這些科目名稱的帖子、房間及導師申請資料，此頁只可以<b>新增</b>科目，不支援改名或刪除；如新增錯誤，請聯絡開發者處理。</p>
+          <p style="font-size:13px; color:#888; margin:0;">${window.t('admin.s538', '此處顯示全站使用的 HKDSE 科目清單（用於導師「想教的科目」及教材管理「新增科目」）。為免影響已使用這些科目名稱的帖子、房間及導師申請資料，此頁只可以')}<b>${window.t('tutormat.addBtn', '新增')}</b>${window.t('admin.s539', '科目，不支援改名或刪除；如新增錯誤，請聯絡開發者處理。')}</p>
         </div>
         <div class="admin-card" style="margin-bottom:16px;">
-          <p style="font-size:13px; font-weight:bold; margin-bottom:8px;">➕ 新增科目</p>
+          <p style="font-size:13px; font-weight:bold; margin-bottom:8px;">${window.t('admin.s540', '➕ 新增科目')}</p>
           <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:flex-end;">
             <div style="flex:1; min-width:160px;">
-              <label style="font-size:12px; color:#888; display:block;">科目中文名稱 *</label>
-              <input type="text" class="input-field" value="${escapeHtml(adminNewSubjectName)}" oninput="window.adminUpdateNewSubjectField('name', this.value)" placeholder="例如：資訊科技概論">
+              <label style="font-size:12px; color:#888; display:block;">${window.t('admin.s541', '科目中文名稱 *')}</label>
+              <input type="text" class="input-field" value="${escapeHtml(adminNewSubjectName)}" oninput="window.adminUpdateNewSubjectField('name', this.value)" placeholder="${window.t('admin.s542', '例如：資訊科技概論')}">
             </div>
             <div style="flex:1; min-width:160px;">
-              <label style="font-size:12px; color:#888; display:block;">科目英文名稱（English顯示用，可留空）</label>
+              <label style="font-size:12px; color:#888; display:block;">${window.t('admin.s543', '科目英文名稱（English顯示用，可留空）')}</label>
               <input type="text" class="input-field" value="${escapeHtml(adminNewSubjectNameEn)}" oninput="window.adminUpdateNewSubjectField('nameEn', this.value)" placeholder="e.g. Information Technology">
             </div>
-            <button type="button" class="btn btn-primary" style="height:38px;" onclick="window.adminAddSubject()">新增</button>
+            <button type="button" class="btn btn-primary" style="height:38px;" onclick="window.adminAddSubject()">${window.t('tutormat.addBtn', '新增')}</button>
           </div>
         </div>
         <div class="admin-card">
           <div style="overflow-x:auto;">
             <table class="admin-table">
-              <thead><tr><th>科目（中文）</th><th>English</th><th>來源</th></tr></thead>
+              <thead><tr><th>${window.t('admin.s544', '科目（中文）')}</th><th>English</th><th>${window.t('admin.s545', '來源')}</th></tr></thead>
               <tbody>${rows}</tbody>
             </table>
           </div>
@@ -4160,9 +4160,9 @@
     window.adminAddSubject = async function() {
       const name = (adminNewSubjectName || '').trim();
       const nameEn = (adminNewSubjectNameEn || '').trim();
-      if (!name) { window.showToast('請輸入科目中文名稱', '⚠️'); return; }
+      if (!name) { window.showToast(window.t('admin.s546', '請輸入科目中文名稱'), '⚠️'); return; }
       if (window.TUTOR_DSE_SUBJECTS && window.TUTOR_DSE_SUBJECTS.includes(name)) {
-        window.showToast('此科目已在清單內', '⚠️');
+        window.showToast(window.t('admin.s547', '此科目已在清單內'), '⚠️');
         return;
       }
       try {
@@ -4173,9 +4173,9 @@
         await logAdminAction('新增科目', { name, nameEn });
         adminNewSubjectName = '';
         adminNewSubjectNameEn = '';
-        window.showToast('已新增科目', '✅');
+        window.showToast(window.t('tutor.s10', '已新增科目'), '✅');
       } catch (err) {
-        window.showToast('新增失敗：' + (err.message || err), '❌');
+        window.showToast(window.t('admin.s548', '新增失敗：') + (err.message || err), '❌');
       }
     };
 
@@ -4229,11 +4229,11 @@
       const container = document.getElementById('admin-tab-districts');
       if (!container) return;
       if (!isCurrentUserSuperAdmin()) {
-        container.innerHTML = '<div class="admin-card" style="color:#c0392b;">只有「超級管理員」可以查看此頁。</div>';
+        container.innerHTML = ('<div class="admin-card" style="color:#c0392b;">' + window.t('admin.s506', '只有「超級管理員」可以查看此頁。') + '</div>');
         return;
       }
       if (!districtListConfigLoaded) {
-        container.innerHTML = '<p style="text-align:center; color:#999; padding:20px;">載入中地區清單...</p>';
+        container.innerHTML = ('<p style="text-align:center; color:#999; padding:20px;">' + window.t('admin.s549', '載入中地區清單...') + '</p>');
         return;
       }
       const addedNames = new Set(((window.ADMIN_DISTRICT_LIST_RAW && window.ADMIN_DISTRICT_LIST_RAW.districts) || []).map((d) => d.name));
@@ -4241,33 +4241,33 @@
         const rows = g.districts.map((d) => {
           const isAdded = addedNames.has(d);
           const enName = (window.HK_DISTRICT_EN_NAMES && window.HK_DISTRICT_EN_NAMES[d]) || '—';
-          return `<tr><td>${escapeHtml(d)}</td><td style="color:#888;">${escapeHtml(enName)}</td><td>${isAdded ? '<span style="color:#3F588F;">後台新增</span>' : '<span style="color:#999;">內建</span>'}</td></tr>`;
+          return `<tr><td>${escapeHtml(d)}</td><td style="color:#888;">${escapeHtml(enName)}</td><td>${isAdded ? ('<span style="color:#3F588F;">' + window.t('admin.s536', '後台新增') + '</span>') : ('<span style="color:#999;">' + window.t('admin.s537', '內建') + '</span>')}</td></tr>`;
         }).join('');
-        return `<p style="font-size:13px; font-weight:bold; margin:12px 0 6px;">${escapeHtml(g.region)}</p><table class="admin-table"><thead><tr><th>地區</th><th>English</th><th>來源</th></tr></thead><tbody>${rows}</tbody></table>`;
+        return `<p style="font-size:13px; font-weight:bold; margin:12px 0 6px;">${escapeHtml(g.region)}</p><table class="admin-table"><thead><tr><th>${window.t('admin.s550', '地區')}</th><th>English</th><th>${window.t('admin.s545', '來源')}</th></tr></thead><tbody>${rows}</tbody></table>`;
       }).join('');
       const regionOptionsHtml = (window.HK_DISTRICT_REGION_GROUPS || []).map((g) => `<option value="${escapeHtml(g.region)}"></option>`).join('');
 
       container.innerHTML = `
         <div class="admin-card" style="margin-bottom:16px;">
-          <p style="font-size:13px; color:#888; margin:0;">此處顯示全站使用的香港地區清單（用於註冊表格選擇學校地區及分區溫習排行榜）。與科目清單一樣，只可以<b>新增</b>，不支援改名或刪除。</p>
+          <p style="font-size:13px; color:#888; margin:0;">${window.t('admin.s551', '此處顯示全站使用的香港地區清單（用於註冊表格選擇學校地區及分區溫習排行榜）。與科目清單一樣，只可以')}<b>${window.t('tutormat.addBtn', '新增')}</b>${window.t('admin.s552', '，不支援改名或刪除。')}</p>
         </div>
         <div class="admin-card" style="margin-bottom:16px;">
-          <p style="font-size:13px; font-weight:bold; margin-bottom:8px;">➕ 新增地區</p>
+          <p style="font-size:13px; font-weight:bold; margin-bottom:8px;">${window.t('admin.s553', '➕ 新增地區')}</p>
           <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:flex-end;">
             <div style="flex:1; min-width:140px;">
-              <label style="font-size:12px; color:#888; display:block;">所屬分區 *</label>
-              <input type="text" class="input-field" list="admin-district-region-options" value="${escapeHtml(adminNewDistrictRegion)}" oninput="window.adminUpdateNewDistrictField('region', this.value)" placeholder="香港島／九龍／新界">
+              <label style="font-size:12px; color:#888; display:block;">${window.t('admin.s554', '所屬分區 *')}</label>
+              <input type="text" class="input-field" list="admin-district-region-options" value="${escapeHtml(adminNewDistrictRegion)}" oninput="window.adminUpdateNewDistrictField('region', this.value)" placeholder="${window.t('admin.s555', '香港島／九龍／新界')}">
               <datalist id="admin-district-region-options">${regionOptionsHtml}</datalist>
             </div>
             <div style="flex:1; min-width:140px;">
-              <label style="font-size:12px; color:#888; display:block;">地區名稱 *</label>
-              <input type="text" class="input-field" value="${escapeHtml(adminNewDistrictName)}" oninput="window.adminUpdateNewDistrictField('name', this.value)" placeholder="例如：將軍澳區">
+              <label style="font-size:12px; color:#888; display:block;">${window.t('admin.s556', '地區名稱 *')}</label>
+              <input type="text" class="input-field" value="${escapeHtml(adminNewDistrictName)}" oninput="window.adminUpdateNewDistrictField('name', this.value)" placeholder="${window.t('admin.s557', '例如：將軍澳區')}">
             </div>
             <div style="flex:1; min-width:140px;">
-              <label style="font-size:12px; color:#888; display:block;">地區英文名稱（可留空）</label>
+              <label style="font-size:12px; color:#888; display:block;">${window.t('admin.s558', '地區英文名稱（可留空）')}</label>
               <input type="text" class="input-field" value="${escapeHtml(adminNewDistrictNameEn)}" oninput="window.adminUpdateNewDistrictField('nameEn', this.value)" placeholder="e.g. Tseung Kwan O">
             </div>
-            <button type="button" class="btn btn-primary" style="height:38px;" onclick="window.adminAddDistrict()">新增</button>
+            <button type="button" class="btn btn-primary" style="height:38px;" onclick="window.adminAddDistrict()">${window.t('tutormat.addBtn', '新增')}</button>
           </div>
         </div>
         <div class="admin-card">${groupsHtml}</div>
@@ -4285,9 +4285,9 @@
       const region = (adminNewDistrictRegion || '').trim();
       const name = (adminNewDistrictName || '').trim();
       const nameEn = (adminNewDistrictNameEn || '').trim();
-      if (!region || !name) { window.showToast('請填寫所屬分區同地區名稱', '⚠️'); return; }
+      if (!region || !name) { window.showToast(window.t('admin.s559', '請填寫所屬分區同地區名稱'), '⚠️'); return; }
       const alreadyExists = (window.HK_DISTRICT_REGION_GROUPS || []).some((g) => g.districts.includes(name));
-      if (alreadyExists) { window.showToast('此地區已在清單內', '⚠️'); return; }
+      if (alreadyExists) { window.showToast(window.t('admin.s560', '此地區已在清單內'), '⚠️'); return; }
       try {
         const ref = window.fs.doc(window.db, 'admin_config', 'districtList');
         const existing = (window.ADMIN_DISTRICT_LIST_RAW && Array.isArray(window.ADMIN_DISTRICT_LIST_RAW.districts)) ? window.ADMIN_DISTRICT_LIST_RAW.districts.slice() : [];
@@ -4297,9 +4297,9 @@
         adminNewDistrictRegion = '';
         adminNewDistrictName = '';
         adminNewDistrictNameEn = '';
-        window.showToast('已新增地區', '✅');
+        window.showToast(window.t('admin.s561', '已新增地區'), '✅');
       } catch (err) {
-        window.showToast('新增失敗：' + (err.message || err), '❌');
+        window.showToast(window.t('admin.s548', '新增失敗：') + (err.message || err), '❌');
       }
     };
 
@@ -4372,11 +4372,11 @@
       const container = document.getElementById('admin-tab-schools');
       if (!container) return;
       if (!isCurrentUserSuperAdmin()) {
-        container.innerHTML = '<div class="admin-card" style="color:#c0392b;">只有「超級管理員」可以查看此頁。</div>';
+        container.innerHTML = ('<div class="admin-card" style="color:#c0392b;">' + window.t('admin.s506', '只有「超級管理員」可以查看此頁。') + '</div>');
         return;
       }
       if (!schoolListConfigLoaded) {
-        container.innerHTML = '<p style="text-align:center; color:#999; padding:20px;">載入中學校名單...</p>';
+        container.innerHTML = ('<p style="text-align:center; color:#999; padding:20px;">' + window.t('admin.s562', '載入中學校名單...') + '</p>');
         return;
       }
       const districtOptionsHtml = (window.HK_DISTRICT_REGION_GROUPS || []).map((g) =>
@@ -4385,59 +4385,59 @@
       const secondaryAdded = (window.ADMIN_SCHOOL_LIST_RAW && Array.isArray(window.ADMIN_SCHOOL_LIST_RAW.secondary)) ? window.ADMIN_SCHOOL_LIST_RAW.secondary : [];
       const tertiaryAdded = (window.ADMIN_SCHOOL_LIST_RAW && Array.isArray(window.ADMIN_SCHOOL_LIST_RAW.tertiary)) ? window.ADMIN_SCHOOL_LIST_RAW.tertiary : [];
       const secondaryRows = secondaryAdded.map((s) => `<tr><td>${escapeHtml(s.name)}</td><td style="color:#888;">${escapeHtml(s.district)}</td></tr>`).join('');
-      const tertiaryRows = tertiaryAdded.map((t) => `<tr><td>${escapeHtml(t.name)}</td><td style="color:#888;">${t.district ? escapeHtml(t.district) : '常見院校（不分地區）'}</td></tr>`).join('');
+      const tertiaryRows = tertiaryAdded.map((t) => `<tr><td>${escapeHtml(t.name)}</td><td style="color:#888;">${t.district ? escapeHtml(t.district) : window.t('admin.s563', '常見院校（不分地區）')}</td></tr>`).join('');
 
       container.innerHTML = `
         <div class="admin-card" style="margin-bottom:16px;">
-          <p style="font-size:13px; color:#888; margin:0;">此處可以新增註冊表格可選的中學及大專院校。與科目及地區清單一樣，只可以<b>新增</b>，不支援改名或刪除。下表只顯示在此新增的學校，內建的一千多間中學及院校不會逐一列出（可在註冊表格選擇地區查看完整清單）。</p>
+          <p style="font-size:13px; color:#888; margin:0;">${window.t('admin.s566', '此處可以新增註冊表格可選的中學及大專院校。與科目及地區清單一樣，只可以')}<b>${window.t('tutormat.addBtn', '新增')}</b>${window.t('admin.s567', '，不支援改名或刪除。下表只顯示在此新增的學校，內建的一千多間中學及院校不會逐一列出（可在註冊表格選擇地區查看完整清單）。')}</p>
         </div>
         <div class="admin-card" style="margin-bottom:16px;">
-          <p style="font-size:13px; font-weight:bold; margin-bottom:8px;">➕ 新增中學</p>
+          <p style="font-size:13px; font-weight:bold; margin-bottom:8px;">${window.t('admin.s568', '➕ 新增中學')}</p>
           <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:flex-end;">
             <div style="flex:1; min-width:180px;">
-              <label style="font-size:12px; color:#888; display:block;">中學名稱 *</label>
-              <input type="text" class="input-field" value="${escapeHtml(adminNewSecondarySchoolName)}" oninput="window.adminUpdateNewSchoolField('secondaryName', this.value)" placeholder="例如：XX中學">
+              <label style="font-size:12px; color:#888; display:block;">${window.t('admin.s569', '中學名稱 *')}</label>
+              <input type="text" class="input-field" value="${escapeHtml(adminNewSecondarySchoolName)}" oninput="window.adminUpdateNewSchoolField('secondaryName', this.value)" placeholder="${window.t('admin.s570', '例如：XX中學')}">
             </div>
             <div style="flex:1; min-width:160px;">
-              <label style="font-size:12px; color:#888; display:block;">所屬地區 *</label>
+              <label style="font-size:12px; color:#888; display:block;">${window.t('admin.s571', '所屬地區 *')}</label>
               <select class="input-field" onchange="window.adminUpdateNewSchoolField('secondaryDistrict', this.value)">
-                <option value="">請選擇地區</option>
+                <option value="">${window.t('admin.s572', '請選擇地區')}</option>
                 ${districtOptionsHtml}
               </select>
             </div>
-            <button type="button" class="btn btn-primary" style="height:38px;" onclick="window.adminAddSecondarySchool()">新增</button>
+            <button type="button" class="btn btn-primary" style="height:38px;" onclick="window.adminAddSecondarySchool()">${window.t('tutormat.addBtn', '新增')}</button>
           </div>
         </div>
         <div class="admin-card" style="margin-bottom:16px;">
           <div style="overflow-x:auto;">
             <table class="admin-table">
-              <thead><tr><th>中學（後台新增）</th><th>地區</th></tr></thead>
-              <tbody>${secondaryRows || '<tr><td colspan="2" style="text-align:center; color:#999;">暫時未有在後台新增的中學</td></tr>'}</tbody>
+              <thead><tr><th>${window.t('admin.s573', '中學（後台新增）')}</th><th>${window.t('admin.s550', '地區')}</th></tr></thead>
+              <tbody>${secondaryRows || ('<tr><td colspan="2" style="text-align:center; color:#999;">' + window.t('admin.s564', '暫時未有在後台新增的中學') + '</td></tr>')}</tbody>
             </table>
           </div>
         </div>
         <div class="admin-card" style="margin-bottom:16px;">
-          <p style="font-size:13px; font-weight:bold; margin-bottom:8px;">➕ 新增大專／大學</p>
+          <p style="font-size:13px; font-weight:bold; margin-bottom:8px;">${window.t('admin.s574', '➕ 新增大專／大學')}</p>
           <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:flex-end;">
             <div style="flex:1; min-width:180px;">
-              <label style="font-size:12px; color:#888; display:block;">院校名稱 *</label>
-              <input type="text" class="input-field" value="${escapeHtml(adminNewTertiaryName)}" oninput="window.adminUpdateNewSchoolField('tertiaryName', this.value)" placeholder="例如：XX學院">
+              <label style="font-size:12px; color:#888; display:block;">${window.t('auth.institutionNameLabel', '院校名稱 *')}</label>
+              <input type="text" class="input-field" value="${escapeHtml(adminNewTertiaryName)}" oninput="window.adminUpdateNewSchoolField('tertiaryName', this.value)" placeholder="${window.t('admin.s575', '例如：XX學院')}">
             </div>
             <div style="flex:1; min-width:160px;">
-              <label style="font-size:12px; color:#888; display:block;">所屬地區（可留空＝加入常見院校清單）</label>
+              <label style="font-size:12px; color:#888; display:block;">${window.t('admin.s576', '所屬地區（可留空＝加入常見院校清單）')}</label>
               <select class="input-field" onchange="window.adminUpdateNewSchoolField('tertiaryDistrict', this.value)">
-                <option value="">唔揀地區（常見院校）</option>
+                <option value="">${window.t('admin.s577', '唔揀地區（常見院校）')}</option>
                 ${districtOptionsHtml}
               </select>
             </div>
-            <button type="button" class="btn btn-primary" style="height:38px;" onclick="window.adminAddTertiaryInstitution()">新增</button>
+            <button type="button" class="btn btn-primary" style="height:38px;" onclick="window.adminAddTertiaryInstitution()">${window.t('tutormat.addBtn', '新增')}</button>
           </div>
         </div>
         <div class="admin-card">
           <div style="overflow-x:auto;">
             <table class="admin-table">
-              <thead><tr><th>大專／大學（後台新增）</th><th>地區</th></tr></thead>
-              <tbody>${tertiaryRows || '<tr><td colspan="2" style="text-align:center; color:#999;">暫時未有在後台新增的院校</td></tr>'}</tbody>
+              <thead><tr><th>${window.t('admin.s578', '大專／大學（後台新增）')}</th><th>${window.t('admin.s550', '地區')}</th></tr></thead>
+              <tbody>${tertiaryRows || ('<tr><td colspan="2" style="text-align:center; color:#999;">' + window.t('admin.s565', '暫時未有在後台新增的院校') + '</td></tr>')}</tbody>
             </table>
           </div>
         </div>
@@ -4455,9 +4455,9 @@
     window.adminAddSecondarySchool = async function() {
       const name = (adminNewSecondarySchoolName || '').trim();
       const district = (adminNewSecondarySchoolDistrict || '').trim();
-      if (!name || !district) { window.showToast('請填寫中學名稱同所屬地區', '⚠️'); return; }
+      if (!name || !district) { window.showToast(window.t('admin.s579', '請填寫中學名稱同所屬地區'), '⚠️'); return; }
       const alreadyExists = window.HK_SECONDARY_SCHOOLS_BY_DISTRICT && Object.values(window.HK_SECONDARY_SCHOOLS_BY_DISTRICT).some((list) => list.includes(name));
-      if (alreadyExists) { window.showToast('此中學已在清單內', '⚠️'); return; }
+      if (alreadyExists) { window.showToast(window.t('admin.s580', '此中學已在清單內'), '⚠️'); return; }
       try {
         const ref = window.fs.doc(window.db, 'admin_config', 'schoolList');
         const existingSecondary = (window.ADMIN_SCHOOL_LIST_RAW && Array.isArray(window.ADMIN_SCHOOL_LIST_RAW.secondary)) ? window.ADMIN_SCHOOL_LIST_RAW.secondary.slice() : [];
@@ -4467,19 +4467,19 @@
         await logAdminAction('新增中學', { name, district });
         adminNewSecondarySchoolName = '';
         adminNewSecondarySchoolDistrict = '';
-        window.showToast('已新增中學', '✅');
+        window.showToast(window.t('admin.s581', '已新增中學'), '✅');
       } catch (err) {
-        window.showToast('新增失敗：' + (err.message || err), '❌');
+        window.showToast(window.t('admin.s548', '新增失敗：') + (err.message || err), '❌');
       }
     };
 
     window.adminAddTertiaryInstitution = async function() {
       const name = (adminNewTertiaryName || '').trim();
       const district = (adminNewTertiaryDistrict || '').trim();
-      if (!name) { window.showToast('請輸入院校名稱', '⚠️'); return; }
+      if (!name) { window.showToast(window.t('core.enterInstitutionName', '請輸入院校名稱'), '⚠️'); return; }
       const inByDistrict = window.HK_TERTIARY_INSTITUTIONS_BY_DISTRICT && Object.values(window.HK_TERTIARY_INSTITUTIONS_BY_DISTRICT).some((list) => list.includes(name));
       const inCommon = window.HK_TERTIARY_INSTITUTIONS_COMMON && window.HK_TERTIARY_INSTITUTIONS_COMMON.includes(name);
-      if (inByDistrict || inCommon) { window.showToast('此院校已在清單內', '⚠️'); return; }
+      if (inByDistrict || inCommon) { window.showToast(window.t('admin.s582', '此院校已在清單內'), '⚠️'); return; }
       try {
         const ref = window.fs.doc(window.db, 'admin_config', 'schoolList');
         const existingSecondary = (window.ADMIN_SCHOOL_LIST_RAW && Array.isArray(window.ADMIN_SCHOOL_LIST_RAW.secondary)) ? window.ADMIN_SCHOOL_LIST_RAW.secondary.slice() : [];
@@ -4489,9 +4489,9 @@
         await logAdminAction('新增大專院校', { name, district: district || '(常見院校)' });
         adminNewTertiaryName = '';
         adminNewTertiaryDistrict = '';
-        window.showToast('已新增院校', '✅');
+        window.showToast(window.t('admin.s583', '已新增院校'), '✅');
       } catch (err) {
-        window.showToast('新增失敗：' + (err.message || err), '❌');
+        window.showToast(window.t('admin.s548', '新增失敗：') + (err.message || err), '❌');
       }
     };
 
@@ -4718,33 +4718,33 @@
       const container = document.getElementById('admin-tab-legal');
       if (!container) return;
       if (!isCurrentUserSuperAdmin()) {
-        container.innerHTML = '<div class="admin-card" style="color:#c0392b;">只有「超級管理員」可以查看此頁。</div>';
+        container.innerHTML = ('<div class="admin-card" style="color:#c0392b;">' + window.t('admin.s506', '只有「超級管理員」可以查看此頁。') + '</div>');
         return;
       }
       if (!legalContentConfigLoaded) {
-        container.innerHTML = '<p style="text-align:center; color:#999; padding:20px;">載入中條款內容設定...</p>';
+        container.innerHTML = ('<p style="text-align:center; color:#999; padding:20px;">' + window.t('admin.s584', '載入中條款內容設定...') + '</p>');
         return;
       }
       ensureLegalDraftLoaded();
-      const docTabs = [['terms', '服務條款'], ['privacy', '私隱政策']];
+      const docTabs = [['terms', window.t('landing.footerTerms', '服務條款')], ['privacy', window.t('landing.footerPrivacy', '私隱政策')]];
       const langTabs = [['zh-Hant', '繁體中文'], ['en', 'English'], ['yue', '廣東話']];
       const docBtns = docTabs.map(([k, label]) => `<button type="button" class="btn ${adminLegalActiveDoc === k ? 'btn-primary' : 'btn-outline'}" style="font-size:13px; padding:6px 14px;" onclick="window.adminSwitchLegalDoc('${k}')">${label}</button>`).join('');
       const langBtns = langTabs.map(([k, label]) => `<button type="button" class="btn ${adminLegalActiveLang === k ? 'btn-primary' : 'btn-outline'}" style="font-size:12px; padding:5px 12px;" onclick="window.adminSwitchLegalLang('${k}')">${label}</button>`).join('');
       const currentText = adminLegalDraft[adminLegalActiveDoc][adminLegalActiveLang] || '';
       const hint = adminLegalActiveLang === 'zh-Hant'
-        ? '這是網站目前顯示的版本，可以直接修改。'
-        : `如留空，此語言會自動顯示繁體中文版本（${adminLegalActiveLang === 'en' ? 'English' : '廣東話'}未填寫亦不會出現空白）。`;
+        ? window.t('admin.s585', '這是網站目前顯示的版本，可以直接修改。')
+        : `${window.t('admin.s586', '如留空，此語言會自動顯示繁體中文版本（')}${adminLegalActiveLang === 'en' ? 'English' : window.t('admin.s369', '廣東話')}${window.t('admin.s587', '未填寫亦不會出現空白）。')}`;
 
       container.innerHTML = `
         <div class="admin-card" style="margin-bottom:16px;">
-          <p style="font-size:13px; color:#888; margin:0;">此處編輯「服務條款」及「私隱政策」的內容，三種語言可以分開編輯。段落之間留一行空白；如需粗體小標題（例如「第一條　服務內容」），請在該行開頭輸入「#」。注意：English 及廣東話版本的翻譯準確性及法律效力，請自行核實或諮詢專業人士。</p>
+          <p style="font-size:13px; color:#888; margin:0;">${window.t('admin.s588', '此處編輯「服務條款」及「私隱政策」的內容，三種語言可以分開編輯。段落之間留一行空白；如需粗體小標題（例如「第一條　服務內容」），請在該行開頭輸入「#」。注意：English 及廣東話版本的翻譯準確性及法律效力，請自行核實或諮詢專業人士。')}</p>
         </div>
         <div class="admin-card" style="margin-bottom:16px;">
           <div style="display:flex; gap:8px; margin-bottom:10px;">${docBtns}</div>
           <div style="display:flex; gap:6px; margin-bottom:10px;">${langBtns}</div>
           <p style="font-size:12px; color:#999; margin-bottom:6px;">${hint}</p>
           <textarea class="input-field" style="width:100%; min-height:360px; font-family:inherit; font-size:13px; line-height:1.6;" oninput="window.adminUpdateLegalDraft(this.value)">${escapeHtml(currentText)}</textarea>
-          <button type="button" class="btn btn-primary" style="margin-top:10px;" onclick="window.adminSaveLegalContent()">儲存全部語言</button>
+          <button type="button" class="btn btn-primary" style="margin-top:10px;" onclick="window.adminSaveLegalContent()">${window.t('admin.s589', '儲存全部語言')}</button>
         </div>
       `;
     }
@@ -4767,7 +4767,7 @@
 
     window.adminSaveLegalContent = async function() {
       ensureLegalDraftLoaded();
-      if (!(await window.appConfirm('確定要儲存嗎？此改動會即時影響全站顯示的服務條款／私隱政策內容。'))) return;
+      if (!(await window.appConfirm(window.t('admin.s590', '確定要儲存嗎？此改動會即時影響全站顯示的服務條款／私隱政策內容。')))) return;
       try {
         const ref = window.fs.doc(window.db, 'admin_config', 'legalContent');
         await window.fs.setDoc(ref, {
@@ -4777,9 +4777,9 @@
           updatedBy: (window.currentUser && window.currentUser.loginId) || null,
         });
         await logAdminAction('更新服務條款／私隱政策內容', { doc: adminLegalActiveDoc, lang: adminLegalActiveLang });
-        window.showToast('已儲存', '✅');
+        window.showToast(window.t('admin.s591', '已儲存'), '✅');
       } catch (err) {
-        window.showToast('儲存失敗：' + (err.message || err), '❌');
+        window.showToast(window.t('admin.s138', '儲存失敗：') + (err.message || err), '❌');
       }
     };
 
@@ -4800,7 +4800,7 @@
     async function renderAdminTurnTab() {
       const panel = document.getElementById('admin-tab-turn');
       if (!panel) return;
-      panel.innerHTML = '<div class="card" style="padding:16px;">載入中…</div>';
+      panel.innerHTML = ('<div class="card" style="padding:16px;">' + window.t('qa.loading', '載入中…') + '</div>');
       let settings = { enabled: true, monthlyCapGB: 900 };
       try {
         const s = await window.fs.getDoc(window.fs.doc(window.db, 'admin_config', 'turnSettings'));
@@ -4818,34 +4818,34 @@
         const pct = (n) => total ? Math.round(n / total * 100) + '%' : '—';
         const gb = (m.d.relayMinutes || 0) * TURN_GB_PER_RELAY_MINUTE;
         const cost = Math.max(0, gb - 1000) * 0.05;
-        return `<tr><td>${m.key.slice(0, 4)} 年 ${Number(m.key.slice(4))} 月</td><td>${total}</td><td>${direct}（${pct(direct)}）</td><td>${relay}（${pct(relay)}）</td><td>${failed}（${pct(failed)}）</td><td>${gb.toFixed(1)} GB</td><td>US$${cost.toFixed(2)}</td></tr>`;
+        return `<tr><td>${m.key.slice(0, 4)} ${window.t('auth.yearOption', '年')} ${Number(m.key.slice(4))} ${window.t('auth.monthOption', '月')}</td><td>${total}</td><td>${direct}（${pct(direct)}）</td><td>${relay}（${pct(relay)}）</td><td>${failed}（${pct(failed)}）</td><td>${gb.toFixed(1)} GB</td><td>US$${cost.toFixed(2)}</td></tr>`;
       };
       const cur = months[0];
       const curGB = (cur.d.relayMinutes || 0) * TURN_GB_PER_RELAY_MINUTE;
       const capReached = curGB >= settings.monthlyCapGB;
       panel.innerHTML = `
         <div class="card" style="padding:16px;">
-          <h3 style="margin:0 0 6px;">中轉伺服器（TURN）</h3>
+          <h3 style="margin:0 0 6px;">${window.t('admin.s593', '中轉伺服器（TURN）')}</h3>
           <p style="font-size:13px; color:#666; line-height:1.7; margin:0 0 14px;">
-            學生在學校 Wi-Fi 或部分流動網絡下，未必能夠直接連線，需要經 Cloudflare 中轉伺服器轉送畫面。<br>
-            Cloudflare 每月首 1,000 GB 免費，其後每 GB 收費 US$0.05。以下用量為系統估算，實際以 Cloudflare 帳單為準。<br>
-            本月估算用量達到上限時，系統會自動暫停中轉，直至下個月；暫停期間大部分同學仍可直接連線，只有需要中轉的同學會連線失敗。
+            ${window.t('admin.s594', '學生在學校 Wi-Fi 或部分流動網絡下，未必能夠直接連線，需要經 Cloudflare 中轉伺服器轉送畫面。')}<br>
+            ${window.t('admin.s595', 'Cloudflare 每月首 1,000 GB 免費，其後每 GB 收費 US$0.05。以下用量為系統估算，實際以 Cloudflare 帳單為準。')}<br>
+            ${window.t('admin.s596', '本月估算用量達到上限時，系統會自動暫停中轉，直至下個月；暫停期間大部分同學仍可直接連線，只有需要中轉的同學會連線失敗。')}
           </p>
           <div style="display:flex; gap:12px; flex-wrap:wrap; align-items:center; margin-bottom:16px;">
             <label style="display:flex; align-items:center; gap:8px; font-weight:bold; color:var(--brand-800); cursor:pointer;">
-              <input type="checkbox" id="turn-enabled" ${settings.enabled !== false ? 'checked' : ''} style="width:18px; height:18px;"> 啟用中轉伺服器
+              <input type="checkbox" id="turn-enabled" ${settings.enabled !== false ? 'checked' : ''} style="width:18px; height:18px;"> ${window.t('admin.s597', '啟用中轉伺服器')}
             </label>
-            <label style="display:flex; align-items:center; gap:8px; font-size:14px;">每月上限
+            <label style="display:flex; align-items:center; gap:8px; font-size:14px;">${window.t('admin.s598', '每月上限')}
               <input type="number" id="turn-cap" min="1" step="50" value="${settings.monthlyCapGB}" style="width:90px; padding:6px 8px; border:1px solid var(--brand-200); border-radius:8px;"> GB
             </label>
-            <button type="button" class="btn btn-primary" onclick="window.adminSaveTurnSettings()">儲存設定</button>
+            <button type="button" class="btn btn-primary" onclick="window.adminSaveTurnSettings()">${window.t('admin.s599', '儲存設定')}</button>
           </div>
           <div style="padding:12px 14px; border-radius:10px; background:${capReached ? '#FDECEA' : 'var(--brand-50)'}; color:${capReached ? '#8A2F2F' : 'var(--brand-800)'}; font-size:14px; margin-bottom:14px;">
-            本月估算中轉用量：<b>${curGB.toFixed(1)} GB</b>／上限 ${settings.monthlyCapGB} GB${capReached ? '（已達上限，中轉已自動暫停）' : ''}
+            ${window.t('admin.s600', '本月估算中轉用量：')}<b>${curGB.toFixed(1)} GB</b>${window.t('admin.s601', '／上限')} ${settings.monthlyCapGB} GB${capReached ? window.t('admin.s592', '（已達上限，中轉已自動暫停）') : ''}
           </div>
           <div style="overflow-x:auto;">
             <table style="width:100%; border-collapse:collapse; font-size:13px;" class="admin-simple-table">
-              <thead><tr style="text-align:left; color:#666;"><th>月份</th><th>連線總數</th><th>直接連線</th><th>經中轉</th><th>連線失敗</th><th>估算中轉用量</th><th>估算費用</th></tr></thead>
+              <thead><tr style="text-align:left; color:#666;"><th>${window.t('admin.s482', '月份')}</th><th>${window.t('admin.s602', '連線總數')}</th><th>${window.t('admin.s603', '直接連線')}</th><th>${window.t('admin.s604', '經中轉')}</th><th>${window.t('admin.s605', '連線失敗')}</th><th>${window.t('admin.s606', '估算中轉用量')}</th><th>${window.t('admin.s607', '估算費用')}</th></tr></thead>
               <tbody>${months.map(row).join('')}</tbody>
             </table>
           </div>
@@ -4853,19 +4853,19 @@
       panel.querySelectorAll('td,th').forEach((c) => { c.style.padding = '8px 6px'; c.style.borderBottom = '1px solid var(--brand-100)'; });
     }
     window.adminSaveTurnSettings = async function() {
-      if (!(window.isCurrentUserSuperAdmin && window.isCurrentUserSuperAdmin())) { window.showToast('只有超級管理員可以修改此設定', ''); return; }
+      if (!(window.isCurrentUserSuperAdmin && window.isCurrentUserSuperAdmin())) { window.showToast(window.t('admin.s608', '只有超級管理員可以修改此設定'), ''); return; }
       const enabled = !!(document.getElementById('turn-enabled') || {}).checked;
       const cap = Number((document.getElementById('turn-cap') || {}).value);
-      if (!(cap > 0)) { window.showToast('請輸入有效的每月上限', ''); return; }
+      if (!(cap > 0)) { window.showToast(window.t('admin.s609', '請輸入有效的每月上限'), ''); return; }
       try {
         await window.fs.setDoc(window.fs.doc(window.db, 'admin_config', 'turnSettings'), {
           enabled, monthlyCapGB: cap, updatedAt: Date.now(), updatedBy: window.currentUser ? window.currentUser.email : null
         }, { merge: true });
         if (typeof window.logAdminAction === 'function') window.logAdminAction('更新中轉伺服器設定', { enabled, monthlyCapGB: cap });
-        window.showToast('已儲存中轉伺服器設定', '');
+        window.showToast(window.t('admin.s610', '已儲存中轉伺服器設定'), '');
         renderAdminTurnTab();
       } catch (e) {
-        window.showToast('儲存失敗：' + window.friendlyErrorText(e), '');
+        window.showToast(window.t('admin.s138', '儲存失敗：') + window.friendlyErrorText(e), '');
       }
     };
 
@@ -4878,18 +4878,18 @@
       const list = window.NAV_FEATURE_LIST || [];
       panel.innerHTML = `
         <div class="card" style="padding:16px;">
-          <h3 style="margin:0 0 6px;">功能表顯示</h3>
+          <h3 style="margin:0 0 6px;">${window.t('admin.s611', '功能表顯示')}</h3>
           <p style="font-size:13px; color:#666; line-height:1.7; margin:0 0 14px;">
-            取消勾選即可暫時關閉該功能：一般用戶的功能表會即時隱藏該項目，亦無法從其他入口（例如主頁卡片、通知）進入。<br>
-            管理員仍可看到已關閉的項目（半透明並顯示「已關閉」），方便測試。「主頁」固定顯示，不可關閉。<br>
-            正在使用該功能的用戶不會被強制退出，例如正在溫習室溫習的同學可以繼續，離開後才無法再進入。
+            ${window.t('admin.s612', '取消勾選即可暫時關閉該功能：一般用戶的功能表會即時隱藏該項目，亦無法從其他入口（例如主頁卡片、通知）進入。')}<br>
+            ${window.t('admin.s613', '管理員仍可看到已關閉的項目（半透明並顯示「已關閉」），方便測試。「主頁」固定顯示，不可關閉。')}<br>
+            ${window.t('admin.s614', '正在使用該功能的用戶不會被強制退出，例如正在溫習室溫習的同學可以繼續，離開後才無法再進入。')}
           </p>
           <div id="admin-navmenu-list" style="display:flex; flex-direction:column; gap:8px; max-width:520px;"></div>
         </div>`;
       const box = document.getElementById('admin-navmenu-list');
       const rowHome = document.createElement('div');
       rowHome.style.cssText = 'display:flex; align-items:center; gap:12px; padding:10px 14px; border:1px solid #E9EDF5; border-radius:10px; background:#F7FAFD;';
-      rowHome.innerHTML = '<input type="checkbox" checked disabled style="width:18px; height:18px;"><span style="font-weight:bold; color:#29395C; flex:1;">主頁</span><span style="font-size:12px; color:#999;">固定顯示</span>';
+      rowHome.innerHTML = ('<input type="checkbox" checked disabled style="width:18px; height:18px;"><span style="font-weight:bold; color:#29395C; flex:1;">' + window.t('nav.home', '主頁') + '</span><span style="font-size:12px; color:#999;">' + window.t('admin.s615', '固定顯示') + '</span>');
       box.appendChild(rowHome);
       list.forEach((f) => {
         const hidden = !!(window.navHiddenFeatures && window.navHiddenFeatures[f.id]);
@@ -4898,13 +4898,13 @@
         row.innerHTML = `
           <input type="checkbox" ${hidden ? '' : 'checked'} style="width:18px; height:18px; cursor:pointer;" onchange="window.adminSetNavFeature('${f.id}', this.checked, this)">
           <span style="font-weight:bold; color:#29395C; flex:1;">${f.label}</span>
-          <span id="admin-navmenu-status-${f.id}" style="font-size:12px; font-weight:bold; padding:2px 8px; border-radius:6px; ${hidden ? 'background:#F3F4F6; color:#6B7280;' : 'background:#E6F4EA; color:#1E7B3A;'}">${hidden ? '已關閉' : '顯示中'}</span>`;
+          <span id="admin-navmenu-status-${f.id}" style="font-size:12px; font-weight:bold; padding:2px 8px; border-radius:6px; ${hidden ? 'background:#F3F4F6; color:#6B7280;' : 'background:#E6F4EA; color:#1E7B3A;'}">${hidden ? window.t('nav.offTag', '已關閉') : window.t('admin.s616', '顯示中')}</span>`;
         box.appendChild(row);
       });
     }
 
     window.adminSetNavFeature = async function(id, show, input) {
-      if (!(window.isCurrentUserSuperAdmin && window.isCurrentUserSuperAdmin())) { window.showToast('只有超級管理員可以修改此設定', ''); if (input) input.checked = !show; return; }
+      if (!(window.isCurrentUserSuperAdmin && window.isCurrentUserSuperAdmin())) { window.showToast(window.t('admin.s608', '只有超級管理員可以修改此設定'), ''); if (input) input.checked = !show; return; }
       const f = (window.NAV_FEATURE_LIST || []).find((x) => x.id === id);
       const label = f ? f.label : id;
       if (input) input.disabled = true;
@@ -4919,15 +4919,15 @@
         if (typeof window.applyNavVisibility === 'function') window.applyNavVisibility();
         const st = document.getElementById('admin-navmenu-status-' + id);
         if (st) {
-          st.textContent = show ? '顯示中' : '已關閉';
+          st.textContent = show ? window.t('admin.s616', '顯示中') : window.t('nav.offTag', '已關閉');
           st.style.background = show ? '#E6F4EA' : '#F3F4F6';
           st.style.color = show ? '#1E7B3A' : '#6B7280';
         }
-        window.showToast(show ? `已開啟「${label}」` : `已關閉「${label}」`, '');
+        window.showToast(show ? `${window.t('admin.s617', '已開啟「')}${label}」` : `${window.t('admin.s618', '已關閉「')}${label}」`, '');
         if (typeof window.logAdminAction === 'function') window.logAdminAction(show ? '開啟功能' : '關閉功能', { feature: id, label });
       } catch (e) {
         if (input) input.checked = !show;
-        window.showToast('儲存失敗：' + (e.message || e), '');
+        window.showToast(window.t('admin.s138', '儲存失敗：') + (e.message || e), '');
       } finally {
         if (input) input.disabled = false;
       }
@@ -4945,11 +4945,10 @@
       if (!panel) return;
       panel.innerHTML = `
         <div class="card" style="padding:16px;">
-          <h3 style="margin:0 0 6px;">合照背景</h3>
+          <h3 style="margin:0 0 6px;">${window.t('html.s50', '合照背景')}</h3>
           <p style="font-size:13px; color:#666; line-height:1.7; margin:0 0 14px;">
-            溫習室「合照」可按人數使用不同背景。冇上載的人數會使用預設米白相紙背景。<br>
-            給設計師的規格：尺寸 <b>1080 × 1350 像素</b>（直身 4:5）；底部 120 像素會顯示「今日溫習時數」及 ConcenMate 標誌，請保留空位；
-            每個人數的相片位置是固定的，請先下載對應的「設計範本」：灰色方框是相片位置（會被遮蓋），斜線範圍是文字及標誌位置，其餘地方可以自由設計。上載後會自動裁切及壓縮。
+            ${window.t('admin.s619', '溫習室「合照」可按人數使用不同背景。冇上載的人數會使用預設米白相紙背景。')}<br>
+            ${window.t('admin.s620', '給設計師的規格：尺寸')} <b>${window.t('admin.s621', '1080 × 1350 像素')}</b>${window.t('admin.s622', '（直身 4:5）；底部 120 像素會顯示「今日溫習時數」及 ConcenMate 標誌，請保留空位；\n            每個人數的相片位置是固定的，請先下載對應的「設計範本」：灰色方框是相片位置（會被遮蓋），斜線範圍是文字及標誌位置，其餘地方可以自由設計。上載後會自動裁切及壓縮。')}
           </p>
           <div id="admin-snapshotbg-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr)); gap:14px;"></div>
         </div>`;
@@ -4958,14 +4957,14 @@
         const card = document.createElement('div');
         card.style.cssText = 'border:1px solid #E9EDF5; border-radius:12px; padding:10px; text-align:center; background:#fff;';
         card.innerHTML = `
-          <div style="font-weight:bold; color:#29395C; margin-bottom:8px;">${n} 人合照背景</div>
-          <div id="admin-snapshotbg-preview-${n}" style="aspect-ratio:4/5; border-radius:8px; background:#F7F4EE; display:flex; align-items:center; justify-content:center; color:#999; font-size:13px; overflow:hidden;">載入中…</div>
+          <div style="font-weight:bold; color:#29395C; margin-bottom:8px;">${n} ${window.t('admin.s623', '人合照背景')}</div>
+          <div id="admin-snapshotbg-preview-${n}" style="aspect-ratio:4/5; border-radius:8px; background:#F7F4EE; display:flex; align-items:center; justify-content:center; color:#999; font-size:13px; overflow:hidden;">${window.t('qa.loading', '載入中…')}</div>
           <div style="display:flex; gap:6px; justify-content:center; margin-top:8px; flex-wrap:wrap;">
-            <label class="btn btn-primary" style="font-size:13px; padding:5px 10px; cursor:pointer;">上載圖片
+            <label class="btn btn-primary" style="font-size:13px; padding:5px 10px; cursor:pointer;">${window.t('admin.s624', '上載圖片')}
               <input type="file" accept="image/png,image/jpeg,image/webp" style="display:none;" onchange="window.adminUploadSnapshotBg(${n}, this)">
             </label>
-            <button type="button" class="btn btn-outline" style="font-size:13px; padding:5px 10px;" onclick="window.adminDownloadSnapshotTemplate(${n})">下載設計範本</button>
-            <button type="button" class="btn btn-outline" style="font-size:13px; padding:5px 10px;" onclick="window.adminDeleteSnapshotBg(${n})">移除</button>
+            <button type="button" class="btn btn-outline" style="font-size:13px; padding:5px 10px;" onclick="window.adminDownloadSnapshotTemplate(${n})">${window.t('admin.s625', '下載設計範本')}</button>
+            <button type="button" class="btn btn-outline" style="font-size:13px; padding:5px 10px;" onclick="window.adminDeleteSnapshotBg(${n})">${window.t('admin.s57', '移除')}</button>
           </div>`;
         grid.appendChild(card);
         loadAdminSnapshotBgPreview(n);
@@ -4978,9 +4977,9 @@
       try {
         const snap = await window.fs.getDoc(window.fs.doc(window.db, 'admin_config', 'snapshotBg' + n));
         const img = snap.exists() ? snap.data().image : null;
-        el.innerHTML = img ? `<img src="${img}" alt="" style="width:100%; height:100%; object-fit:cover;">` : '使用預設背景';
+        el.innerHTML = img ? `<img src="${img}" alt="" style="width:100%; height:100%; object-fit:cover;">` : window.t('admin.s626', '使用預設背景');
       } catch (e) {
-        el.innerText = '讀取失敗';
+        el.innerText = window.t('admin.s627', '讀取失敗');
       }
     }
 
@@ -4999,10 +4998,10 @@
           // Firestore 單一文件上限 1MB，壓到大約 850KB 以下
           let q = 0.88, data = canvas.toDataURL('image/jpeg', q);
           while (data.length > 850000 && q > 0.4) { q -= 0.08; data = canvas.toDataURL('image/jpeg', q); }
-          if (data.length > 850000) reject(new Error('圖片太複雜，壓縮後仍然太大，請提供較簡單的設計'));
+          if (data.length > 850000) reject(new Error(window.t('admin.s628', '圖片太複雜，壓縮後仍然太大，請提供較簡單的設計')));
           else resolve(data);
         };
-        img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('無法讀取此圖片檔案')); };
+        img.onerror = () => { URL.revokeObjectURL(url); reject(new Error(window.t('admin.s629', '無法讀取此圖片檔案'))); };
         img.src = url;
       });
     }
@@ -5011,30 +5010,30 @@
       const file = input && input.files && input.files[0];
       if (input) input.value = '';
       if (!file) return;
-      if (file.size > 15 * 1024 * 1024) { window.showToast('圖片不可以超過 15MB', ''); return; }
+      if (file.size > 15 * 1024 * 1024) { window.showToast(window.t('admin.s630', '圖片不可以超過 15MB'), ''); return; }
       try {
-        if (window.showLoading) window.showLoading('正在上載背景…');
+        if (window.showLoading) window.showLoading(window.t('admin.s631', '正在上載背景…'));
         const data = await fileToSnapshotBgDataUrl(file);
         await window.fs.setDoc(window.fs.doc(window.db, 'admin_config', 'snapshotBg' + n), {
           image: data, updatedAt: Date.now(), updatedBy: window.currentUser ? window.currentUser.email : null
         });
-        window.showToast(`已更新 ${n} 人合照背景`, '');
+        window.showToast(`${window.t('admin.s491', '已更新')} ${n} ${window.t('admin.s623', '人合照背景')}`, '');
         loadAdminSnapshotBgPreview(n);
       } catch (e) {
-        window.showToast('上載失敗：' + (e.message || e), '');
+        window.showToast(window.t('admin.s632', '上載失敗：') + (e.message || e), '');
       } finally {
         if (window.hideLoading) window.hideLoading();
       }
     };
 
     window.adminDeleteSnapshotBg = async function(n) {
-      if (!(await window.appConfirm(`確定移除 ${n} 人合照背景？移除後會使用預設背景。`))) return;
+      if (!(await window.appConfirm(`${window.t('admin.s633', '確定移除')} ${n} ${window.t('admin.s634', '人合照背景？移除後會使用預設背景。')}`))) return;
       try {
         await window.fs.deleteDoc(window.fs.doc(window.db, 'admin_config', 'snapshotBg' + n));
-        window.showToast(`已移除 ${n} 人合照背景`, '');
+        window.showToast(`${window.t('admin.s635', '已移除')} ${n} ${window.t('admin.s623', '人合照背景')}`, '');
         loadAdminSnapshotBgPreview(n);
       } catch (e) {
-        window.showToast('移除失敗：' + (e.message || e), '');
+        window.showToast(window.t('admin.s636', '移除失敗：') + (e.message || e), '');
       }
     };
 
@@ -5042,7 +5041,7 @@
     // v1.205.1：設計範本——按實際合照排版畫出相片位置同文字位置，俾設計師
     // 直接喺上面設計（PNG，1080×1350）。
     window.adminDownloadSnapshotTemplate = function(n) {
-      if (typeof window.getSnapshotLayout !== 'function') { window.showToast('範本未能產生，請重新整理頁面再試', ''); return; }
+      if (typeof window.getSnapshotLayout !== 'function') { window.showToast(window.t('admin.s637', '範本未能產生，請重新整理頁面再試'), ''); return; }
       const L = window.getSnapshotLayout(n);
       const c = document.createElement('canvas');
       c.width = L.width; c.height = L.height;
@@ -5057,25 +5056,25 @@
       for (let x = -L.footerHeight; x < c.width; x += 18) { ctx.beginPath(); ctx.moveTo(x, c.height); ctx.lineTo(x + L.footerHeight, fy); ctx.stroke(); }
       ctx.restore();
       ctx.fillStyle = '#B9682B'; ctx.font = 'bold 26px sans-serif'; ctx.textBaseline = 'middle';
-      ctx.textAlign = 'left'; ctx.fillText('今日溫習時數（文字）', 52, fy + L.footerHeight / 2);
-      ctx.textAlign = 'right'; ctx.fillText('ConcenMate 標誌＋網址', c.width - 52, fy + L.footerHeight / 2);
+      ctx.textAlign = 'left'; ctx.fillText(window.t('admin.s638', '今日溫習時數（文字）'), 52, fy + L.footerHeight / 2);
+      ctx.textAlign = 'right'; ctx.fillText(window.t('admin.s639', 'ConcenMate 標誌＋網址'), c.width - 52, fy + L.footerHeight / 2);
       // 相片位置
       L.slots.forEach((r, i) => {
         ctx.fillStyle = '#C9CED3'; ctx.fillRect(r.x, r.y, r.w, r.h);
         ctx.strokeStyle = '#7A848C'; ctx.lineWidth = 3; ctx.strokeRect(r.x + 1.5, r.y + 1.5, r.w - 3, r.h - 3);
         ctx.fillStyle = '#4F5961'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
         ctx.font = `bold ${Math.round(Math.min(48, r.h / 6))}px sans-serif`;
-        ctx.fillText(`相片 ${i + 1}`, r.x + r.w / 2, r.y + r.h / 2 - 18);
+        ctx.fillText(`${window.t('diary.photosLabel', '相片')} ${i + 1}`, r.x + r.w / 2, r.y + r.h / 2 - 18);
         ctx.font = `${Math.round(Math.min(26, r.h / 10))}px sans-serif`;
-        ctx.fillText(`${r.w} × ${r.h} px（左上角 ${r.x}, ${r.y}）`, r.x + r.w / 2, r.y + r.h / 2 + 26);
+        ctx.fillText(`${r.w} × ${r.h} ${window.t('admin.s640', 'px（左上角')} ${r.x}, ${r.y}）`, r.x + r.w / 2, r.y + r.h / 2 + 26);
       });
       ctx.fillStyle = '#9AA3AA'; ctx.textAlign = 'center'; ctx.textBaseline = 'top'; ctx.font = '22px sans-serif';
-      ctx.fillText(`ConcenMate ${n} 人合照背景範本　1080 × 1350 px`, c.width / 2, 12);
+      ctx.fillText(`ConcenMate ${n} ${window.t('admin.s641', '人合照背景範本　1080 × 1350 px')}`, c.width / 2, 12);
       c.toBlob((b) => {
         if (!b) return;
         const a = document.createElement('a');
         a.href = URL.createObjectURL(b);
-        a.download = `ConcenMate-合照背景範本-${n}人.png`;
+        a.download = `${window.t('admin.s642', 'ConcenMate-合照背景範本-')}${n}${window.t('admin.s643', '人.png')}`;
         document.body.appendChild(a); a.click(); a.remove();
         setTimeout(() => URL.revokeObjectURL(a.href), 5000);
       }, 'image/png');
@@ -5088,17 +5087,17 @@
 (function () {
   const HKD = 7.8;
   const LEVEL = {
-    ok: { color: '#4A68A8', label: '正常' },
-    watch: { color: '#E8B321', label: '需要留意' },
-    urgent: { color: '#C0392B', label: '立即處理' },
-    unknown: { color: '#A4B4D4', label: '未有數據' }
+    ok: { color: '#4A68A8', label: window.t('admin.s324', '正常') },
+    watch: { color: '#E8B321', label: window.t('admin.s644', '需要留意') },
+    urgent: { color: '#C0392B', label: window.t('admin.s645', '立即處理') },
+    unknown: { color: '#A4B4D4', label: window.t('admin.s646', '未有數據') }
   };
-  const SOURCE = { official: '官方數據', count: '系統點數', estimate: '系統估算', unavailable: '未能取得' };
+  const SOURCE = { official: window.t('admin.s647', '官方數據'), count: window.t('admin.s648', '系統點數'), estimate: window.t('admin.s649', '系統估算'), unavailable: window.t('admin.s650', '未能取得') };
   const PIE_COLORS = ['#29395C', '#4A68A8', '#7F96C6', '#FFD84D', '#E8A33C', '#A4B4D4', '#C0392B', '#6B7894', '#344976'];
   const esc = (s) => (window.escapeHtml ? window.escapeHtml(String(s == null ? '' : s)) : String(s == null ? '' : s));
   const fmt = (n, d) => (n == null ? '—' : Number(n).toLocaleString('zh-HK', { maximumFractionDigits: d == null ? 1 : d }));
   const usd = (n) => 'US$' + Number(n || 0).toFixed(2);
-  const hkd = (n) => '約 HK$' + Math.round(Number(n || 0) * HKD).toLocaleString('zh-HK');
+  const hkd = (n) => window.t('admin.s651', '約 HK$') + Math.round(Number(n || 0) * HKD).toLocaleString('zh-HK');
 
   // 圓環圖（百分比）
   function gauge(pct, color) {
@@ -5114,7 +5113,7 @@
   // 圓形圖（開支分佈）
   function pie(parts) {
     const total = parts.reduce((a, b) => a + b.value, 0);
-    if (!total) return '<p style="font-size:13px; color:#6B7894; margin:0;">本月暫時沒有收費項目。</p>';
+    if (!total) return ('<p style="font-size:13px; color:#6B7894; margin:0;">' + window.t('admin.s652', '本月暫時沒有收費項目。') + '</p>');
     let acc = 0;
     const r = 40, cx = 50, cy = 50;
     const slices = parts.map((pt, i) => {
@@ -5142,19 +5141,19 @@
       return `<div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; min-width:0;">
         <span style="font-size:11px; color:var(--brand-800); white-space:nowrap;">${v == null ? '—' : usd(v)}</span>
         <div style="width:100%; max-width:46px; height:${ht}px; border-radius:6px 6px 0 0; background:${v == null ? '#E9EDF5' : '#4A68A8'};"></div>
-        <span style="font-size:11px; color:#6B7894;">${Number(h.month.slice(4))} 月</span></div>`;
+        <span style="font-size:11px; color:#6B7894;">${Number(h.month.slice(4))} ${window.t('auth.monthOption', '月')}</span></div>`;
     }).join('')}</div>`;
   }
 
   async function load(refresh) {
     const panel = document.getElementById('admin-tab-costs');
     if (!panel) return;
-    if (!panel.dataset.loaded || refresh) panel.innerHTML = '<div class="card" style="padding:16px;">正在讀取用量數據…（首次約需 5 至 10 秒）</div>';
+    if (!panel.dataset.loaded || refresh) panel.innerHTML = ('<div class="card" style="padding:16px;">' + window.t('admin.s653', '正在讀取用量數據…（首次約需 5 至 10 秒）') + '</div>');
     let d;
     try {
       d = await window.callCloudFunction('getCostDashboard', { refresh: !!refresh });
     } catch (e) {
-      panel.innerHTML = `<div class="card" style="padding:16px; color:#8A2F2F;">未能讀取營運開支數據：${esc((e && e.message) || e)}</div>`;
+      panel.innerHTML = `<div class="card" style="padding:16px; color:#8A2F2F;">${window.t('admin.s654', '未能讀取營運開支數據：')}${esc((e && e.message) || e)}</div>`;
       return;
     }
     panel.dataset.loaded = '1';
@@ -5164,11 +5163,11 @@
     const alertHtml = alerts.length
       ? alerts.map(it => `<div style="display:flex; gap:10px; padding:10px 12px; border-radius:10px; margin-bottom:8px; background:${it.level === 'urgent' ? '#FDECEA' : '#FFF7DA'}; border:1px solid ${it.level === 'urgent' ? '#F1B8B1' : '#F0D98A'};">
           <b style="color:${LEVEL[it.level].color}; white-space:nowrap;">${LEVEL[it.level].label}</b>
-          <div style="font-size:13px; color:var(--brand-800); line-height:1.6;"><b>${esc(it.name)}</b>：已用 ${it.pct}%。${esc(it.advice)}</div></div>`).join('')
-      : '<div style="padding:10px 12px; border-radius:10px; background:var(--brand-100); font-size:14px; color:var(--brand-800);">所有項目均在安全水平，暫時毋須升級。</div>';
+          <div style="font-size:13px; color:var(--brand-800); line-height:1.6;"><b>${esc(it.name)}</b>${window.t('admin.s655', '：已用')} ${it.pct}%。${esc(it.advice)}</div></div>`).join('')
+      : ('<div style="padding:10px 12px; border-radius:10px; background:var(--brand-100); font-size:14px; color:var(--brand-800);">' + window.t('admin.s656', '所有項目均在安全水平，暫時毋須升級。') + '</div>');
 
     const pieParts = items.filter(it => it.costUSD > 0).map(it => ({ name: it.name.replace(/（.*?）/g, ''), value: it.costUSD }));
-    if (d.domainUSD) pieParts.push({ name: '域名', value: d.domainUSD });
+    if (d.domainUSD) pieParts.push({ name: window.t('admin.s657', '域名'), value: d.domainUSD });
 
     const cards = items.map(it => {
       const lv = LEVEL[it.level] || LEVEL.unknown;
@@ -5181,20 +5180,20 @@
           ${gauge(it.pct, lv.color)}
           <div style="font-size:13px; color:var(--brand-800); line-height:1.7;">
             <div>${esc(it.period)}：<b>${fmt(it.used, it.unit === 'GB' ? 1 : 0)}</b> ${esc(it.unit)}</div>
-            <div style="color:#6B7894;">上限：${fmt(it.limit, 0)} ${esc(it.unit)}</div>
+            <div style="color:#6B7894;">${window.t('admin.s658', '上限：')}${fmt(it.limit, 0)} ${esc(it.unit)}</div>
             ${it.extra ? `<div style="color:#6B7894;">${esc(it.extra)}</div>` : ''}
-            <div>本月估算：<b>${usd(it.costUSD)}</b></div>
+            <div>${window.t('admin.s659', '本月估算：')}<b>${usd(it.costUSD)}</b></div>
             <div style="color:${lv.color}; font-weight:700;">${lv.label}</div>
           </div>
         </div>
-        <details style="font-size:12px; color:#6B7894;"><summary style="cursor:pointer;">幾時要升級？</summary><p style="margin:6px 0 0; line-height:1.6;">${esc(it.advice)}</p></details>
+        <details style="font-size:12px; color:#6B7894;"><summary style="cursor:pointer;">${window.t('admin.s660', '幾時要升級？')}</summary><p style="margin:6px 0 0; line-height:1.6;">${esc(it.advice)}</p></details>
       </div>`;
     }).join('');
 
     const errs = d.errors || {};
     const errNotes = [];
-    if (errs.google) errNotes.push('Google 用量數據（資料庫、伺服器程式、相片儲存）未能取得：' + errs.google);
-    if (errs.vultr) errNotes.push('Vultr 數據未能取得，直播流量改用系統估算：' + errs.vultr);
+    if (errs.google) errNotes.push(window.t('admin.s661', 'Google 用量數據（資料庫、伺服器程式、相片儲存）未能取得：') + errs.google);
+    if (errs.vultr) errNotes.push(window.t('admin.s662', 'Vultr 數據未能取得，直播流量改用系統估算：') + errs.vultr);
     const s = d.settings || {};
     const updated = new Date(d.at).toLocaleString('zh-HK', { hour12: false });
     // v1.230.1：每月預算自動控制狀態
@@ -5204,45 +5203,45 @@
     let budgetHtml;
     if (g.paused) {
       budgetHtml = `<div class="card" style="padding:16px; border:2px solid #C0392B; background:#FDF1EF;">
-        <h3 style="margin:0 0 6px; font-size:16px; color:#A33A2F;">直播已自動暫停（本月開支已達預算上限）</h3>
-        <p style="margin:0; font-size:14px; line-height:1.7; color:#5A2A24;">暫停時間：${esc(fmtTime(g.pausedAt))}<br>本月估算 ${usd(d.totalUSD)}，預算上限 ${usd(budget || g.budgetUSD)}。<br>暫停期間一般用戶不能開始或觀看直播（管理員除外）。提高預算上限或關閉「自動暫停」後儲存，直播會即時恢復；下月估算回落至預算以下亦會自動恢復。</p>
+        <h3 style="margin:0 0 6px; font-size:16px; color:#A33A2F;">${window.t('admin.s663', '直播已自動暫停（本月開支已達預算上限）')}</h3>
+        <p style="margin:0; font-size:14px; line-height:1.7; color:#5A2A24;">${window.t('admin.s664', '暫停時間：')}${esc(fmtTime(g.pausedAt))}<br>${window.t('admin.s665', '本月估算')} ${usd(d.totalUSD)}${window.t('admin.s666', '，預算上限')} ${usd(budget || g.budgetUSD)}。<br>${window.t('admin.s667', '暫停期間一般用戶不能開始或觀看直播（管理員除外）。提高預算上限或關閉「自動暫停」後儲存，直播會即時恢復；下月估算回落至預算以下亦會自動恢復。')}</p>
       </div>`;
     } else if (budget > 0) {
       const pct = Math.round(d.totalUSD / budget * 100);
       const barColor = pct >= 90 ? '#C0392B' : pct >= 70 ? '#E0A800' : '#4A68A8';
       budgetHtml = `<div class="card" style="padding:16px;">
         <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px; align-items:baseline;">
-          <h3 style="margin:0; font-size:16px;">每月預算控制</h3>
-          <span style="font-size:13px; color:#6B7894;">自動暫停直播：<b>${s.budgetAutoStop ? '已開啟' : '未開啟'}</b></span>
+          <h3 style="margin:0; font-size:16px;">${window.t('admin.s671', '每月預算控制')}</h3>
+          <span style="font-size:13px; color:#6B7894;">${window.t('admin.s672', '自動暫停直播：')}<b>${s.budgetAutoStop ? window.t('admin.s668', '已開啟') : window.t('admin.s669', '未開啟')}</b></span>
         </div>
-        <p style="margin:6px 0 8px; font-size:14px;">本月估算 ${usd(d.totalUSD)} ／ 預算上限 ${usd(budget)}（${pct}%）</p>
+        <p style="margin:6px 0 8px; font-size:14px;">${window.t('admin.s665', '本月估算')} ${usd(d.totalUSD)} ${window.t('admin.s673', '／ 預算上限')} ${usd(budget)}（${pct}%）</p>
         <div style="height:10px; background:var(--brand-100); border-radius:6px; overflow:hidden;"><div style="height:100%; width:${Math.min(100, pct)}%; background:${barColor};"></div></div>
-        ${g.resumedAt ? `<p style="margin:8px 0 0; font-size:12px; color:#8A94A8;">上次自動恢復直播：${esc(fmtTime(g.resumedAt))}</p>` : ''}
+        ${g.resumedAt ? `<p style="margin:8px 0 0; font-size:12px; color:#8A94A8;">${window.t('admin.s670', '上次自動恢復直播：')}${esc(fmtTime(g.resumedAt))}</p>` : ''}
       </div>`;
     } else {
-      budgetHtml = `<div class="card" style="padding:16px;"><h3 style="margin:0 0 4px; font-size:16px;">每月預算控制</h3><p style="margin:0; font-size:13px; color:#6B7894;">尚未設定預算上限。可在下方「方案設定」填寫每月預算上限，並開啟「超出預算時自動暫停直播」。</p></div>`;
+      budgetHtml = `<div class="card" style="padding:16px;"><h3 style="margin:0 0 4px; font-size:16px;">${window.t('admin.s671', '每月預算控制')}</h3><p style="margin:0; font-size:13px; color:#6B7894;">${window.t('admin.s674', '尚未設定預算上限。可在下方「方案設定」填寫每月預算上限，並開啟「超出預算時自動暫停直播」。')}</p></div>`;
     }
 
     panel.innerHTML = `
       <div class="card" style="padding:16px;">
         <!-- v1.235.1：「重新整理」掣固定在標題右邊（手機窄畫面亦不會跌到中間），更新時間移到金額下面 -->
         <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
-          <h3 style="margin:0;">營運開支</h3>
-          <button type="button" class="btn btn-outline" style="font-size:13px; padding:5px 12px; min-height:0; flex-shrink:0;" onclick="window.renderAdminCostsTab(true)">重新整理</button>
+          <h3 style="margin:0;">${window.t('html.s28', '營運開支')}</h3>
+          <button type="button" class="btn btn-outline" style="font-size:13px; padding:5px 12px; min-height:0; flex-shrink:0;" onclick="window.renderAdminCostsTab(true)">${window.t('admin.s221', '重新整理')}</button>
         </div>
-        <p style="margin:4px 0 0; font-size:13px; color:#6B7894;">本月（${Number(d.monthKey.slice(4))} 月，已過 ${d.dayOfMonth}／${d.daysInMonth} 日）全月估算開支</p>
+        <p style="margin:4px 0 0; font-size:13px; color:#6B7894;">${window.t('admin.s683', '本月（')}${Number(d.monthKey.slice(4))} ${window.t('admin.s684', '月，已過')} ${d.dayOfMonth}／${d.daysInMonth} ${window.t('admin.s685', '日）全月估算開支')}</p>
         <div style="font-size:28px; font-weight:800; color:var(--brand-800); margin-top:6px;">${usd(d.totalUSD)} <span style="font-size:15px; font-weight:600; color:#6B7894;">${hkd(d.totalUSD)}</span></div>
-        ${d.vultrPendingUSD != null ? `<p style="margin:4px 0 0; font-size:13px; color:#6B7894;">Vultr 本月實際累計帳單：${usd(d.vultrPendingUSD)}</p>` : ''}
-        <p style="margin:6px 0 0; font-size:12px; color:#8A94A8;">更新時間：${esc(updated)}（數據每 30 分鐘更新一次）</p>
+        ${d.vultrPendingUSD != null ? `<p style="margin:4px 0 0; font-size:13px; color:#6B7894;">${window.t('admin.s675', 'Vultr 本月實際累計帳單：')}${usd(d.vultrPendingUSD)}</p>` : ''}
+        <p style="margin:6px 0 0; font-size:12px; color:#8A94A8;">${window.t('admin.s686', '更新時間：')}${esc(updated)}${window.t('admin.s687', '（數據每 30 分鐘更新一次）')}</p>
         <div style="display:flex; gap:14px; flex-wrap:wrap; margin-top:12px; font-size:12px; color:#6B7894;">
-          ${['ok', 'watch', 'urgent'].map(k => `<span style="display:flex; align-items:center; gap:5px;"><span style="width:10px; height:10px; border-radius:50%; background:${LEVEL[k].color};"></span>${LEVEL[k].label}${k === 'ok' ? '（70% 以下）' : k === 'watch' ? '（70%–89%）' : '（90% 或以上）'}</span>`).join('')}
+          ${['ok', 'watch', 'urgent'].map(k => `<span style="display:flex; align-items:center; gap:5px;"><span style="width:10px; height:10px; border-radius:50%; background:${LEVEL[k].color};"></span>${LEVEL[k].label}${k === 'ok' ? window.t('admin.s676', '（70% 以下）') : k === 'watch' ? '（70%–89%）' : window.t('admin.s677', '（90% 或以上）')}</span>`).join('')}
         </div>
       </div>
 
       ${budgetHtml}
 
       <div class="card" style="padding:16px;">
-        <h3 style="margin:0 0 10px; font-size:16px;">需要處理的項目</h3>
+        <h3 style="margin:0 0 10px; font-size:16px;">${window.t('admin.s688', '需要處理的項目')}</h3>
         ${alertHtml}
         ${errNotes.length ? `<div style="font-size:12px; color:#8A6D1F; background:#FFF7E6; border:1px solid #F0D9A0; border-radius:8px; padding:8px 10px; margin-top:6px; line-height:1.6;">${errNotes.map(esc).join('<br>')}</div>` : ''}
       </div>
@@ -5251,31 +5250,31 @@
 
       <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:12px;">
         <div class="card" style="padding:16px; margin:0;">
-          <h3 style="margin:0 0 10px; font-size:16px;">本月開支分佈</h3>
+          <h3 style="margin:0 0 10px; font-size:16px;">${window.t('admin.s689', '本月開支分佈')}</h3>
           ${pie(pieParts)}
         </div>
         <div class="card" style="padding:16px; margin:0;">
-          <h3 style="margin:0 0 4px; font-size:16px;">過去 6 個月估算開支</h3>
-          <p style="margin:0; font-size:12px; color:#8A94A8;">每 3 小時自動記錄一次當月估算</p>
+          <h3 style="margin:0 0 4px; font-size:16px;">${window.t('admin.s690', '過去 6 個月估算開支')}</h3>
+          <p style="margin:0; font-size:12px; color:#8A94A8;">${window.t('admin.s691', '每 3 小時自動記錄一次當月估算')}</p>
           ${bars(d.history || [])}
         </div>
       </div>
 
       <div class="card" style="padding:16px; margin-top:12px;">
-        <h3 style="margin:0 0 6px; font-size:16px;">方案設定</h3>
-        <p style="margin:0 0 12px; font-size:13px; color:#6B7894;">升級或更改方案後，請在此更新，圓形圖的上限及估算開支會隨之調整。</p>
+        <h3 style="margin:0 0 6px; font-size:16px;">${window.t('admin.s692', '方案設定')}</h3>
+        <p style="margin:0 0 12px; font-size:13px; color:#6B7894;">${window.t('admin.s693', '升級或更改方案後，請在此更新，圓形圖的上限及估算開支會隨之調整。')}</p>
         <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr)); gap:10px; font-size:14px;">
-          <label>Vultr 月費（US$）<input id="cost-vultr-fee" type="number" min="0" step="1" value="${esc(s.vultrMonthlyUSD)}" class="input-field" style="width:100%; box-sizing:border-box; margin-top:4px; padding:8px; border:1px solid var(--brand-200); border-radius:8px;"></label>
-          <label>Vultr 每月包含流量（GB）<input id="cost-vultr-gb" type="number" min="1" step="100" value="${esc(s.vultrIncludedGB)}" style="width:100%; box-sizing:border-box; margin-top:4px; padding:8px; border:1px solid var(--brand-200); border-radius:8px;"></label>
-          <label>直播同時觀看上限（人）<input id="cost-live-cap" type="number" min="1" step="10" value="${esc(s.liveViewerCapacity)}" style="width:100%; box-sizing:border-box; margin-top:4px; padding:8px; border:1px solid var(--brand-200); border-radius:8px;"></label>
-          <label>EmailJS 方案<select id="cost-emailjs" style="width:100%; box-sizing:border-box; margin-top:4px; padding:8px; border:1px solid var(--brand-200); border-radius:8px;">
-            ${[[200, '免費（每月 200 封）'], [2000, 'Personal（2,000 封，US$9）'], [5000, 'Professional（5,000 封，US$15）'], [25000, 'Business（25,000 封，US$40）']].map(([v, l]) => `<option value="${v}" ${Number(s.emailjsQuota) === v ? 'selected' : ''}>${l}</option>`).join('')}
+          <label>${window.t('admin.s694', 'Vultr 月費（US$）')}<input id="cost-vultr-fee" type="number" min="0" step="1" value="${esc(s.vultrMonthlyUSD)}" class="input-field" style="width:100%; box-sizing:border-box; margin-top:4px; padding:8px; border:1px solid var(--brand-200); border-radius:8px;"></label>
+          <label>${window.t('admin.s695', 'Vultr 每月包含流量（GB）')}<input id="cost-vultr-gb" type="number" min="1" step="100" value="${esc(s.vultrIncludedGB)}" style="width:100%; box-sizing:border-box; margin-top:4px; padding:8px; border:1px solid var(--brand-200); border-radius:8px;"></label>
+          <label>${window.t('admin.s696', '直播同時觀看上限（人）')}<input id="cost-live-cap" type="number" min="1" step="10" value="${esc(s.liveViewerCapacity)}" style="width:100%; box-sizing:border-box; margin-top:4px; padding:8px; border:1px solid var(--brand-200); border-radius:8px;"></label>
+          <label>${window.t('admin.s697', 'EmailJS 方案')}<select id="cost-emailjs" style="width:100%; box-sizing:border-box; margin-top:4px; padding:8px; border:1px solid var(--brand-200); border-radius:8px;">
+            ${[[200, window.t('admin.s678', '免費（每月 200 封）')], [2000, window.t('admin.s679', 'Personal（2,000 封，US$9）')], [5000, window.t('admin.s680', 'Professional（5,000 封，US$15）')], [25000, window.t('admin.s681', 'Business（25,000 封，US$40）')]].map(([v, l]) => `<option value="${v}" ${Number(s.emailjsQuota) === v ? 'selected' : ''}>${l}</option>`).join('')}
           </select></label>
-          <label>每月預算上限（US$，0 為不設）<input id="cost-budget" type="number" min="0" step="1" value="${esc(s.monthlyBudgetUSD || 0)}" style="width:100%; box-sizing:border-box; margin-top:4px; padding:8px; border:1px solid var(--brand-200); border-radius:8px;"></label>
-          <label style="display:flex; align-items:center; gap:8px; margin-top:22px;"><input id="cost-budget-autostop" type="checkbox" ${s.budgetAutoStop ? 'checked' : ''}>超出預算時自動暫停直播</label>
+          <label>${window.t('admin.s698', '每月預算上限（US$，0 為不設）')}<input id="cost-budget" type="number" min="0" step="1" value="${esc(s.monthlyBudgetUSD || 0)}" style="width:100%; box-sizing:border-box; margin-top:4px; padding:8px; border:1px solid var(--brand-200); border-radius:8px;"></label>
+          <label style="display:flex; align-items:center; gap:8px; margin-top:22px;"><input id="cost-budget-autostop" type="checkbox" ${s.budgetAutoStop ? 'checked' : ''}>${window.t('admin.s699', '超出預算時自動暫停直播')}</label>
         </div>
-        <p style="margin:10px 0 0; font-size:12px; color:#8A94A8;">系統每 3 小時檢查一次本月估算開支；達到預算上限時會結束所有進行中的直播，並暫停開播及觀看，直至估算回落至預算以下。中轉伺服器的上限請在「中轉伺服器」分頁設定。</p>
-        <button type="button" class="btn btn-primary" style="margin-top:12px;" onclick="window.adminSaveCostSettings()">儲存方案設定</button>
+        <p style="margin:10px 0 0; font-size:12px; color:#8A94A8;">${window.t('admin.s700', '系統每 3 小時檢查一次本月估算開支；達到預算上限時會結束所有進行中的直播，並暫停開播及觀看，直至估算回落至預算以下。中轉伺服器的上限請在「中轉伺服器」分頁設定。')}</p>
+        <button type="button" class="btn btn-primary" style="margin-top:12px;" onclick="window.adminSaveCostSettings()">${window.t('admin.s701', '儲存方案設定')}</button>
       </div>`;
   }
 
@@ -5289,10 +5288,10 @@
         monthlyBudgetUSD: v('cost-budget'),
         budgetAutoStop: !!(document.getElementById('cost-budget-autostop') || {}).checked
       });
-      window.showToast('已儲存方案設定', '✅');
+      window.showToast(window.t('admin.s702', '已儲存方案設定'), '✅');
       load(true);
     } catch (e) {
-      window.showToast('儲存失敗：' + ((e && e.message) || e), '❌');
+      window.showToast(window.t('admin.s138', '儲存失敗：') + ((e && e.message) || e), '❌');
     }
   };
 })();
@@ -5324,7 +5323,7 @@
       const snap = await window.fs.getDocs(window.fs.collection(window.db, 'schoolEmailDomains'));
       docs = snap.docs.map(d => Object.assign({ id: d.id }, d.data()));
     } catch (e) {
-      panel.innerHTML = `<div class="card" style="padding:16px; color:#8A2F2F;">未能讀取：${esc(e.message || e)}</div>`;
+      panel.innerHTML = `<div class="card" style="padding:16px; color:#8A2F2F;">${window.t('admin.s703', '未能讀取：')}${esc(e.message || e)}</div>`;
       return;
     }
     const pending = docs.filter(d => d.status === 'pending').sort((a, b) => (a.firstSeenAt || 0) - (b.firstSeenAt || 0));
@@ -5332,55 +5331,55 @@
     const pendHtml = pending.length ? pending.map(d => `
       <div style="border:1px solid var(--brand-200); border-radius:10px; padding:12px; margin-bottom:10px;">
         <div style="font-size:15px; font-weight:800; color:var(--brand-800); word-break:break-all;">@${esc(d.domain)}</div>
-        <div style="font-size:13px; color:#6B7894; margin:4px 0 8px;">學生填寫的學校：${esc((d.sampleSchools || []).join('、') || '—')}　｜　等候人數：${esc(d.pendingCount || 0)}</div>
+        <div style="font-size:13px; color:#6B7894; margin:4px 0 8px;">${window.t('admin.s704', '學生填寫的學校：')}${esc((d.sampleSchools || []).join('、') || '—')}　${window.t('admin.s705', '｜　等候人數：')}${esc(d.pendingCount || 0)}</div>
         <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
-          <input id="sd-school-${esc(d.id)}" value="${esc((d.sampleSchools || [])[0] || '')}" placeholder="這個域名屬於哪間中學" style="flex:1; min-width:180px; padding:8px 10px; border:1px solid var(--brand-300); border-radius:8px; font-size:14px;">
-          <button type="button" class="btn btn-primary" onclick="window.adminReviewSchoolDomain('${esc(d.id)}', true)">確認為中學</button>
-          <button type="button" class="btn btn-outline" onclick="window.adminReviewSchoolDomain('${esc(d.id)}', false)">不是中學</button>
+          <input id="sd-school-${esc(d.id)}" value="${esc((d.sampleSchools || [])[0] || '')}" placeholder="${window.t('admin.s706', '這個域名屬於哪間中學')}" style="flex:1; min-width:180px; padding:8px 10px; border:1px solid var(--brand-300); border-radius:8px; font-size:14px;">
+          <button type="button" class="btn btn-primary" onclick="window.adminReviewSchoolDomain('${esc(d.id)}', true)">${window.t('admin.s707', '確認為中學')}</button>
+          <button type="button" class="btn btn-outline" onclick="window.adminReviewSchoolDomain('${esc(d.id)}', false)">${window.t('admin.s708', '不是中學')}</button>
         </div>
-      </div>`).join('') : '<p style="font-size:14px; color:#6B7894; margin:0;">暫時沒有待審批的域名。</p>';
+      </div>`).join('') : ('<p style="font-size:14px; color:#6B7894; margin:0;">' + window.t('admin.s709', '暫時沒有待審批的域名。') + '</p>');
     const doneHtml = done.length ? `<table style="width:100%; border-collapse:collapse; font-size:13px;">
-        <thead><tr style="text-align:left; color:#6B7894;"><th style="padding:6px;">域名</th><th style="padding:6px;">結果</th><th style="padding:6px;">學校</th><th style="padding:6px;"></th></tr></thead>
+        <thead><tr style="text-align:left; color:#6B7894;"><th style="padding:6px;">${window.t('admin.s657', '域名')}</th><th style="padding:6px;">${window.t('admin.s713', '結果')}</th><th style="padding:6px;">${window.t('admin.s215', '學校')}</th><th style="padding:6px;"></th></tr></thead>
         <tbody>${done.map(d => `<tr style="border-top:1px solid var(--brand-100);">
           <td style="padding:6px; word-break:break-all;">@${esc(d.domain)}</td>
-          <td style="padding:6px;">${d.status === 'approved' ? '已確認為中學' : '不是中學'}</td>
+          <td style="padding:6px;">${d.status === 'approved' ? window.t('admin.s710', '已確認為中學') : window.t('admin.s708', '不是中學')}</td>
           <td style="padding:6px;">${esc(d.school || '—')}</td>
           <td style="padding:6px; text-align:right;">${d.status === 'approved'
-            ? `<button type="button" class="btn btn-outline" style="font-size:12px; padding:3px 8px;" onclick="window.adminReviewSchoolDomain('${esc(d.id)}', false)">撤銷</button>`
-            : `<button type="button" class="btn btn-outline" style="font-size:12px; padding:3px 8px;" onclick="window.adminReopenSchoolDomain('${esc(d.id)}', '${esc(d.domain)}')">改為中學</button>`}</td></tr>`).join('')}</tbody></table>`
-      : '<p style="font-size:14px; color:#6B7894; margin:0;">未有紀錄。</p>';
+            ? `<button type="button" class="btn btn-outline" style="font-size:12px; padding:3px 8px;" onclick="window.adminReviewSchoolDomain('${esc(d.id)}', false)">${window.t('admin.s711', '撤銷')}</button>`
+            : `<button type="button" class="btn btn-outline" style="font-size:12px; padding:3px 8px;" onclick="window.adminReopenSchoolDomain('${esc(d.id)}', '${esc(d.domain)}')">${window.t('admin.s712', '改為中學')}</button>`}</td></tr>`).join('')}</tbody></table>`
+      : ('<p style="font-size:14px; color:#6B7894; margin:0;">' + window.t('admin.s714', '未有紀錄。') + '</p>');
     panel.innerHTML = `
       <div class="card" style="padding:16px;">
-        <h3 style="margin:0 0 6px;">學校電郵審批</h3>
-        <p style="font-size:13px; color:#6B7894; line-height:1.7; margin:0;">學生用 .edu.hk 學校電郵驗證時，如果該學校的電郵域名是第一次出現，會列在這裏。請確認它屬於一間中學（例如在學校網站核對），確認後同一域名的學生會即時成為中學生帳戶，之後同校學生驗證時會即時通過。大專院校的域名系統已自動拒絕。</p>
+        <h3 style="margin:0 0 6px;">${window.t('html.s35', '學校電郵審批')}</h3>
+        <p style="font-size:13px; color:#6B7894; line-height:1.7; margin:0;">${window.t('admin.s715', '學生用 .edu.hk 學校電郵驗證時，如果該學校的電郵域名是第一次出現，會列在這裏。請確認它屬於一間中學（例如在學校網站核對），確認後同一域名的學生會即時成為中學生帳戶，之後同校學生驗證時會即時通過。大專院校的域名系統已自動拒絕。')}</p>
       </div>
-      <div class="card" style="padding:16px;"><h4 style="margin:0 0 10px;">待審批</h4>${pendHtml}</div>
-      <div class="card" style="padding:16px;"><h4 style="margin:0 0 10px;">已處理</h4>${doneHtml}</div>`;
+      <div class="card" style="padding:16px;"><h4 style="margin:0 0 10px;">${window.t('admin.s315', '待審批')}</h4>${pendHtml}</div>
+      <div class="card" style="padding:16px;"><h4 style="margin:0 0 10px;">${window.t('admin.s271', '已處理')}</h4>${doneHtml}</div>`;
   };
   window.adminReviewSchoolDomain = async function (id, approve) {
     const input = document.getElementById('sd-school-' + id);
     const school = input ? input.value.trim() : '';
     const domain = id;
-    if (approve && !school) { window.showToast('請填寫學校名稱', '⚠️'); return; }
-    const msg = approve ? `確認 @${domain} 屬於「${school}」？同一域名等候中的學生會即時成為中學生帳戶。` : `確定 @${domain} 不是中學電郵？使用此域名的學生會失去中學生帳戶資格。`;
+    if (approve && !school) { window.showToast(window.t('admin.s716', '請填寫學校名稱'), '⚠️'); return; }
+    const msg = approve ? `${window.t('admin.s717', '確認 @')}${domain} ${window.t('admin.s718', '屬於「')}${school}${window.t('admin.s719', '」？同一域名等候中的學生會即時成為中學生帳戶。')}` : `${window.t('admin.s720', '確定 @')}${domain} ${window.t('admin.s721', '不是中學電郵？使用此域名的學生會失去中學生帳戶資格。')}`;
     if (!(await window.appConfirm(msg))) return;
     try {
       const res = await window.callCloudFunction('reviewSchoolEmailDomain', { domain, approve, school });
-      window.showToast(`已處理，更新了 ${res && res.updated || 0} 位學生`, '✅');
+      window.showToast(`${window.t('admin.s722', '已處理，更新了')} ${res && res.updated || 0} ${window.t('admin.s723', '位學生')}`, '✅');
       window.renderAdminSchoolDomainsTab();
     } catch (e) {
-      window.showToast('處理失敗：' + (window.friendlyErrorText ? window.friendlyErrorText(e) : (e.message || e)), '❌');
+      window.showToast(window.t('admin.s724', '處理失敗：') + (window.friendlyErrorText ? window.friendlyErrorText(e) : (e.message || e)), '❌');
     }
   };
   window.adminReopenSchoolDomain = async function (id, domain) {
-    const school = await window.appPrompt(`@${domain} 屬於哪間中學？`, '');
+    const school = await window.appPrompt(`@${domain} ${window.t('admin.s725', '屬於哪間中學？')}`, '');
     if (!school) return;
     try {
       const res = await window.callCloudFunction('reviewSchoolEmailDomain', { domain, approve: true, school: school.trim() });
-      window.showToast(`已改為中學，更新了 ${res && res.updated || 0} 位學生`, '✅');
+      window.showToast(`${window.t('admin.s726', '已改為中學，更新了')} ${res && res.updated || 0} ${window.t('admin.s723', '位學生')}`, '✅');
       window.renderAdminSchoolDomainsTab();
     } catch (e) {
-      window.showToast('處理失敗：' + (window.friendlyErrorText ? window.friendlyErrorText(e) : (e.message || e)), '❌');
+      window.showToast(window.t('admin.s724', '處理失敗：') + (window.friendlyErrorText ? window.friendlyErrorText(e) : (e.message || e)), '❌');
     }
   };
 })();
@@ -5407,117 +5406,117 @@
   window.renderAdminMobileAppTab = async function () {
     const box = document.getElementById('admin-tab-mobileapp');
     if (!box) return;
-    box.innerHTML = '<div class="admin-card">載入中…</div>';
+    box.innerHTML = ('<div class="admin-card">' + window.t('qa.loading', '載入中…') + '</div>');
     let stats = null, upd = {}, statsErr = '';
     try { stats = await window.callCloudFunction('getAppStats', {}); } catch (e) { statsErr = (window.friendlyErrorText ? window.friendlyErrorText(e) : (e.message || e)); }
     try { const s = await window.fs.getDoc(window.fs.doc(window.db, 'admin_config', 'appUpdate')); if (s.exists()) upd = s.data(); } catch (e) {}
     const pushOn = stats ? stats.pushEnabled : true;
     box.innerHTML = `
       <div class="admin-card">
-        <h3 style="font-size:16px; font-weight:bold; color:var(--brand-800); margin-bottom:10px;">App 使用統計</h3>
+        <h3 style="font-size:16px; font-weight:bold; color:var(--brand-800); margin-bottom:10px;">${window.t('admin.s744', 'App 使用統計')}</h3>
         ${stats ? `
         <table class="admin-table">
-          <tr><th>過去 7 日使用 App 的用戶</th><td>${stats.users7}</td></tr>
-          <tr><th>過去 30 日使用 App 的用戶</th><td>${stats.users30}（裝置 ${stats.devices30} 部）</td></tr>
-          <tr><th>平台</th><td>${listObj(stats.platforms)}</td></tr>
-          <tr><th>網站版本分佈</th><td>${listObj(stats.webVersions)}</td></tr>
-          <tr><th>原生版本（build）分佈</th><td>${listObj(stats.nativeBuilds)}</td></tr>
-          <tr><th>已登記推送通知的裝置</th><td>${stats.pushDevices}</td></tr>
+          <tr><th>${window.t('admin.s727', '過去 7 日使用 App 的用戶')}</th><td>${stats.users7}</td></tr>
+          <tr><th>${window.t('admin.s728', '過去 30 日使用 App 的用戶')}</th><td>${stats.users30}${window.t('admin.s729', '（裝置')} ${stats.devices30} ${window.t('admin.s730', '部）')}</td></tr>
+          <tr><th>${window.t('admin.s731', '平台')}</th><td>${listObj(stats.platforms)}</td></tr>
+          <tr><th>${window.t('admin.s732', '網站版本分佈')}</th><td>${listObj(stats.webVersions)}</td></tr>
+          <tr><th>${window.t('admin.s733', '原生版本（build）分佈')}</th><td>${listObj(stats.nativeBuilds)}</td></tr>
+          <tr><th>${window.t('admin.s734', '已登記推送通知的裝置')}</th><td>${stats.pushDevices}</td></tr>
         </table>
-        <p style="font-size:12px; color:#888; margin-top:6px;">每部裝置每日最多記錄一次；網站用戶不計算在內。</p>` : `<p style="color:#A33A2F; font-size:13px;">未能載入統計：${esc(statsErr)}</p>`}
+        <p style="font-size:12px; color:#888; margin-top:6px;">${window.t('admin.s735', '每部裝置每日最多記錄一次；網站用戶不計算在內。')}</p>` : `<p style="color:#A33A2F; font-size:13px;">${window.t('admin.s736', '未能載入統計：')}${esc(statsErr)}</p>`}
       </div>
 
       <div class="admin-card">
-        <h3 style="font-size:16px; font-weight:bold; color:var(--brand-800); margin-bottom:6px;">推送通知總開關</h3>
-        <p style="font-size:13px; color:#6B7894; margin-bottom:10px;">關閉後，所有推送通知即時暫停（約 1 分鐘內生效），用戶個人設定保持不變。</p>
+        <h3 style="font-size:16px; font-weight:bold; color:var(--brand-800); margin-bottom:6px;">${window.t('admin.s745', '推送通知總開關')}</h3>
+        <p style="font-size:13px; color:#6B7894; margin-bottom:10px;">${window.t('admin.s746', '關閉後，所有推送通知即時暫停（約 1 分鐘內生效），用戶個人設定保持不變。')}</p>
         <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
-          <span style="font-weight:bold; color:${pushOn ? 'var(--brand-800)' : '#A33A2F'};">目前：${pushOn ? '開啟' : '已暫停'}</span>
-          <button type="button" class="btn ${pushOn ? 'btn-outline' : 'btn-primary'}" id="adm-push-toggle">${pushOn ? '暫停所有推送通知' : '恢復推送通知'}</button>
+          <span style="font-weight:bold; color:${pushOn ? 'var(--brand-800)' : '#A33A2F'};">${window.t('admin.s747', '目前：')}${pushOn ? window.t('admin.s737', '開啟') : window.t('admin.s738', '已暫停')}</span>
+          <button type="button" class="btn ${pushOn ? 'btn-outline' : 'btn-primary'}" id="adm-push-toggle">${pushOn ? window.t('admin.s739', '暫停所有推送通知') : window.t('admin.s740', '恢復推送通知')}</button>
         </div>
       </div>
 
       <div class="admin-card">
-        <h3 style="font-size:16px; font-weight:bold; color:var(--brand-800); margin-bottom:6px;">App 網站更新</h3>
+        <h3 style="font-size:16px; font-weight:bold; color:var(--brand-800); margin-bottom:6px;">${window.t('admin.s748', 'App 網站更新')}</h3>
         <p style="font-size:13px; color:#6B7894; line-height:1.7; margin-bottom:10px;">
-          網站改動推上 GitHub 後，只會更新網站；App 用戶要靠這裡的「網站更新包」才會更新。上載後，App 下次打開時會在背景下載，再下次打開時生效。<br>
-          製作方法：在終端機執行 <code>cd ~/Desktop/concenmate-app/mobile && npm run bundle:${ENV()}</code>，然後在下面選擇 <code>mobile/dist/</code> 內的 zip 檔。<br>
-          本頁是<b>${window.IS_PROD_SITE ? '正式網站' : '測試環境（Staging）'}</b>，只接受 <code>concenmate-web-${ENV()}-版本.zip</code>。
+          ${window.t('admin.s749', '網站改動推上 GitHub 後，只會更新網站；App 用戶要靠這裡的「網站更新包」才會更新。上載後，App 下次打開時會在背景下載，再下次打開時生效。')}<br>
+          ${window.t('admin.s750', '製作方法：在終端機執行')} <code>cd ~/Desktop/concenmate-app/mobile && npm run bundle:${ENV()}</code>${window.t('admin.s751', '，然後在下面選擇')} <code>mobile/dist/</code> ${window.t('admin.s752', '內的 zip 檔。')}<br>
+          ${window.t('admin.s753', '本頁是')}<b>${window.IS_PROD_SITE ? window.t('admin.s5', '正式網站') : window.t('admin.s741', '測試環境（Staging）')}</b>${window.t('admin.s754', '，只接受')} <code>concenmate-web-${ENV()}${window.t('admin.s755', '-版本.zip')}</code>。
         </p>
         <table class="admin-table" style="margin-bottom:12px;">
-          <tr><th>目前發佈的網站版本</th><td>${upd.version ? 'v' + esc(upd.version) : '未有（App 使用安裝時內置的版本）'}</td></tr>
-          <tr><th>上載時間</th><td>${esc(fmtTime(upd.uploadedAt))}${upd.uploadedBy ? '（' + esc(upd.uploadedBy) + '）' : ''}</td></tr>
-          <tr><th>檔案大小</th><td>${upd.size ? (upd.size / 1048576).toFixed(1) + ' MB' : '—'}</td></tr>
+          <tr><th>${window.t('admin.s756', '目前發佈的網站版本')}</th><td>${upd.version ? 'v' + esc(upd.version) : window.t('admin.s742', '未有（App 使用安裝時內置的版本）')}</td></tr>
+          <tr><th>${window.t('admin.s757', '上載時間')}</th><td>${esc(fmtTime(upd.uploadedAt))}${upd.uploadedBy ? '（' + esc(upd.uploadedBy) + '）' : ''}</td></tr>
+          <tr><th>${window.t('admin.s758', '檔案大小')}</th><td>${upd.size ? (upd.size / 1048576).toFixed(1) + ' MB' : '—'}</td></tr>
         </table>
         <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
           <input type="file" id="adm-bundle-file" accept=".zip,application/zip">
-          <button type="button" class="btn btn-primary" id="adm-bundle-upload">上載網站更新包</button>
+          <button type="button" class="btn btn-primary" id="adm-bundle-upload">${window.t('admin.s759', '上載網站更新包')}</button>
         </div>
         <div id="adm-bundle-progress" style="font-size:13px; color:#6B7894; margin-top:8px;"></div>
-        ${upd.version ? `<button type="button" class="btn btn-outline" id="adm-bundle-stop" style="margin-top:10px;">停止發佈更新（已更新的 App 不受影響）</button>` : ''}
+        ${upd.version ? `<button type="button" class="btn btn-outline" id="adm-bundle-stop" style="margin-top:10px;">${window.t('admin.s743', '停止發佈更新（已更新的 App 不受影響）')}</button>` : ''}
       </div>
 
       <div class="admin-card">
-        <h3 style="font-size:16px; font-weight:bold; color:var(--brand-800); margin-bottom:6px;">最低 App 版本（強制更新）</h3>
+        <h3 style="font-size:16px; font-weight:bold; color:var(--brand-800); margin-bottom:6px;">${window.t('admin.s760', '最低 App 版本（強制更新）')}</h3>
         <p style="font-size:13px; color:#6B7894; line-height:1.7; margin-bottom:10px;">
-          原生版本號（build）低於此數字的 App，打開時會顯示「請到 Google Play 更新」，不能繼續使用。<br>
-          只在發布了新版 App（例如加入新的原生功能）而舊版不能再正常運作時才提高。目前第一版 App 的 build 是 1。設定為 0 即不限制。
+          ${window.t('admin.s761', '原生版本號（build）低於此數字的 App，打開時會顯示「請到 Google Play 更新」，不能繼續使用。')}<br>
+          ${window.t('admin.s762', '只在發布了新版 App（例如加入新的原生功能）而舊版不能再正常運作時才提高。目前第一版 App 的 build 是 1。設定為 0 即不限制。')}
         </p>
         <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
           <input type="number" min="0" step="1" id="adm-min-build" class="admin-input-sm" style="width:100px;" value="${Number(upd.minNativeBuild) || 0}">
-          <button type="button" class="btn btn-primary" id="adm-min-build-save">儲存</button>
+          <button type="button" class="btn btn-primary" id="adm-min-build-save">${window.t('common.save', '儲存')}</button>
         </div>
       </div>`;
 
     document.getElementById('adm-push-toggle').onclick = async () => {
       const next = !pushOn;
-      if (!next && !(await window.appConfirm('確定要暫停所有推送通知嗎？'))) return;
+      if (!next && !(await window.appConfirm(window.t('admin.s763', '確定要暫停所有推送通知嗎？')))) return;
       try {
         await window.fs.setDoc(window.fs.doc(window.db, 'admin_config', 'push'), { enabled: next, updatedAt: Date.now() }, { merge: true });
-        window.showToast(next ? '已恢復推送通知' : '已暫停所有推送通知');
+        window.showToast(next ? window.t('admin.s764', '已恢復推送通知') : window.t('admin.s765', '已暫停所有推送通知'));
         window.renderAdminMobileAppTab();
-      } catch (e) { window.showToast('儲存失敗：' + (e.message || e)); }
+      } catch (e) { window.showToast(window.t('admin.s138', '儲存失敗：') + (e.message || e)); }
     };
 
     document.getElementById('adm-min-build-save').onclick = async () => {
       const v = Math.max(0, parseInt(document.getElementById('adm-min-build').value, 10) || 0);
-      if (v > 0 && !(await window.appConfirm(`原生版本低於 ${v} 的 App 將不能使用，要先到 Google Play 更新。確定嗎？`))) return;
+      if (v > 0 && !(await window.appConfirm(`${window.t('admin.s766', '原生版本低於')} ${v} ${window.t('admin.s767', '的 App 將不能使用，要先到 Google Play 更新。確定嗎？')}`))) return;
       try {
         await window.fs.setDoc(window.fs.doc(window.db, 'admin_config', 'appUpdate'), { minNativeBuild: v }, { merge: true });
-        window.showToast('已儲存');
+        window.showToast(window.t('admin.s591', '已儲存'));
         window.renderAdminMobileAppTab();
-      } catch (e) { window.showToast('儲存失敗：' + (e.message || e)); }
+      } catch (e) { window.showToast(window.t('admin.s138', '儲存失敗：') + (e.message || e)); }
     };
 
     const stopBtn = document.getElementById('adm-bundle-stop');
     if (stopBtn) stopBtn.onclick = async () => {
-      if (!(await window.appConfirm('停止後，未更新的 App 不會再下載這個版本。確定嗎？'))) return;
+      if (!(await window.appConfirm(window.t('admin.s768', '停止後，未更新的 App 不會再下載這個版本。確定嗎？')))) return;
       try {
         await window.fs.setDoc(window.fs.doc(window.db, 'admin_config', 'appUpdate'), { version: '', url: '' }, { merge: true });
-        window.showToast('已停止發佈');
+        window.showToast(window.t('admin.s769', '已停止發佈'));
         window.renderAdminMobileAppTab();
-      } catch (e) { window.showToast('儲存失敗：' + (e.message || e)); }
+      } catch (e) { window.showToast(window.t('admin.s138', '儲存失敗：') + (e.message || e)); }
     };
 
     document.getElementById('adm-bundle-upload').onclick = async (ev) => {
       const btn = ev.currentTarget;
       const prog = document.getElementById('adm-bundle-progress');
       const f = document.getElementById('adm-bundle-file').files[0];
-      if (!f) { window.showToast('請先選擇 zip 檔'); return; }
+      if (!f) { window.showToast(window.t('admin.s770', '請先選擇 zip 檔')); return; }
       const m = /^concenmate-web-(dev|prod)-(\d+\.\d+\.\d+)\.zip$/.exec(f.name);
-      if (!m) { window.showToast('檔名不正確，應為 concenmate-web-' + ENV() + '-版本.zip（由 npm run bundle:' + ENV() + ' 產生）'); return; }
-      if (m[1] !== ENV()) { window.showToast(`這是${m[1] === 'prod' ? '正式版' : '測試版'}更新包，不能在${window.IS_PROD_SITE ? '正式網站' : '測試環境'}上載`); return; }
+      if (!m) { window.showToast(window.t('admin.s771', '檔名不正確，應為 concenmate-web-') + ENV() + window.t('admin.s772', '-版本.zip（由 npm run bundle:') + ENV() + window.t('admin.s773', ' 產生）')); return; }
+      if (m[1] !== ENV()) { window.showToast(`${window.t('admin.s776', '這是')}${m[1] === 'prod' ? window.t('admin.s774', '正式版') : window.t('admin.s775', '測試版')}${window.t('admin.s777', '更新包，不能在')}${window.IS_PROD_SITE ? window.t('admin.s5', '正式網站') : window.t('admin.s6', '測試環境')}${window.t('admin.s778', '上載')}`); return; }
       const ver = m[2];
-      if (upd.version && cmpVer(ver, upd.version) < 0) { window.showToast(`版本 v${ver} 比目前發佈的 v${upd.version} 舊，App 不會更新`); return; }
-      if (upd.version && cmpVer(ver, upd.version) === 0 && !(await window.appConfirm(`v${ver} 已經發佈過，要重新上載取代嗎？`))) return;
-      if (cmpVer(ver, window.APP_VERSION) !== 0 && !(await window.appConfirm(`更新包版本 v${ver} 與本網站目前版本 ${window.APP_VERSION} 不同，確定要上載嗎？`))) return;
-      if (f.size > 40 * 1024 * 1024) { window.showToast('檔案超過 40MB'); return; }
+      if (upd.version && cmpVer(ver, upd.version) < 0) { window.showToast(`${window.t('admin.s779', '版本 v')}${ver} ${window.t('admin.s780', '比目前發佈的 v')}${upd.version} ${window.t('admin.s781', '舊，App 不會更新')}`); return; }
+      if (upd.version && cmpVer(ver, upd.version) === 0 && !(await window.appConfirm(`v${ver} ${window.t('admin.s782', '已經發佈過，要重新上載取代嗎？')}`))) return;
+      if (cmpVer(ver, window.APP_VERSION) !== 0 && !(await window.appConfirm(`${window.t('admin.s783', '更新包版本 v')}${ver} ${window.t('admin.s784', '與本網站目前版本')} ${window.APP_VERSION} ${window.t('admin.s785', '不同，確定要上載嗎？')}`))) return;
+      if (f.size > 40 * 1024 * 1024) { window.showToast(window.t('admin.s786', '檔案超過 40MB')); return; }
       btn.disabled = true;
       try {
-        prog.textContent = '計算檢查碼…';
+        prog.textContent = window.t('admin.s787', '計算檢查碼…');
         // v1.235.5：App 更新套件規定要有 SHA-256 檢查碼
         const hashBuf = await crypto.subtle.digest('SHA-256', await f.arrayBuffer());
         const checksum = Array.from(new Uint8Array(hashBuf)).map(b => b.toString(16).padStart(2, '0')).join('');
-        prog.textContent = '上載中…（' + (f.size / 1048576).toFixed(1) + ' MB）';
+        prog.textContent = window.t('admin.s788', '上載中…（') + (f.size / 1048576).toFixed(1) + ' MB）';
         const path = `app_updates/web-${ENV()}-${ver}.zip`;
         const ref = window.storageApi.ref(window.storage, path);
         await window.storageApi.uploadBytes(ref, f, { contentType: 'application/zip', cacheControl: 'public, max-age=31536000' });
@@ -5527,11 +5526,11 @@
           uploadedAt: Date.now(), uploadedBy: (window.currentUser && window.currentUser.loginId) || ''
         }, { merge: true });
         prog.textContent = '';
-        window.showToast(`已發佈 v${ver}，App 下次打開時會自動下載`);
+        window.showToast(`${window.t('admin.s789', '已發佈 v')}${ver}${window.t('admin.s790', '，App 下次打開時會自動下載')}`);
         window.renderAdminMobileAppTab();
       } catch (e) {
         prog.textContent = '';
-        window.showToast('上載失敗：' + (window.friendlyErrorText ? window.friendlyErrorText(e) : (e.message || e)));
+        window.showToast(window.t('admin.s632', '上載失敗：') + (window.friendlyErrorText ? window.friendlyErrorText(e) : (e.message || e)));
       } finally { btn.disabled = false; }
     };
   };

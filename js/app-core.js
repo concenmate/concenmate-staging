@@ -110,8 +110,17 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
     // HttpsError 拋出嘅錯誤，呢度會變成一個帶住 .code／.message 嘅 Error。
     window.callCloudFunction = async function(name, data) {
       const fn = httpsCallable(cloudFunctions, name);
-      const result = await fn(data || {});
-      return result.data;
+      try {
+        const result = await fn(data || {});
+        return result.data;
+      } catch (err) {
+        // v1.238.0：伺服器錯誤訊息係中文，按用戶語言換成對應翻譯（見 i18n.js translateServerMessage）
+        if (err && typeof err.message === 'string' && typeof window.translateServerMessage === 'function') {
+          const translated = window.translateServerMessage(err.message);
+          if (translated !== err.message) { try { err.message = translated; } catch (e) { /* 唯讀就照用原文 */ } }
+        }
+        throw err;
+      }
     };
 
     // 側邊選單喺窄螢幕（≤900px，見 index.html 嘅 CSS）變成撳☰先滑出嚟
