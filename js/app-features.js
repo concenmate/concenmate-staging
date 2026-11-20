@@ -2611,7 +2611,8 @@
         return;
       }
 
-      area.innerHTML = ('<p style="font-size:13px; color:#999; text-align:center;">' + window.t('feat.s9', '正在查詢導師身份狀態…') + '</p>');
+      // v1.239.1：查詢期間不再顯示「正在查詢導師身份狀態…」，避免文字一閃即逝；查到結果才顯示
+      area.innerHTML = '';
       try {
         const snap = await window.fs.getDoc(window.fs.doc(window.db, 'tutorApplications', window.currentUser.uid));
         if (!snap.exists()) {
