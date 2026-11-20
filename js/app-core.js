@@ -1109,7 +1109,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
       modal.classList.add('cm-google-mode');
       ['reg-password', 'reg-password-confirm', 'reg-contact-email'].forEach(id => { const el = document.getElementById(id); if (el) el.required = false; });
       const em = document.getElementById('reg-contact-email'); if (em) em.value = user.email || '';
-      const nm = document.getElementById('reg-username'); if (nm && !nm.value && user.displayName) nm.value = String(user.displayName).slice(0, 30);
+      // v1.236.1：唔再自動填 Google 真名做暱稱（暱稱公開顯示，保護學生私隱）
       const banner = document.getElementById('reg-google-banner');
       if (banner) {
         banner.style.display = 'block';
