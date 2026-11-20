@@ -219,7 +219,7 @@
 
   function elapsedText(ms) {
     const m = Math.max(0, Math.floor(ms / 60000));
-    return m >= 60 ? `${Math.floor(m / 60)} 小時 ${m % 60} 分鐘` : `${m} 分鐘`;
+    return m >= 60 ? t('unit.hmTemplate', '{h} 小時 {m} 分鐘').replace('{h}', Math.floor(m / 60)).replace('{m}', m % 60) : t('unit.mTemplate', '{m} 分鐘').replace('{m}', m);
   }
 
   function renderLobbyList() {
@@ -250,10 +250,10 @@
     const minor = u.isSecondaryStudent === true || (typeof u.birthYear === 'number' && new Date().getFullYear() - u.birthYear < 18);
     const needConsent = minor && !u.parentConsentAt;
     const roomSubject = document.getElementById('modal-room-subject');
-    const subjectOptions = roomSubject ? roomSubject.innerHTML : '<option value="其他">其他</option>';
+    const subjectOptions = roomSubject ? roomSubject.innerHTML : '<option value="其他">' + t('room.subjectOther', '其他') + '</option>';
     const maxH = Math.max(1, Math.min(12, parseInt(settings.maxDurationHours, 10) || 4));
     const durations = [30, 60, 90, 120, 180, 240, 300, 360, 480, 600, 720].filter(m => m <= maxH * 60);
-    const durLabel = (m) => m < 60 ? `${m} 分鐘` : (m % 60 ? `${Math.floor(m / 60)} 小時 ${m % 60} 分鐘` : `${m / 60} 小時`);
+    const durLabel = (m) => m < 60 ? t('unit.mTemplate', '{m} 分鐘').replace('{m}', m) : (m % 60 ? t('unit.hmTemplate', '{h} 小時 {m} 分鐘').replace('{h}', Math.floor(m / 60)).replace('{m}', m % 60) : t('unit.hTemplate', '{h} 小時').replace('{h}', m / 60));
     const wrap = document.createElement('div');
     wrap.className = 'modal-backdrop';
     wrap.id = 'modal-create-stream';
@@ -696,13 +696,14 @@
     }
     if (!reportedUid) return;
     const reasons = ['不當言論', '騷擾', '色情或不雅內容', '索取聯絡資料', '直播內容不當', '其他'];
+    const reasonLabel = (r, i) => t(['stream.reasonAbuse', 'stream.reasonHarass', 'stream.reasonSexual', 'stream.reasonContact', 'stream.reasonContent', 'stream.reasonOther'][i], r);
     const wrap = document.createElement('div');
     wrap.className = 'modal-backdrop';
     wrap.innerHTML = `
       <div class="modal-box">
         <h3 style="font-size:17px; font-weight:bold; color:var(--brand-800); margin:0 0 10px;">${esc(t('stream.reportTitle', '舉報'))}：${esc(reportedName)}</h3>
         ${quoted ? `<p style="font-size:13px; color:#6B7894; background:var(--brand-50); border-radius:8px; padding:6px 8px;">${esc(quoted)}</p>` : ''}
-        <select id="swm-report-reason" class="input-field">${reasons.map(r => `<option value="${esc(r)}">${esc(r)}</option>`).join('')}</select>
+        <select id="swm-report-reason" class="input-field">${reasons.map((r, i) => `<option value="${esc(r)}">${esc(reasonLabel(r, i))}</option>`).join('')}</select>
         <textarea id="swm-report-notes" class="input-field" rows="3" maxlength="300" placeholder="${esc(t('stream.reportNotes', '補充說明（可留空）'))}" style="margin-top:8px;"></textarea>
         <div style="display:flex; gap:8px; margin-top:12px;">
           <button type="button" class="btn btn-red" id="swm-report-send" style="flex:1;">${esc(t('stream.reportSend', '送出舉報'))}</button>

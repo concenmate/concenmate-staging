@@ -294,15 +294,15 @@ window.applyRoleBasedSidebar = function() {
     if (approvedPanel) approvedPanel.style.display = 'none';
     if (!pendingPanel) return;
     pendingPanel.style.display = 'block';
-    pendingPanel.innerHTML = '<p style="text-align:center; color:#999; padding:20px;">正在查詢申請狀態…</p>';
+    pendingPanel.innerHTML = ('<p style="text-align:center; color:#999; padding:20px;">' + window.t('tutor.s1', '正在查詢申請狀態…') + '</p>');
     try {
       const snap = await window.fs.getDoc(window.fs.doc(window.db, 'tutorApplications', window.currentUser.uid));
       if (!snap.exists()) {
         pendingPanel.innerHTML = `
           <div style="text-align:center; padding:20px;">
             <div style="font-size:40px; margin-bottom:8px;"></div>
-            <p style="font-size:14px; color:#666;">找不到導師申請紀錄，請重新提交申請。</p>
-            <button class="btn btn-primary" type="button" style="margin-top:10px;" onclick="window.openTutorApplyModal()">重新申請</button>
+            <p style="font-size:14px; color:#666;">${window.t('tutor.s2', '找不到導師申請紀錄，請重新提交申請。')}</p>
+            <button class="btn btn-primary" type="button" style="margin-top:10px;" onclick="window.openTutorApplyModal()">${window.t('tutor.s3', '重新申請')}</button>
           </div>
         `;
         return;
@@ -312,29 +312,29 @@ window.applyRoleBasedSidebar = function() {
         pendingPanel.innerHTML = `
           <div style="text-align:center; padding:30px 16px;">
             <div style="font-size:44px; margin-bottom:10px;"></div>
-            <h3 style="font-size:17px; font-weight:bold; color:var(--brand-800); margin-bottom:6px;">導師申請審批中</h3>
-            <p style="font-size:14px; color:#666; max-width:360px; margin:0 auto;">您的導師申請已經收到，請耐心等候管理員審批。批核之後這裡就會變成完整的教材管理後台。</p>
+            <h3 style="font-size:17px; font-weight:bold; color:var(--brand-800); margin-bottom:6px;">${window.t('tutor.s4', '導師申請審批中')}</h3>
+            <p style="font-size:14px; color:#666; max-width:360px; margin:0 auto;">${window.t('tutor.s5', '您的導師申請已經收到，請耐心等候管理員審批。批核之後這裡就會變成完整的教材管理後台。')}</p>
           </div>
         `;
       } else if (app.status === 'rejected') {
         pendingPanel.innerHTML = `
           <div style="text-align:center; padding:30px 16px;">
             <div style="font-size:44px; margin-bottom:10px;"></div>
-            <h3 style="font-size:17px; font-weight:bold; color:var(--brand-800); margin-bottom:6px;">導師申請未獲批准</h3>
-            ${app.rejectionReason ? `<p style="font-size:14px; color:#8a2f2f; background:#FBEAEA; border-radius:8px; padding:8px 10px; max-width:360px; margin:0 auto 10px;">原因：${escapeHtmlLocal(app.rejectionReason)}</p>` : ''}
-            <button class="btn btn-primary" type="button" onclick="window.openTutorApplyModal()">重新申請</button>
+            <h3 style="font-size:17px; font-weight:bold; color:var(--brand-800); margin-bottom:6px;">${window.t('tutor.s6', '導師申請未獲批准')}</h3>
+            ${app.rejectionReason ? `<p style="font-size:14px; color:#8a2f2f; background:#FBEAEA; border-radius:8px; padding:8px 10px; max-width:360px; margin:0 auto 10px;">${window.t('feat.s11', '原因：')}${escapeHtmlLocal(app.rejectionReason)}</p>` : ''}
+            <button class="btn btn-primary" type="button" onclick="window.openTutorApplyModal()">${window.t('tutor.s3', '重新申請')}</button>
           </div>
         `;
       } else {
         pendingPanel.innerHTML = `
           <div style="text-align:center; padding:30px 16px;">
             <div style="font-size:44px; margin-bottom:10px;"></div>
-            <p style="font-size:14px; color:#666;">您的導師申請已經批核，請重新登入以更新帳戶狀態。</p>
+            <p style="font-size:14px; color:#666;">${window.t('tutor.s7', '您的導師申請已經批核，請重新登入以更新帳戶狀態。')}</p>
           </div>
         `;
       }
     } catch (err) {
-      pendingPanel.innerHTML = `<p style="text-align:center; color:#c0392b; font-size:13px;">查詢申請狀態失敗：${escapeHtmlLocal(err.message || err)}</p>`;
+      pendingPanel.innerHTML = `<p style="text-align:center; color:#c0392b; font-size:13px;">${window.t('tutor.applyStatusFailed', '查詢申請狀態失敗：')}${escapeHtmlLocal(err.message || err)}</p>`;
     }
   };
 
@@ -361,7 +361,7 @@ window.applyRoleBasedSidebar = function() {
       }
     }, (err) => {
       const el = document.getElementById('tutor-subject-tabs');
-      if (el) el.innerHTML = `<p style="color:#c0392b; font-size:13px;">載入科目失敗：${escapeHtmlLocal(err.message || err)}</p>`;
+      if (el) el.innerHTML = `<p style="color:#c0392b; font-size:13px;">${window.t('tutor.loadSubjectsFailed', '載入科目失敗：')}${escapeHtmlLocal(err.message || err)}</p>`;
     });
   }
 
@@ -369,7 +369,7 @@ window.applyRoleBasedSidebar = function() {
     const container = document.getElementById('tutor-subject-tabs');
     if (!container) return;
     if (tutorSubjects.length === 0) {
-      container.innerHTML = '<p style="font-size:13px; color:#999;">還未有任何科目，點擊「＋ 新增科目」開始。</p>';
+      container.innerHTML = ('<p style="font-size:13px; color:#999;">' + window.t('tutor.s8', '還未有任何科目，點擊「＋ 新增科目」開始。') + '</p>');
       return;
     }
     container.innerHTML = tutorSubjects.map((d) => {
@@ -430,7 +430,7 @@ window.applyRoleBasedSidebar = function() {
     if (name === '其他（自行輸入）') {
       name = (document.getElementById('tutor-add-subject-custom').value || '').trim();
     }
-    if (!name) { window.showToast('請填寫科目名稱', '⚠️'); return; }
+    if (!name) { window.showToast(window.t('tutor.s9', '請填寫科目名稱'), '⚠️'); return; }
     try {
       const ref = await window.fs.addDoc(window.fs.collection(window.db, 'tutorSubjects'), {
         tutorUid: window.currentUser.uid,
@@ -439,9 +439,9 @@ window.applyRoleBasedSidebar = function() {
       });
       window.closeModal('modal-tutor-add-subject');
       window.selectTutorSubject(ref.id);
-      window.showToast('已新增科目', '✅');
+      window.showToast(window.t('tutor.s10', '已新增科目'), '✅');
     } catch (err) {
-      window.showToast('新增科目失敗：' + (err.message || err), '❌');
+      window.showToast(window.t('tutor.s11', '新增科目失敗：') + (err.message || err), '❌');
     }
   };
 
@@ -449,21 +449,21 @@ window.applyRoleBasedSidebar = function() {
   window.getSelectedTutorTopicId = function() { return selectedTopicId; };
 
   window.deleteTutorSubject = async function(subjectId) {
-    if (!subjectId) { window.showToast('請先選擇一個科目', '⚠️'); return; }
+    if (!subjectId) { window.showToast(window.t('tutor.s12', '請先選擇一個科目'), '⚠️'); return; }
     const topicsSnap = await window.fs.getDocs(window.fs.query(
       window.fs.collection(window.db, 'tutorTopics'),
       window.fs.where('subjectId', '==', subjectId)
     ));
     if (!topicsSnap.empty) {
-      window.showToast('這個科目底下還有課題，請先刪除全部課題', '⚠️');
+      window.showToast(window.t('tutor.s13', '這個科目底下還有課題，請先刪除全部課題'), '⚠️');
       return;
     }
-    if (!(await window.appConfirm('確定刪除這個科目？'))) return;
+    if (!(await window.appConfirm(window.t('tutor.confirmDeleteSubject', '確定刪除這個科目？')))) return;
     try {
       await window.fs.deleteDoc(window.fs.doc(window.db, 'tutorSubjects', subjectId));
-      window.showToast('已刪除科目', '✅');
+      window.showToast(window.t('tutor.s14', '已刪除科目'), '✅');
     } catch (err) {
-      window.showToast('刪除失敗：' + (err.message || err), '❌');
+      window.showToast(window.t('tutor.s15', '刪除失敗：') + (err.message || err), '❌');
     }
   };
 
@@ -488,7 +488,7 @@ window.applyRoleBasedSidebar = function() {
       }
     }, (err) => {
       const el = document.getElementById('tutor-topic-tabs');
-      if (el) el.innerHTML = `<p style="color:#c0392b; font-size:13px;">載入課題失敗：${escapeHtmlLocal(err.message || err)}</p>`;
+      if (el) el.innerHTML = `<p style="color:#c0392b; font-size:13px;">${window.t('tutor.loadTopicsFailed', '載入課題失敗：')}${escapeHtmlLocal(err.message || err)}</p>`;
     });
   }
 
@@ -496,7 +496,7 @@ window.applyRoleBasedSidebar = function() {
     const container = document.getElementById('tutor-topic-tabs');
     if (!container) return;
     if (tutorTopics.length === 0) {
-      container.innerHTML = '<p style="font-size:13px; color:#999;">這個科目還未有任何課題，點擊「＋ 新增課題」開始。</p>';
+      container.innerHTML = ('<p style="font-size:13px; color:#999;">' + window.t('tutor.s16', '這個科目還未有任何課題，點擊「＋ 新增課題」開始。') + '</p>');
       return;
     }
     container.innerHTML = tutorTopics.map((d) => {
@@ -515,8 +515,8 @@ window.applyRoleBasedSidebar = function() {
   };
 
   window.promptCreateTutorTopic = async function() {
-    if (!selectedSubjectId) { window.showToast('請先選擇一個科目', '⚠️'); return; }
-    const name = ((await window.appPrompt('新課題名稱（例如：三角函數）：', '')) || '').trim();
+    if (!selectedSubjectId) { window.showToast(window.t('tutor.s12', '請先選擇一個科目'), '⚠️'); return; }
+    const name = ((await window.appPrompt(window.t('tutor.newTopicPrompt', '新課題名稱（例如：三角函數）：'), '')) || '').trim();
     if (!name) return;
     try {
       const ref = await window.fs.addDoc(window.fs.collection(window.db, 'tutorTopics'), {
@@ -526,29 +526,29 @@ window.applyRoleBasedSidebar = function() {
         createdAt: Date.now(),
       });
       window.selectTutorTopic(ref.id);
-      window.showToast('已新增課題', '✅');
+      window.showToast(window.t('tutor.s17', '已新增課題'), '✅');
     } catch (err) {
-      window.showToast('新增課題失敗：' + (err.message || err), '❌');
+      window.showToast(window.t('tutor.s18', '新增課題失敗：') + (err.message || err), '❌');
     }
   };
 
   window.deleteTutorTopic = async function(topicId) {
-    if (!topicId) { window.showToast('請先選擇一個課題', '⚠️'); return; }
+    if (!topicId) { window.showToast(window.t('tutor.s19', '請先選擇一個課題'), '⚠️'); return; }
     const notesSnap = await window.fs.getDocs(window.fs.query(
       window.fs.collection(window.db, 'tutorNotes'),
       window.fs.where('topicId', '==', topicId),
       window.fs.where('tutorUid', '==', window.currentUser.uid)
     ));
     if (!notesSnap.empty) {
-      window.showToast('這個課題底下還有教材，請先刪除全部教材', '⚠️');
+      window.showToast(window.t('tutor.s20', '這個課題底下還有教材，請先刪除全部教材'), '⚠️');
       return;
     }
-    if (!(await window.appConfirm('確定刪除這個課題？'))) return;
+    if (!(await window.appConfirm(window.t('tutor.confirmDeleteTopic', '確定刪除這個課題？')))) return;
     try {
       await window.fs.deleteDoc(window.fs.doc(window.db, 'tutorTopics', topicId));
-      window.showToast('已刪除課題', '✅');
+      window.showToast(window.t('tutor.s21', '已刪除課題'), '✅');
     } catch (err) {
-      window.showToast('刪除失敗：' + (err.message || err), '❌');
+      window.showToast(window.t('tutor.s15', '刪除失敗：') + (err.message || err), '❌');
     }
   };
 
@@ -604,7 +604,7 @@ window.applyRoleBasedSidebar = function() {
       renderTutorNotesGridUI();
     }, (err) => {
       const el = document.getElementById('tutor-notes-grid');
-      if (el) el.innerHTML = `<p style="color:#c0392b; font-size:13px;">載入教材失敗：${escapeHtmlLocal(err.message || err)}</p>`;
+      if (el) el.innerHTML = `<p style="color:#c0392b; font-size:13px;">${window.t('tutor.loadNotesFailed', '載入教材失敗：')}${escapeHtmlLocal(err.message || err)}</p>`;
     });
   }
 
@@ -626,31 +626,31 @@ window.applyRoleBasedSidebar = function() {
     return `
       <div class="admin-card" style="margin-bottom:0; ${dragEnabled ? 'cursor:grab;' : ''}" ${dragAttrs}>
         <div style="display:flex; align-items:center; gap:6px; margin-bottom:4px;">
-          ${dragEnabled ? '<span style="color:#bbb; font-size:14px;" title="拖曳可調整排序">⠿</span>' : ''}
+          ${dragEnabled ? ('<span style="color:#bbb; font-size:14px;" title="' + window.t('tutor.s22', '拖曳可調整排序') + '">⠿</span>') : ''}
           <div style="font-size:12px; color:#999;">${escapeHtmlLocal(statusLabel)}</div>
         </div>
         <div id="tutor-note-thumb-${id}" class="tutor-note-thumb" style="width:100%; aspect-ratio:3/4; max-height:160px; border-radius:6px; background:#EEF3FA; display:flex; align-items:center; justify-content:center; margin-bottom:6px; overflow:hidden;">
-          <span style="font-size:11px; color:#bbb;">縮圖載入中…</span>
+          <span style="font-size:11px; color:#bbb;">${window.t('tutor.s30', '縮圖載入中…')}</span>
         </div>
         <div style="font-weight:700; font-size:14px; color:var(--brand-800); margin-bottom:2px;">${escapeHtmlLocal(n.title)}</div>
         <div style="font-size:12px; color:#888; margin-bottom:6px; min-height:16px;">${escapeHtmlLocal(n.description || '')}</div>
         <div style="font-size:13px; color:#3F588F; font-weight:700;">${centsToDollarStr(n.priceCents)}</div>
-        <div style="font-size:12px; color:#aaa; margin:4px 0;">${n.pageCount ? (n.pageCount + ' 頁') : '頁數計算中…'}${n.previewPages && n.previewPages.length ? '　預覽頁：' + n.previewPages.join(', ') : ''}</div>
+        <div style="font-size:12px; color:#aaa; margin:4px 0;">${n.pageCount ? (n.pageCount + window.t('tutor.s23', ' 頁')) : window.t('tutor.s24', '頁數計算中…')}${n.previewPages && n.previewPages.length ? window.t('tutor.s25', '　預覽頁：') + n.previewPages.join(', ') : ''}</div>
         <div style="display:flex; gap:6px; flex-wrap:wrap; margin-top:8px;">
           ${n.fullStoragePath
-            ? `<button class="btn btn-outline" style="font-size:12px; padding:4px 8px;" onclick="window.previewTutorNoteFull('${id}')">預覽整份文件</button>`
+            ? `<button class="btn btn-outline" style="font-size:12px; padding:4px 8px;" onclick="window.previewTutorNoteFull('${id}')">${window.t('tutor.s26', '預覽整份文件')}</button>`
             : ''}
           ${n.status === 'published' && n.previewStoragePath
-            ? `<button class="btn btn-outline" style="font-size:12px; padding:4px 8px;" onclick="window.previewTutorNoteStudentView('${id}')">預覽（學生視角）</button>`
+            ? `<button class="btn btn-outline" style="font-size:12px; padding:4px 8px;" onclick="window.previewTutorNoteStudentView('${id}')">${window.t('tutor.s27', '預覽（學生視角）')}</button>`
             : ''}
           ${n.status === 'awaiting_preview_selection' || n.status === 'published'
-            ? `<button class="btn btn-outline" style="font-size:12px; padding:4px 8px;" onclick="window.openTutorPreviewPicker('${id}', ${n.pageCount || 0})">選擇預覽頁</button>`
+            ? `<button class="btn btn-outline" style="font-size:12px; padding:4px 8px;" onclick="window.openTutorPreviewPicker('${id}', ${n.pageCount || 0})">${window.t('tutor.s28', '選擇預覽頁')}</button>`
             : ''}
           ${n.status === 'draft'
-            ? `<button class="btn btn-outline" style="font-size:12px; padding:4px 8px;" onclick="window.retryRegisterTutorNote('${id}')">重試讀取頁數</button>`
+            ? `<button class="btn btn-outline" style="font-size:12px; padding:4px 8px;" onclick="window.retryRegisterTutorNote('${id}')">${window.t('tutor.s29', '重試讀取頁數')}</button>`
             : ''}
-          <button class="btn btn-outline" style="font-size:12px; padding:4px 8px;" onclick="window.promptEditTutorNote('${id}')">編輯</button>
-          <button class="btn btn-red" style="font-size:12px; padding:4px 8px;" onclick="window.deleteTutorNoteConfirm('${id}')">刪除</button>
+          <button class="btn btn-outline" style="font-size:12px; padding:4px 8px;" onclick="window.promptEditTutorNote('${id}')">${window.t('qa.edit', '編輯')}</button>
+          <button class="btn btn-red" style="font-size:12px; padding:4px 8px;" onclick="window.deleteTutorNoteConfirm('${id}')">${window.t('qa.delete', '刪除')}</button>
         </div>
       </div>
     `;
@@ -699,7 +699,7 @@ window.applyRoleBasedSidebar = function() {
         window.fs.updateDoc(window.fs.doc(window.db, 'tutorNotes', id), { order: (idx + 1) * 10 })
       ));
     } catch (err) {
-      window.showToast('儲存排序失敗：' + (err.message || err), '❌');
+      window.showToast(window.t('tutor.s31', '儲存排序失敗：') + (err.message || err), '❌');
     }
   };
 
@@ -748,7 +748,7 @@ window.applyRoleBasedSidebar = function() {
     if (titleEl) titleEl.innerText = titleText;
     if (typeof window.openModal === 'function') window.openModal('modal-pdf-preview');
     const label = document.getElementById('pdf-preview-page-label');
-    if (label) label.innerText = '載入中…';
+    if (label) label.innerText = window.t('qa.loading', '載入中…');
     try {
       await window.ensurePdfJs();
       pdfPreviewDoc = await window.pdfjsLib.getDocument(url).promise;
@@ -763,7 +763,7 @@ window.applyRoleBasedSidebar = function() {
       // 自動降級：關咗個彈出視窗，改為喺新分頁直接開個 PDF 網址（呢個
       // 純粹瀏覽器顯示 PDF，唔涉及 fetch()，唔會撞到 CORS）。
       window.closePdfPreviewModal();
-      window.showToast('目前未能在頁面內預覽，已改用新分頁開啟檔案', '📄');
+      window.showToast(window.t('tutor.s32', '目前未能在頁面內預覽，已改用新分頁開啟檔案'), '📄');
       window.open(url, '_blank');
     }
   }
@@ -776,24 +776,24 @@ window.applyRoleBasedSidebar = function() {
   window.previewTutorNoteFull = async function(noteId) {
     const docSnap = findTutorNoteDocById(noteId);
     const n = docSnap && docSnap.data();
-    if (!n || !n.fullStoragePath) { window.showToast('找不到這份教材的檔案', '⚠️'); return; }
+    if (!n || !n.fullStoragePath) { window.showToast(window.t('tutor.s33', '找不到這份教材的檔案'), '⚠️'); return; }
     try {
       const url = await window.storageApi.getDownloadURL(window.storageApi.ref(window.storage, n.fullStoragePath));
-      showPdfPreviewModal(url, '預覽整份文件：' + (n.title || ''));
+      showPdfPreviewModal(url, window.t('tutor.previewWholeTitle', '預覽整份文件：') + (n.title || ''));
     } catch (err) {
-      window.showToast('開啟檔案失敗：' + (err.message || err), '❌');
+      window.showToast(window.t('tutor.s34', '開啟檔案失敗：') + (err.message || err), '❌');
     }
   };
 
   window.previewTutorNoteStudentView = async function(noteId) {
     const docSnap = findTutorNoteDocById(noteId);
     const n = docSnap && docSnap.data();
-    if (!n || !n.previewStoragePath) { window.showToast('這份教材尚未設定預覽頁', '⚠️'); return; }
+    if (!n || !n.previewStoragePath) { window.showToast(window.t('tutorview.noPreviewSet', '這份教材尚未設定預覽頁'), '⚠️'); return; }
     try {
       const url = await window.storageApi.getDownloadURL(window.storageApi.ref(window.storage, n.previewStoragePath));
-      showPdfPreviewModal(url, '預覽（學生視角）：' + (n.title || ''));
+      showPdfPreviewModal(url, window.t('tutor.previewStudentTitle', '預覽（學生視角）：') + (n.title || ''));
     } catch (err) {
-      window.showToast('開啟檔案失敗：' + (err.message || err), '❌');
+      window.showToast(window.t('tutor.s34', '開啟檔案失敗：') + (err.message || err), '❌');
     }
   };
 
@@ -927,7 +927,7 @@ window.applyRoleBasedSidebar = function() {
     const container = document.getElementById('tutor-notes-grid');
     if (!container) return;
     if (tutorNotes.length === 0) {
-      container.innerHTML = '<p style="font-size:13px; color:#999; grid-column:1/-1;">這個課題還未有任何教材，點擊「上傳教材」開始。</p>';
+      container.innerHTML = ('<p style="font-size:13px; color:#999; grid-column:1/-1;">' + window.t('tutor.s35', '這個課題還未有任何教材，點擊「上傳教材」開始。') + '</p>');
       return;
     }
     const dragEnabled = tutorNotes.length > 1;
@@ -937,24 +937,24 @@ window.applyRoleBasedSidebar = function() {
 
   // ---------- 上傳流程 ----------
   window.openTutorNoteUploadForm = function() {
-    if (!selectedTopicId) { window.showToast('請先選擇一個課題', '⚠️'); return; }
+    if (!selectedTopicId) { window.showToast(window.t('tutor.s19', '請先選擇一個課題'), '⚠️'); return; }
     const panel = document.getElementById('tutor-note-upload-panel');
     if (!panel) return;
     panel.style.display = 'block';
     panel.innerHTML = `
-      <h4 style="font-size:14px; font-weight:bold; color:var(--brand-800); margin-bottom:8px;">上傳新教材</h4>
-      <label style="font-size:13px; font-weight:bold; color:#555;">標題 *</label>
-      <input id="tutor-note-title" class="input-field" type="text" maxlength="80" style="width:100%; margin-bottom:8px;" placeholder="例如：三角函數重點筆記">
-      <label style="font-size:13px; font-weight:bold; color:#555;">簡介</label>
-      <textarea id="tutor-note-desc" class="input-field" rows="2" maxlength="1000" style="width:100%; margin-bottom:8px; resize:vertical;" placeholder="簡單介紹這份筆記的內容"></textarea>
-      <label style="font-size:13px; font-weight:bold; color:#555;">定價（港幣，最低 $10，只能為整數）*</label>
-      <input id="tutor-note-price" class="input-field" type="number" min="10" step="1" style="width:100%; margin-bottom:8px;" placeholder="例如：30">
-      <label style="font-size:13px; font-weight:bold; color:#555;">PDF 檔案 *（上限 50MB）</label>
+      <h4 style="font-size:14px; font-weight:bold; color:var(--brand-800); margin-bottom:8px;">${window.t('tutor.s36', '上傳新教材')}</h4>
+      <label style="font-size:13px; font-weight:bold; color:#555;">${window.t('tutormat.noteTitleLabel', '標題 *')}</label>
+      <input id="tutor-note-title" class="input-field" type="text" maxlength="80" style="width:100%; margin-bottom:8px;" placeholder="${window.t('tutor.s37', '例如：三角函數重點筆記')}">
+      <label style="font-size:13px; font-weight:bold; color:#555;">${window.t('tutormat.noteDescLabel', '簡介')}</label>
+      <textarea id="tutor-note-desc" class="input-field" rows="2" maxlength="1000" style="width:100%; margin-bottom:8px; resize:vertical;" placeholder="${window.t('tutor.s38', '簡單介紹這份筆記的內容')}"></textarea>
+      <label style="font-size:13px; font-weight:bold; color:#555;">${window.t('tutormat.notePriceLabel', '定價（港幣，最低 $10，只能為整數）*')}</label>
+      <input id="tutor-note-price" class="input-field" type="number" min="10" step="1" style="width:100%; margin-bottom:8px;" placeholder="${window.t('tutor.s39', '例如：30')}">
+      <label style="font-size:13px; font-weight:bold; color:#555;">${window.t('tutor.s40', 'PDF 檔案 *（上限 50MB）')}</label>
       <input id="tutor-note-file" type="file" accept="application/pdf" style="width:100%; margin-bottom:10px;">
       <p id="tutor-note-upload-progress" style="font-size:13px; color:#888; margin-bottom:8px;"></p>
       <div style="display:flex; gap:8px;">
-        <button class="btn btn-outline" type="button" onclick="document.getElementById('tutor-note-upload-panel').style.display='none';">取消</button>
-        <button class="btn btn-primary" type="button" id="tutor-note-upload-btn" onclick="window.submitTutorNoteUpload()">送出</button>
+        <button class="btn btn-outline" type="button" onclick="document.getElementById('tutor-note-upload-panel').style.display='none';">${window.t('common.cancel', '取消')}</button>
+        <button class="btn btn-primary" type="button" id="tutor-note-upload-btn" onclick="window.submitTutorNoteUpload()">${window.t('tutor.s41', '送出')}</button>
       </div>
     `;
   };
@@ -968,23 +968,23 @@ window.applyRoleBasedSidebar = function() {
     const progressEl = document.getElementById('tutor-note-upload-progress');
     const btn = document.getElementById('tutor-note-upload-btn');
 
-    if (!title) { window.showToast('請填寫標題', '⚠️'); return; }
+    if (!title) { window.showToast(window.t('tutor.s42', '請填寫標題'), '⚠️'); return; }
     // ⚠️ 定價一定要係 HKD$10 或以上嘅整數（唔可以有仙）——用
     // Number.isInteger() 驗證返個原始輸入係咪已經係整數，唔淨係四捨五
     // 入之後先啱，例如打 "10.5" 呢種都要擋低，唔可以靜雞雞變咗 $11。
     if (Number.isNaN(priceDollar) || !Number.isInteger(priceDollar) || priceDollar < 10) {
-      window.showToast('定價必須為 $10 或以上的整數金額', '⚠️');
+      window.showToast(window.t('tutor.s43', '定價必須為 $10 或以上的整數金額'), '⚠️');
       return;
     }
-    if (!file) { window.showToast('請選擇 PDF 檔案', '⚠️'); return; }
-    if (file.type !== 'application/pdf') { window.showToast('只可以上傳 PDF 檔案', '⚠️'); return; }
-    if (file.size > 50 * 1024 * 1024) { window.showToast('檔案不可以超過 50MB', '⚠️'); return; }
+    if (!file) { window.showToast(window.t('tutor.s44', '請選擇 PDF 檔案'), '⚠️'); return; }
+    if (file.type !== 'application/pdf') { window.showToast(window.t('tutor.s45', '只可以上傳 PDF 檔案'), '⚠️'); return; }
+    if (file.size > 50 * 1024 * 1024) { window.showToast(window.t('tutor.s46', '檔案不可以超過 50MB'), '⚠️'); return; }
 
     const priceCents = Math.round(priceDollar * 100);
-    if (btn) { btn.disabled = true; btn.innerText = '處理中…'; }
+    if (btn) { btn.disabled = true; btn.innerText = window.t('tutor.s47', '處理中…'); }
 
     try {
-      if (progressEl) progressEl.innerText = '正在建立教材紀錄…';
+      if (progressEl) progressEl.innerText = window.t('tutor.s48', '正在建立教材紀錄…');
       const beginResult = await window.callCloudFunction('beginTutorNoteUpload', {
         subjectId: selectedSubjectId,
         topicId: selectedTopicId,
@@ -994,21 +994,21 @@ window.applyRoleBasedSidebar = function() {
       });
       const noteId = beginResult.noteId;
 
-      if (progressEl) progressEl.innerText = '正在上傳 PDF 檔案…';
+      if (progressEl) progressEl.innerText = window.t('tutor.s49', '正在上傳 PDF 檔案…');
       const storagePath = `tutor_notes/${window.currentUser.uid}/${noteId}/full.pdf`;
       const fileRef = window.storageApi.ref(window.storage, storagePath);
       await window.storageApi.uploadBytes(fileRef, file, { contentType: 'application/pdf' });
 
-      if (progressEl) progressEl.innerText = '正在讀取頁數…';
+      if (progressEl) progressEl.innerText = window.t('tutor.s50', '正在讀取頁數…');
       const registerResult = await window.callCloudFunction('registerTutorNoteUpload', { noteId });
 
       document.getElementById('tutor-note-upload-panel').style.display = 'none';
-      window.showToast('教材上傳成功！請選擇預覽頁', '✅');
+      window.showToast(window.t('tutor.s51', '教材上傳成功！請選擇預覽頁'), '✅');
       window.openTutorPreviewPicker(noteId, registerResult.pageCount);
     } catch (err) {
-      window.showToast('上傳失敗：' + (err.message || err), '❌');
+      window.showToast(window.t('tutor.s52', '上傳失敗：') + (err.message || err), '❌');
     } finally {
-      if (btn) { btn.disabled = false; btn.innerText = '送出'; }
+      if (btn) { btn.disabled = false; btn.innerText = window.t('tutor.s41', '送出'); }
     }
   };
 
@@ -1019,36 +1019,36 @@ window.applyRoleBasedSidebar = function() {
   // 「重試讀取頁數」，畀導師唔使刪走再重新上傳一次成個檔案。
   window.retryRegisterTutorNote = async function(noteId) {
     try {
-      window.showToast('正在重試讀取頁數…', '🔁');
+      window.showToast(window.t('tutor.s53', '正在重試讀取頁數…'), '🔁');
       const registerResult = await window.callCloudFunction('registerTutorNoteUpload', { noteId });
-      window.showToast('已成功讀取頁數，請選擇預覽頁', '✅');
+      window.showToast(window.t('tutor.s54', '已成功讀取頁數，請選擇預覽頁'), '✅');
       window.openTutorPreviewPicker(noteId, registerResult.pageCount);
     } catch (err) {
-      window.showToast('重試失敗：' + (err.message || err), '❌');
+      window.showToast(window.t('tutor.s55', '重試失敗：') + (err.message || err), '❌');
     }
   };
 
   // ---------- 揀預覽頁 ----------
   window.openTutorPreviewPicker = function(noteId, pageCount) {
-    if (!pageCount || pageCount < 1) { window.showToast('這份教材還未完成頁數讀取，請稍後再試', '⚠️'); return; }
+    if (!pageCount || pageCount < 1) { window.showToast(window.t('tutor.s56', '這份教材還未完成頁數讀取，請稍後再試'), '⚠️'); return; }
     lastRegisteredNoteId = noteId;
     const panel = document.getElementById('tutor-note-upload-panel');
     if (!panel) return;
 
     const checkboxes = Array.from({ length: pageCount }, (_, i) => i + 1).map((p) => `
       <label style="display:inline-flex; align-items:center; gap:4px; font-size:13px; border:1px solid #E3EAF6; border-radius:6px; padding:4px 8px; margin:2px;">
-        <input type="checkbox" value="${p}" class="tutor-preview-page-checkbox" onchange="window.enforceTutorPreviewPageLimit()"> 第 ${p} 頁
+        <input type="checkbox" value="${p}" class="tutor-preview-page-checkbox" onchange="window.enforceTutorPreviewPageLimit()"> ${window.t('tutor.pageNumTemplate', '第 {p} 頁').replace('{p}', p)}
       </label>
     `).join('');
 
     panel.style.display = 'block';
     panel.innerHTML = `
-      <h4 style="font-size:14px; font-weight:bold; color:var(--brand-800); margin-bottom:6px;">選擇預覽頁（最多 3 頁，共 ${pageCount} 頁）</h4>
-      <p style="font-size:12px; color:#888; margin-bottom:8px;">學生在購買前可以看到這幾頁的內容，請選擇最能夠展示筆記質素的頁數。</p>
+      <h4 style="font-size:14px; font-weight:bold; color:var(--brand-800); margin-bottom:6px;">${window.t('tutor.choosePreviewTemplate', '選擇預覽頁（最多 3 頁，共 {n} 頁）').replace('{n}', pageCount)}</h4>
+      <p style="font-size:12px; color:#888; margin-bottom:8px;">${window.t('tutor.s57', '學生在購買前可以看到這幾頁的內容，請選擇最能夠展示筆記質素的頁數。')}</p>
       <div id="tutor-preview-page-list" style="max-height:220px; overflow-y:auto; margin-bottom:10px;">${checkboxes}</div>
       <div style="display:flex; gap:8px;">
-        <button class="btn btn-outline" type="button" onclick="document.getElementById('tutor-note-upload-panel').style.display='none';">稍後再選</button>
-        <button class="btn btn-primary" type="button" id="tutor-preview-confirm-btn" onclick="window.confirmTutorPreviewPages()">確認並發佈</button>
+        <button class="btn btn-outline" type="button" onclick="document.getElementById('tutor-note-upload-panel').style.display='none';">${window.t('tutor.s58', '稍後再選')}</button>
+        <button class="btn btn-primary" type="button" id="tutor-preview-confirm-btn" onclick="window.confirmTutorPreviewPages()">${window.t('tutor.s59', '確認並發佈')}</button>
       </div>
     `;
   };
@@ -1058,7 +1058,7 @@ window.applyRoleBasedSidebar = function() {
     const checked = boxes.filter((b) => b.checked);
     if (checked.length > 3) {
       checked[checked.length - 1].checked = false;
-      window.showToast('預覽頁最多只能選擇 3 頁', '⚠️');
+      window.showToast(window.t('tutor.s60', '預覽頁最多只能選擇 3 頁'), '⚠️');
     }
   };
 
@@ -1066,18 +1066,18 @@ window.applyRoleBasedSidebar = function() {
     const pages = Array.from(document.querySelectorAll('.tutor-preview-page-checkbox'))
       .filter((b) => b.checked)
       .map((b) => parseInt(b.value, 10));
-    if (pages.length === 0) { window.showToast('請至少選擇一頁作為預覽', '⚠️'); return; }
+    if (pages.length === 0) { window.showToast(window.t('tutor.s61', '請至少選擇一頁作為預覽'), '⚠️'); return; }
 
     const btn = document.getElementById('tutor-preview-confirm-btn');
-    if (btn) { btn.disabled = true; btn.innerText = '處理中…'; }
+    if (btn) { btn.disabled = true; btn.innerText = window.t('tutor.s47', '處理中…'); }
     try {
       await window.callCloudFunction('selectTutorNotePreviewPages', { noteId: lastRegisteredNoteId, pages });
       document.getElementById('tutor-note-upload-panel').style.display = 'none';
-      window.showToast('教材已經發佈！', '🎉');
+      window.showToast(window.t('tutor.s62', '教材已經發佈！'), '🎉');
     } catch (err) {
-      window.showToast('設定預覽頁失敗：' + (err.message || err), '❌');
+      window.showToast(window.t('tutor.s63', '設定預覽頁失敗：') + (err.message || err), '❌');
     } finally {
-      if (btn) { btn.disabled = false; btn.innerText = '確認並發佈'; }
+      if (btn) { btn.disabled = false; btn.innerText = window.t('tutor.s59', '確認並發佈'); }
     }
   };
 
@@ -1109,10 +1109,10 @@ window.applyRoleBasedSidebar = function() {
     const priceEl = document.getElementById('tutor-edit-note-price');
 
     const newTitle = (titleEl && titleEl.value || '').trim();
-    if (!newTitle) { window.showToast('請輸入標題', '⚠️'); return; }
+    if (!newTitle) { window.showToast(window.t('tutor.s64', '請輸入標題'), '⚠️'); return; }
     const newPriceDollar = parseFloat(priceEl && priceEl.value);
     if (Number.isNaN(newPriceDollar) || !Number.isInteger(newPriceDollar) || newPriceDollar < 10) {
-      window.showToast('定價必須為 $10 或以上的整數金額', '⚠️');
+      window.showToast(window.t('tutor.s43', '定價必須為 $10 或以上的整數金額'), '⚠️');
       return;
     }
 
@@ -1123,21 +1123,21 @@ window.applyRoleBasedSidebar = function() {
         priceCents: Math.round(newPriceDollar * 100),
         updatedAt: Date.now(),
       });
-      window.showToast('已更新教材資料', '✅');
+      window.showToast(window.t('tutor.s65', '已更新教材資料'), '✅');
       if (typeof window.closeModal === 'function') window.closeModal('modal-tutor-edit-note');
       editingNoteId = null;
     } catch (err) {
-      window.showToast('更新失敗：' + (err.message || err), '❌');
+      window.showToast(window.t('tutor.s66', '更新失敗：') + (err.message || err), '❌');
     }
   };
 
   window.deleteTutorNoteConfirm = async function(noteId) {
-    if (!(await window.appConfirm('確定刪除這份教材？已上傳的 PDF 檔案會一併刪除，這個操作無法復原。'))) return;
+    if (!(await window.appConfirm(window.t('tutor.confirmDeleteNote', '確定刪除這份教材？已上傳的 PDF 檔案會一併刪除，這個操作無法復原。')))) return;
     try {
       await window.callCloudFunction('deleteTutorNote', { noteId });
-      window.showToast('已刪除教材', '🗑️');
+      window.showToast(window.t('tutor.s67', '已刪除教材'), '🗑️');
     } catch (err) {
-      window.showToast('刪除失敗：' + (err.message || err), '❌');
+      window.showToast(window.t('tutor.s15', '刪除失敗：') + (err.message || err), '❌');
     }
   };
 })();

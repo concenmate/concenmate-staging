@@ -112,7 +112,7 @@
         if (capacityChoices.length === 0) capacityChoices.push(4);
         const defaultCapacity = capacityChoices.includes(settings.defaultCapacity) ? settings.defaultCapacity : capacityChoices[capacityChoices.length - 1];
         capacitySelectEl.innerHTML = capacityChoices.map(n => {
-          const label = (lang === 'en') ? `${n}-person room` : `${n} 人房`;
+          const label = window.t('room.capacityOptionTemplate', '{n} 人房').replace('{n}', n);
           return `<option value="${n}"${n === defaultCapacity ? ' selected' : ''}>${label}</option>`;
         }).join('');
       }
@@ -123,7 +123,7 @@
         if (durationChoices.length === 0) durationChoices = [15, 30, 40, 45, 60];
         const defaultDuration = durationChoices.includes(settings.defaultDuration) ? settings.defaultDuration : durationChoices[0];
         durationSelectEl.innerHTML = durationChoices.map(n => {
-          const label = (lang === 'en') ? `${n} min` : `${n} 分鐘`;
+          const label = window.t('room.durationOptionTemplate', '{n} 分鐘').replace('{n}', n);
           return `<option value="${n}"${n === defaultDuration ? ' selected' : ''}>${label}</option>`;
         }).join('');
       }
@@ -316,7 +316,7 @@
       const collapsed = roomActive.classList.toggle('controls-collapsed');
       if (btn) {
         btn.innerHTML = window.cmIcon ? window.cmIcon(collapsed ? 'menu' : 'minus', 16) : (collapsed ? '≡' : '−');
-        btn.title = collapsed ? '顯示控制列' : '收起控制列';
+        btn.title = collapsed ? window.t('room.showControlBar', '顯示控制列') : window.t('room.hideControlBar', '收起控制列');
       }
       // 收埋緊控制列嗰陣，背景音細面板（如果啱啱開緊）都會跟住俾隱藏
       // 咗嘅祖先元素蓋埋見唔到，順便都將個 display 狀態校正返做「關閉」，
@@ -332,7 +332,7 @@
       const roomActive = document.getElementById('room-active');
       const btn = document.getElementById('fs-room-bar-collapse-btn');
       if (roomActive) roomActive.classList.remove('controls-collapsed');
-      if (btn) { btn.innerHTML = window.cmIcon ? window.cmIcon('minus', 16) : '−'; btn.title = '收起控制列'; }
+      if (btn) { btn.innerHTML = window.cmIcon ? window.cmIcon('minus', 16) : '−'; btn.title = window.t('room.hideControlBar', '收起控制列'); }
     }
 
     // 表情反應平時收埋，撳個細圓掣先彈出嚟揀（唔係成日用，冇必要成
@@ -560,9 +560,9 @@
             <div class="video-more-menu-wrap">
               <span class="video-tag video-more-menu-toggle" onclick="event.stopPropagation(); window.toggleVideoMoreMenu('${uid}')" title="${window.t('room.moreOptions', '更多選項')}">⋮</span>
               <div class="video-more-menu-dropdown" id="video-more-menu-${uid}" style="display:none;">
-                <button type="button" class="video-more-menu-item" id="transfer-host-btn-${uid}" style="display:none;" onclick="event.stopPropagation(); window.toggleVideoMoreMenu('${uid}'); window.transferHostTo('${uid}', ${window.jsArg(name||'這位同學')})">${window.t('room.transferHost', '轉移房主給他')}</button>
-                <button type="button" class="video-more-menu-item danger" id="kick-btn-${uid}" style="display:none;" onclick="event.stopPropagation(); window.toggleVideoMoreMenu('${uid}'); window.kickParticipant('${uid}', ${window.jsArg(name||'這位同學')})">${window.t('room.kickUser', '將這位同學移出房間')}</button>
-                <button type="button" class="video-more-menu-item danger" onclick="event.stopPropagation(); window.toggleVideoMoreMenu('${uid}'); window.openReportModal('${uid}', ${window.jsArg(name||'這位同學')})">${window.t('room.reportUser', '舉報這位同學')}</button>
+                <button type="button" class="video-more-menu-item" id="transfer-host-btn-${uid}" style="display:none;" onclick="event.stopPropagation(); window.toggleVideoMoreMenu('${uid}'); window.transferHostTo('${uid}', ${window.jsArg(name||window.t('room.thisStudent', '這位同學'))})">${window.t('room.transferHost', '轉移房主給他')}</button>
+                <button type="button" class="video-more-menu-item danger" id="kick-btn-${uid}" style="display:none;" onclick="event.stopPropagation(); window.toggleVideoMoreMenu('${uid}'); window.kickParticipant('${uid}', ${window.jsArg(name||window.t('room.thisStudent', '這位同學'))})">${window.t('room.kickUser', '將這位同學移出房間')}</button>
+                <button type="button" class="video-more-menu-item danger" onclick="event.stopPropagation(); window.toggleVideoMoreMenu('${uid}'); window.openReportModal('${uid}', ${window.jsArg(name||window.t('room.thisStudent', '這位同學'))})">${window.t('room.reportUser', '舉報這位同學')}</button>
               </div>
             </div>
           </div>
@@ -1094,7 +1094,7 @@
         roomActiveEl.appendChild(container);
       }
       const note = document.createElement('div');
-      note.textContent = `${name || '同學'} 進來了`;
+      note.textContent = window.t('room.joinedTemplate', '{name} 進來了').replace('{name}', name || window.t('lb.defaultUsername', '同學'));
       note.style.cssText = 'background:rgba(20,20,20,0.72); color:#fff; padding:10px 20px; border-radius:999px; font-size:14px; font-weight:bold; box-shadow:0 4px 14px rgba(0,0,0,0.25); backdrop-filter:blur(4px); opacity:0; transform:translateY(-8px); transition:opacity .25s ease, transform .25s ease;';
       container.appendChild(note);
       requestAnimationFrame(() => {
@@ -1333,7 +1333,7 @@
       overlay.innerHTML = `
         <div style="background:rgba(20,20,20,0.85); color:#fff; padding:22px 32px; border-radius:16px; text-align:center; box-shadow:0 6px 24px rgba(0,0,0,0.35); backdrop-filter:blur(4px);">
           <div style="margin-bottom:8px; display:flex; justify-content:center; color:#fff;"><svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2z"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></div>
-          <div style="font-size:14px; opacity:0.85; margin-bottom:6px;">此溫習室的密碼為</div>
+          <div style="font-size:14px; opacity:0.85; margin-bottom:6px;">${window.t('room.s1', '此溫習室的密碼為')}</div>
           <div style="font-size:32px; font-weight:bold; letter-spacing:10px;">${window.escapeHtml(password)}</div>
         </div>
       `;
@@ -1448,7 +1448,7 @@
         state.creatingRoom = false;
         if (submitBtn) {
           submitBtn.disabled = false;
-          submitBtn.innerText = originalBtnText || '立即建立並廣播';
+          submitBtn.innerText = originalBtnText || window.t('room.createAndBroadcastBtn', '立即建立並廣播');
         }
       }
     };
@@ -3471,7 +3471,7 @@
         return;
       }
       await cleanupDeadPeerConnection(remoteUid, pc);
-      const remoteName = state.peerNames[remoteUid] || '同學';
+      const remoteName = state.peerNames[remoteUid] || window.t('lb.defaultUsername', '同學');
       getOrCreateRemoteSlot(remoteUid, remoteName);
       try {
         await createOfferTo(state.currentRoomId, remoteUid, remoteName);
@@ -3535,13 +3535,13 @@
           const mon = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][Number(p.m) - 1];
           return `${p.d} ${mon} ${p.y}`;
         }
-        return `${p.y} 年 ${p.m} 月 ${p.d} 日`;
+        return window.t('date.ymdTemplate', '{y} 年 {m} 月 {d} 日').replace('{y}', p.y).replace('{m}', p.m).replace('{d}', p.d);
       }
       function formatMinutes(total) {
         const h = Math.floor(total / 60), m = total % 60;
         const lang = typeof window.getAppLanguage === 'function' ? window.getAppLanguage() : 'zh-Hant';
         if (lang === 'en') return h > 0 ? `${h} h ${m} min` : `${m} min`;
-        return h > 0 ? `${h} 小時 ${m} 分鐘` : `${m} 分鐘`;
+        return h > 0 ? window.t('unit.hmTemplate', '{h} 小時 {m} 分鐘').replace('{h}', h).replace('{m}', m) : window.t('unit.mTemplate', '{m} 分鐘').replace('{m}', m);
       }
       function roundRectPath(ctx, x, y, w, h, r) {
         ctx.beginPath();

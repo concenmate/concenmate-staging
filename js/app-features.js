@@ -596,7 +596,7 @@
         if (isLeaderboardGradeNotApplicable()) {
           if (ownRankWrap) {
             ownRankWrap.style.display = 'block';
-            ownRankWrap.innerHTML = renderLeaderboardNotApplicableRow(window.currentUser.username || '你', window.currentUser.avatarBase64, window.currentUser.uid);
+            ownRankWrap.innerHTML = renderLeaderboardNotApplicableRow(window.currentUser.username || window.t('common.you', '你'), window.currentUser.avatarBase64, window.currentUser.uid);
           }
         } else if (!meInList && window.currentUser.district === district) {
           const myHours = isMonth
@@ -612,7 +612,7 @@
           const myRank = countSnap.data().count + 1;
           if (ownRankWrap) {
             ownRankWrap.style.display = 'block';
-            ownRankWrap.innerHTML = renderLeaderboardRow(myRank, window.currentUser.username || '你', formatHoursMinutes(myHours), true, window.currentUser.avatarBase64, window.currentUser.uid, window.currentUser.exp || 0);
+            ownRankWrap.innerHTML = renderLeaderboardRow(myRank, window.currentUser.username || window.t('common.you', '你'), formatHoursMinutes(myHours), true, window.currentUser.avatarBase64, window.currentUser.uid, window.currentUser.exp || 0);
           }
         } else if (!meInList && ownRankWrap) {
           // 自己個帳戶就讀地區同揀緊嘅地區唔同（睇緊第二區嘅榜），冇
@@ -648,7 +648,7 @@
           listEl.innerHTML = '';
           if (ownRankWrap) {
             ownRankWrap.style.display = 'block';
-            ownRankWrap.innerHTML = renderLeaderboardNotApplicableRow(window.currentUser.username || '你', window.currentUser.avatarBase64, window.currentUser.uid);
+            ownRankWrap.innerHTML = renderLeaderboardNotApplicableRow(window.currentUser.username || window.t('common.you', '你'), window.currentUser.avatarBase64, window.currentUser.uid);
           }
         } else {
           listEl.innerHTML = `<p style="text-align:center; color:#999; padding:20px;">${window.t('lb.schoolNotSetMsg', '你的帳戶未設定學校名稱，請先到「我的帳戶」填寫學校，先可以睇到校內排行榜')}</p>`;
@@ -684,7 +684,7 @@
         if (isLeaderboardGradeNotApplicable()) {
           if (ownRankWrap) {
             ownRankWrap.style.display = 'block';
-            ownRankWrap.innerHTML = renderLeaderboardNotApplicableRow(window.currentUser.username || '你', window.currentUser.avatarBase64, window.currentUser.uid);
+            ownRankWrap.innerHTML = renderLeaderboardNotApplicableRow(window.currentUser.username || window.t('common.you', '你'), window.currentUser.avatarBase64, window.currentUser.uid);
           }
         } else if (!meInList) {
           const myHours = isMonth
@@ -698,7 +698,7 @@
           const myRank = countSnap.data().count + 1;
           if (ownRankWrap) {
             ownRankWrap.style.display = 'block';
-            ownRankWrap.innerHTML = renderLeaderboardRow(myRank, window.currentUser.username || '你', formatHoursMinutes(myHours), true, window.currentUser.avatarBase64, window.currentUser.uid, window.currentUser.exp || 0);
+            ownRankWrap.innerHTML = renderLeaderboardRow(myRank, window.currentUser.username || window.t('common.you', '你'), formatHoursMinutes(myHours), true, window.currentUser.avatarBase64, window.currentUser.uid, window.currentUser.exp || 0);
           }
         }
       } catch (err) {
@@ -754,7 +754,7 @@
         if (isLeaderboardGradeNotApplicable()) {
           if (ownRankWrap) {
             ownRankWrap.style.display = 'block';
-            ownRankWrap.innerHTML = renderLeaderboardNotApplicableRow(window.currentUser.username || '你', window.currentUser.avatarBase64, window.currentUser.uid);
+            ownRankWrap.innerHTML = renderLeaderboardNotApplicableRow(window.currentUser.username || window.t('common.you', '你'), window.currentUser.avatarBase64, window.currentUser.uid);
           }
         } else if (myDocId && meInListIndex !== -1) {
           // 已經喺頭 50 名入面：直接攞返呢行喺清單入面嘅名次，唔使再
@@ -989,7 +989,7 @@
       const names = ['灰石', '鵝卵石', '雲石', '水晶', '寶石'];
       const namesEn = ['Grey stone', 'Pebble', 'Marble', 'Crystal', 'Gem'];
       const i = stoneIndexForRank(rank) - 1;
-      return (window.getAppLanguage && window.getAppLanguage() === 'en') ? namesEn[i] : names[i];
+      return window.t(['gacha.stoneGrey', 'gacha.stonePebble', 'gacha.stoneMarble', 'gacha.stoneCrystal', 'gacha.stoneGem'][i], names[i]);
     };
     // v1.220.0：由 EXP 直接得出段位稱號（溫習室名牌、排行榜用）
     window.rankLabelForExp = function(exp) {
@@ -1124,7 +1124,7 @@
           // 細預覽圈就唔使畀人撳（揀相／換相已經有專用嘅「更換頭像」
           // 掣，撳個預覽圈冇意義）。
           const clickable = id === 'myacc-avatar' || id === 'diary-avatar';
-          el.innerHTML = `<img src="${avatarSrc}" style="width:100%; height:100%; object-fit:cover; border-radius:50%; ${clickable ? 'cursor:zoom-in;' : ''}" alt="會員頭像"${clickable ? ` onclick="openLightbox('${avatarSrc}', true)"` : ''}>`;
+          el.innerHTML = `<img src="${avatarSrc}" style="width:100%; height:100%; object-fit:cover; border-radius:50%; ${clickable ? 'cursor:zoom-in;' : ''}" alt="${window.t('common.avatarAlt', '會員頭像')}"${clickable ? ` onclick="openLightbox('${avatarSrc}', true)"` : ''}>`;
         } else {
           el.innerText = initial;
         }
@@ -1802,7 +1802,7 @@
         if (usernameEl) usernameEl.innerText = u.username || window.t('lb.defaultUsername', '同學');
         if (avatarEl) {
           if (u.avatarBase64) {
-            avatarEl.innerHTML = `<img src="${escapeHtml(safeImgSrc(u.avatarBase64))}" style="width:100%; height:100%; object-fit:cover; border-radius:50%; cursor:zoom-in;" alt="會員頭像" onclick="openLightbox(${jsArg(safeImgSrc(u.avatarBase64))}, true)">`;
+            avatarEl.innerHTML = `<img src="${escapeHtml(safeImgSrc(u.avatarBase64))}" style="width:100%; height:100%; object-fit:cover; border-radius:50%; cursor:zoom-in;" alt="${window.t('common.avatarAlt', '會員頭像')}" onclick="openLightbox(${jsArg(safeImgSrc(u.avatarBase64))}, true)">`;
           } else {
             avatarEl.innerText = (u.username || '同').charAt(0).toUpperCase();
           }
@@ -1857,7 +1857,7 @@
           const cuid = counterpartUids[i];
           const name = u.username || window.t('lb.defaultUsername', '同學');
           const avatarInner = u.avatarBase64
-            ? `<img src="${escapeHtml(safeImgSrc(u.avatarBase64))}" style="width:100%; height:100%; object-fit:cover; border-radius:50%; cursor:zoom-in;" alt="會員頭像" onclick="event.stopPropagation(); openLightbox(${jsArg(safeImgSrc(u.avatarBase64))}, true)">`
+            ? `<img src="${escapeHtml(safeImgSrc(u.avatarBase64))}" style="width:100%; height:100%; object-fit:cover; border-radius:50%; cursor:zoom-in;" alt="${window.t('common.avatarAlt', '會員頭像')}" onclick="event.stopPropagation(); openLightbox(${jsArg(safeImgSrc(u.avatarBase64))}, true)">`
             : `${(name || '同').charAt(0).toUpperCase()}`;
           html += `
             <div style="display:flex; align-items:center; gap:10px; padding:6px 4px;">
@@ -2113,15 +2113,15 @@
       if (errEl) errEl.style.display = 'none';
 
       if (!raw) {
-        if (errEl) { errEl.innerText = '名稱不可以是空白'; errEl.style.display = 'block'; }
+        if (errEl) { errEl.innerText = window.t('feat.s1', '名稱不可以是空白'); errEl.style.display = 'block'; }
         return;
       }
       if (raw.length > OTTER_NAME_MAX_LEN) {
-        if (errEl) { errEl.innerText = `名稱最多 ${OTTER_NAME_MAX_LEN} 個字`; errEl.style.display = 'block'; }
+        if (errEl) { errEl.innerText = window.t('otter.nameMaxTemplate', '名稱最多 {n} 個字').replace('{n}', OTTER_NAME_MAX_LEN); errEl.style.display = 'block'; }
         return;
       }
       if (containsBadWord(raw)) {
-        if (errEl) { errEl.innerText = '這個名稱可能包含不當字眼，請換一個名稱再試～'; errEl.style.display = 'block'; }
+        if (errEl) { errEl.innerText = window.t('feat.s2', '這個名稱可能包含不當字眼，請換一個名稱再試～'); errEl.style.display = 'block'; }
         return;
       }
       if (!window.currentUser || !window.db || !window.fs) return;
@@ -2137,7 +2137,7 @@
         closeModal('modal-otter-rename');
         window.showToast(window.t('features.saveSuccessGeneric', '儲存成功！'), '🦦');
       } catch (e) {
-        if (errEl) { errEl.innerText = '儲存失敗，請再試：' + (e.message || e); errEl.style.display = 'block'; }
+        if (errEl) { errEl.innerText = window.t('feat.s3', '儲存失敗，請再試：') + (e.message || e); errEl.style.display = 'block'; }
       }
     };
 
@@ -2292,7 +2292,7 @@
       const daysInMonth = new Date(year, month + 1, 0).getDate();
       const todayKey = getTodayDateStr();
 
-      let html = ['日', '一', '二', '三', '四', '五', '六'].map(d => `<div class="study-calendar-dow">${d}</div>`).join('');
+      let html = ['日', '一', '二', '三', '四', '五', '六'].map((d, i) => `<div class="study-calendar-dow">${window.t('cal.dow' + i, d)}</div>`).join('');
       for (let i = 0; i < startWeekday; i++) html += `<div class="study-calendar-day empty"></div>`;
       for (let day = 1; day <= daysInMonth; day++) {
         const key = year + '-' + String(month + 1).padStart(2, '0') + '-' + String(day).padStart(2, '0');
@@ -2303,7 +2303,7 @@
         if (studied) cls += ' studied';
         if (isToday) cls += ' today';
         if (isFuture) cls += ' future';
-        html += `<div class="${cls}" title="${key}${studied ? '（有溫習）' : ''}">${day}</div>`;
+        html += `<div class="${cls}" title="${key}${studied ? window.t('cal.studiedMark', '（有溫習）') : ''}">${day}</div>`;
       }
       grid.innerHTML = html;
 
@@ -2400,7 +2400,7 @@
         headerAuthBtn.style.borderRadius = "20px";
         headerAuthBtn.style.padding = "4px 10px";
         headerAuthBtn.style.fontSize = "11px";
-        headerAuthBtn.innerHTML = `待驗證電郵`;
+        headerAuthBtn.innerHTML = `${window.t('feat.s4', '待驗證電郵')}`;
 
         // 導師帳戶就算仲未驗證電郵，左邊側邊欄都要即刻顯示返導師專用
         // 版本（唔係學生版），唔可以淨係喺下面「已驗證」嗰個分支先
@@ -2441,7 +2441,7 @@
         headerAuthBtn.style.fontSize = "11px";
         headerAuthBtn.innerHTML = `<span>${window.currentUser.username || window.currentUser.email}</span> <span style="color:#4A68A8; font-weight:bold;">✓</span>`;
 
-        document.getElementById('room-user-name-tag').innerText = (window.currentUser.username || '使用者') + " (你)";
+        document.getElementById('room-user-name-tag').innerText = (window.currentUser.username || window.t('common.user', '使用者')) + window.t('feat.s5', " (你)");
         const selfRankTag = document.getElementById('room-user-rank-tag');
         if (selfRankTag) selfRankTag.innerText = window.rankLabelForExp(window.currentUser.exp || 0);
         document.getElementById('room-self-avatar').innerText = (window.currentUser.username || 'U').charAt(0).toUpperCase();
@@ -2453,7 +2453,7 @@
         updateOtterNameDisplay();
 
         // 主頁歡迎卡片
-        const displayName = window.currentUser.username || window.currentUser.email?.split('@')[0] || '同學';
+        const displayName = window.currentUser.username || window.currentUser.email?.split('@')[0] || window.t('lb.defaultUsername', '同學');
         const homeUser = document.getElementById('home-username');
         const homeHours = document.getElementById('home-stat-hours');
         const homePts = document.getElementById('home-stat-pts');
@@ -2531,7 +2531,7 @@
         if (typeof window.closeAllChatWindows === 'function') window.closeAllChatWindows();
 
         headerAuthBtn.className = "btn btn-primary";
-        headerAuthBtn.innerHTML = `登入 / 註冊`;
+        headerAuthBtn.innerHTML = `${window.t('feat.s6', '登入 / 註冊')}`;
       }
     }
     window.updateUserAuthUI = updateUserAuthUI;
@@ -2553,8 +2553,8 @@
       const setText = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
 
       if (typeof window.renderUserAvatar === 'function') window.renderUserAvatar();
-      setText('myacc-username', u.username || '同學');
-      setText('myacc-loginid', u.loginId ? ('🆔 ' + u.loginId) : '🆔 未設定');
+      setText('myacc-username', u.username || window.t('lb.defaultUsername', '同學'));
+      setText('myacc-loginid', u.loginId ? ('🆔 ' + u.loginId) : window.t('feat.s7', '🆔 未設定'));
       setText('myacc-school', u.school || window.t('common.notFilled', '未填寫'));
       setText('myacc-grade', u.grade ? (window.translateGradeName ? window.translateGradeName(u.grade) : u.grade) : window.t('common.notFilled', '未填寫'));
       setText('myacc-fav', window.displayOptionalFieldValue ? window.displayOptionalFieldValue(u.favSubjects) : (u.favSubjects || window.t('common.notFilled', '未填寫')));
@@ -2604,13 +2604,13 @@
       if (window.currentUser.role === 'tutor') {
         area.innerHTML = `
           <div style="background:#EAF6EC; border:1px solid #B7E0BE; border-radius:10px; padding:10px 12px; font-size:13px; color:#2F6B3A; text-align:left;">
-            您已經是 ConcenMate 認證導師。請在左側選單點選「管理教材」，即可上傳與管理您的科目、課題及教材。
+            ${window.t('feat.s8', '您已經是 ConcenMate 認證導師。請在左側選單點選「管理教材」，即可上傳與管理您的科目、課題及教材。')}
           </div>
         `;
         return;
       }
 
-      area.innerHTML = '<p style="font-size:13px; color:#999; text-align:center;">正在查詢導師身份狀態…</p>';
+      area.innerHTML = ('<p style="font-size:13px; color:#999; text-align:center;">' + window.t('feat.s9', '正在查詢導師身份狀態…') + '</p>');
       try {
         const snap = await window.fs.getDoc(window.fs.doc(window.db, 'tutorApplications', window.currentUser.uid));
         if (!snap.exists()) {
@@ -2624,15 +2624,15 @@
         if (app.status === 'pending') {
           area.innerHTML = `
             <div style="background:#FFF7E6; border:1px solid #F0D9A0; border-radius:10px; padding:10px 12px; font-size:13px; color:#8a6d1f; text-align:left;">
-              您的導師申請正在審批中，請耐心等候管理員處理。
+              ${window.t('feat.s10', '您的導師申請正在審批中，請耐心等候管理員處理。')}
             </div>
           `;
         } else if (app.status === 'rejected') {
           area.innerHTML = `
             <div style="background:#FBEAEA; border:1px solid #E3B4B4; border-radius:10px; padding:10px 12px; font-size:13px; color:#8a2f2f; text-align:left; margin-bottom:8px;">
-              上一次的導師申請未獲批准。${app.rejectionReason ? ('原因：' + escapeHtml(app.rejectionReason)) : ''}
+              ${window.t('tutor.applyRejected', '上一次的導師申請未獲批准。')}${app.rejectionReason ? (window.t('feat.s11', '原因：') + escapeHtml(app.rejectionReason)) : ''}
             </div>
-            <button class="btn btn-outline" type="button" style="width:100%; justify-content:center;" onclick="openTutorApplyModal()">重新申請</button>
+            <button class="btn btn-outline" type="button" style="width:100%; justify-content:center;" onclick="openTutorApplyModal()">${window.t('feat.s12', '重新申請')}</button>
           `;
         } else {
           // status === 'approved'，但 users/{uid}.role 未及時同步（理論上
@@ -2640,12 +2640,12 @@
           // 極微，保留呢個分支純粹係防禦性顯示）
           area.innerHTML = `
             <div style="background:#EAF6EC; border:1px solid #B7E0BE; border-radius:10px; padding:10px 12px; font-size:13px; color:#2F6B3A; text-align:left;">
-              您的導師申請已經批核，重新登入後即可生效。
+              ${window.t('feat.s13', '您的導師申請已經批核，重新登入後即可生效。')}
             </div>
           `;
         }
       } catch (err) {
-        area.innerHTML = `<p style="font-size:13px; color:#c0392b; text-align:center;">查詢導師身份狀態失敗：${escapeHtml(err.message || String(err))}</p>`;
+        area.innerHTML = `<p style="font-size:13px; color:#c0392b; text-align:center;">${window.t('tutor.statusQueryFailed', '查詢導師身份狀態失敗：')}${escapeHtml(err.message || String(err))}</p>`;
       }
     }
     window.updateMyAccountTutorStatus = updateMyAccountTutorStatus;
@@ -2675,7 +2675,7 @@
       if (!displayName) { window.showToast(window.t('features.fillDisplayNameRequired', '請填寫顯示名稱'), '⚠️'); return; }
       if (subjectsIntended.length === 0) { window.showToast(window.t('core.selectAtLeastOneTeachSubject', '請至少填寫一個想教的科目'), '⚠️'); return; }
 
-      if (btn) { btn.disabled = true; btn.innerText = '送出中…'; }
+      if (btn) { btn.disabled = true; btn.innerText = window.t('qa.sending', '送出中…'); }
       try {
         await window.callCloudFunction('applyTutorRole', { displayName, bio, subjectsIntended, contactInfo });
         closeModal('modal-tutor-apply');
@@ -2683,7 +2683,7 @@
       } catch (err) {
         window.showToast(window.t('features.tutorApplySubmitFailedTemplate', '送出申請失敗：{msg}').replace('{msg}', (err.message || err)), '❌');
       } finally {
-        if (btn) { btn.disabled = false; btn.innerText = '送出申請'; }
+        if (btn) { btn.disabled = false; btn.innerText = window.t('tutorapply.submitBtn', '送出申請'); }
       }
     };
 
@@ -4436,7 +4436,7 @@
         await renderFriendActionButtons(uid, u);
       } catch (e) {
         console.error('讀取用戶資料失敗:', e);
-        if (nameEl) nameEl.innerText = '載入失敗';
+        if (nameEl) nameEl.innerText = window.t('tutorview.loadFailed', '載入失敗');
       }
     }
     window.viewUserProfile = viewUserProfile;
@@ -4455,7 +4455,7 @@
         ]);
 
         if (friendSnap.exists()) {
-          const safeChatName = jsArg(targetUserData.username || '同學');
+          const safeChatName = jsArg(targetUserData.username || window.t('lb.defaultUsername', '同學'));
           container.innerHTML = `
             <div style="display:flex; align-items:center; justify-content:center; gap:8px; flex-wrap:wrap;">
               <span class="tag" style="background:var(--brand-100); color:var(--brand-700);">${window.t('social.alreadyFriendsTag', '已經是好友')}</span>
@@ -5016,7 +5016,7 @@
               <div style="text-align:right; font-size:13px; color:#888; line-height:1.5;">
                 <div>${escapeHtml(u.grade ? (window.translateGradeName ? window.translateGradeName(u.grade) : u.grade) : window.t('common.notFilled', '未填寫'))}</div>
                 <div style="color:var(--brand-600); font-weight:600;">Lv.${levelInfo.level} ${escapeHtml(window.rankTitle(rank))}</div>
-                <div>累積溫習 ${(parseFloat(u.hours) || 0).toFixed(1)} 小時</div>
+                <div>${window.t('social.totalHoursTemplate', '累積溫習 {h} 小時').replace('{h}', (parseFloat(u.hours) || 0).toFixed(1))}</div>
               </div>
               <button class="btn btn-outline" type="button" style="font-size:13px; padding:5px 10px;" onclick="viewUserProfile('${targetUid}')">${window.t('social.viewProfileAddFriendBtn', '看資料 / 加好友')}</button>
             </div>
@@ -5079,7 +5079,7 @@
       const presenceMap = window.friendPresenceMap || {};
       container.innerHTML = friends.map(f => {
         const online = typeof window.isUidOnline === 'function' && window.isUidOnline(presenceMap[f.uid]);
-        const safeChatName = jsArg(f.username || '同學');
+        const safeChatName = jsArg(f.username || window.t('lb.defaultUsername', '同學'));
         return `
           <div class="card" style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:8px;">
             <div style="display:flex; align-items:center; gap:10px; cursor:pointer; min-width:0;" onclick="viewUserProfile('${f.uid}')">
@@ -5467,7 +5467,7 @@
         listEl.innerHTML = conversations.map(c => {
           try {
             const f = friendByUid[c.friendUid];
-            const displayName = c.friendName || (f && f.username) || '同學';
+            const displayName = c.friendName || (f && f.username) || window.t('lb.defaultUsername', '同學');
             const online = typeof window.isUidOnline === 'function' && window.isUidOnline(presenceMap[c.friendUid]);
             const unread = c.unread || 0;
             const safeChatName = jsArg(displayName);
@@ -5479,7 +5479,7 @@
                 </div>
                 <div style="flex:1; min-width:0;">
                   <div class="chat-dock-friend-name">${escapeHtml(displayName)}</div>
-                  <div class="chat-dock-friend-preview">${c.lastMessage ? escapeHtml(c.lastMessage) : '未有對話紀錄'}</div>
+                  <div class="chat-dock-friend-preview">${c.lastMessage ? escapeHtml(c.lastMessage) : window.t('feat.s14', '未有對話紀錄')}</div>
                 </div>
                 ${unread > 0 ? `<span class="chat-dock-friend-unread">${unread > 99 ? '99+' : unread}</span>` : ''}
               </div>
@@ -5491,7 +5491,7 @@
         }).join('');
       } catch (renderErr) {
         console.error('畫「即時對話」清單失敗:', renderErr);
-        listEl.innerHTML = '<p style="text-align:center; color:#e74c3c; font-size:13px; padding:16px;">對話清單畫面出錯，請截圖 console 錯誤訊息給開發者</p>';
+        listEl.innerHTML = ('<p style="text-align:center; color:#e74c3c; font-size:13px; padding:16px;">' + window.t('feat.s15', '對話清單畫面出錯，請截圖 console 錯誤訊息給開發者') + '</p>');
       }
     };
 
@@ -5559,7 +5559,7 @@
             const win = chatOpenWindows.find(w => w.chatId === c.chatId);
             if (!win || win.minimized) {
               const friend = (window.friendsListDataCache || []).find(f => f.uid === c.friendUid);
-              const friendName = c.friendName || (friend ? friend.username : null) || '朋友';
+              const friendName = c.friendName || (friend ? friend.username : null) || window.t('common.friend', '朋友');
               window.showToast(`${friendName}：${c.lastMessage}`, '💬');
             }
           }
@@ -5715,13 +5715,13 @@
             <div class="chat-window-header" onclick="window.toggleMinimizeChatWindow('${w.chatId}')">
               <span class="presence-dot ${online ? 'online' : ''}" style="position:static;"></span>
               <span class="chat-window-title">${escapeHtml(w.friendUsername)}</span>
-              <button type="button" class="chat-window-close-btn" title="清除對話記錄" onclick="event.stopPropagation(); window.clearChatHistory('${w.chatId}')">${window.cmIcon('trash', 15)}</button>
-              <button type="button" class="chat-window-close-btn" title="關閉視窗" aria-label="關閉視窗" onclick="event.stopPropagation(); window.closeChatWindow('${w.chatId}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+              <button type="button" class="chat-window-close-btn" title="${window.t('feat.s16', '清除對話記錄')}" onclick="event.stopPropagation(); window.clearChatHistory('${w.chatId}')">${window.cmIcon('trash', 15)}</button>
+              <button type="button" class="chat-window-close-btn" title="${window.t('feat.s17', '關閉視窗')}" aria-label="${window.t('feat.s17', '關閉視窗')}" onclick="event.stopPropagation(); window.closeChatWindow('${w.chatId}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
             </div>
             <div class="chat-window-body" id="chat-body-${w.chatId}"></div>
             <div class="chat-window-input-row">
-              <input type="text" id="chat-input-${w.chatId}" placeholder="打字傳送訊息..." onkeydown="if(event.key==='Enter'){window.sendChatMessage('${w.chatId}');}">
-              <button type="button" onclick="window.sendChatMessage('${w.chatId}')" aria-label="傳送">${window.cmIcon('send', 16)}</button>
+              <input type="text" id="chat-input-${w.chatId}" placeholder="${window.t('feat.s18', '打字傳送訊息...')}" onkeydown="if(event.key==='Enter'){window.sendChatMessage('${w.chatId}');}">
+              <button type="button" onclick="window.sendChatMessage('${w.chatId}')" aria-label="${window.t('social.sendBtn', '傳送')}">${window.cmIcon('send', 16)}</button>
             </div>
           </div>
         `;
@@ -5806,7 +5806,7 @@
       if (!bodyEl || !window.currentUser) return;
       const messages = chatMessagesCache[chatId] || [];
       if (messages.length === 0) {
-        bodyEl.innerHTML = '<p style="text-align:center; color:#999; font-size:13px; padding:16px;">開始與這位朋友聊天，打個招呼吧！</p>';
+        bodyEl.innerHTML = ('<p style="text-align:center; color:#999; font-size:13px; padding:16px;">' + window.t('feat.s19', '開始與這位朋友聊天，打個招呼吧！') + '</p>');
         return;
       }
       const myUid = window.currentUser.uid;
@@ -5942,9 +5942,9 @@
     // 兩個掣（分享／複製）共用嘅底層資料：房間連結、連同連結一齊送出嘅文案
     function buildRoomInviteShareData() {
       const roomTitleEl = document.getElementById('active-room-title');
-      const roomName = (roomTitleEl && roomTitleEl.innerText) || '溫習室';
+      const roomName = (roomTitleEl && roomTitleEl.innerText) || window.t('room.genericName', '溫習室');
       const link = `${window.location.origin}${window.location.pathname}#join-room=${state.currentRoomId}`;
-      const text = `誠邀閣下加入 ConcenMate 一同溫習，請按以下連結加入溫習室「${roomName}」：`;
+      const text = window.t('room.shareInviteTemplate', '誠邀閣下加入 ConcenMate 一同溫習，請按以下連結加入溫習室「{room}」：').replace('{room}', roomName);
       return { link, text };
     }
 
@@ -5958,7 +5958,7 @@
       // 嘅分享選單，入面就會有 WhatsApp、Instagram 等已安裝嘅社交 App 可以揀。
       if (navigator.share) {
         try {
-          await navigator.share({ title: 'ConcenMate 書伴 · 溫習室邀請', text, url: link });
+          await navigator.share({ title: window.t('room.shareInviteTitle', 'ConcenMate 書伴 · 溫習室邀請'), text, url: link });
           return; // 用家喺分享選單度揀咗（或者取消咗）都算完成，唔使再做複製那一步
         } catch (e) {
           // 用家自己撳「取消」都會拋呢個 error，唔算真正失敗，跌落去用複製方式頂住

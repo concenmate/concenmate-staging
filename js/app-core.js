@@ -798,7 +798,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
       if (!loginId) return;
 
       const btn = document.getElementById('forgot-password-submit-btn');
-      if (btn) { btn.disabled = true; btn.innerText = '處理中...'; }
+      if (btn) { btn.disabled = true; btn.innerText = window.t('common.processing', '處理中...'); }
 
       try {
         // v1.198.0：重設密碼電郵而家由 Cloud Function 喺伺服器直接寄出，
@@ -813,7 +813,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
       } catch (error) {
         window.showToast(window.t('core.processFailedTemplate', '處理失敗：{error}').replace('{error}', window.friendlyErrorText(error)), '❌');
       } finally {
-        if (btn) { btn.disabled = false; btn.innerText = '寄出重設密碼連結'; }
+        if (btn) { btn.disabled = false; btn.innerText = window.t('auth.forgotSubmitBtn', '寄出重設密碼連結'); }
       }
     };
 
@@ -848,7 +848,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
       }
 
       const btn = document.getElementById('reset-password-submit-btn');
-      if (btn) { btn.disabled = true; btn.innerText = '更改中...'; }
+      if (btn) { btn.disabled = true; btn.innerText = window.t('common.changing', '更改中...'); }
 
       try {
         await window.callCloudFunction('confirmPasswordReset', { token, newPassword: newPwd });
@@ -867,7 +867,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
           window.showToast(window.t('core.resetPasswordFailedTemplate', '重設密碼失敗：{error}').replace('{error}', window.friendlyErrorText(error)), '❌');
         }
       } finally {
-        if (btn) { btn.disabled = false; btn.innerText = '確認重設密碼'; }
+        if (btn) { btn.disabled = false; btn.innerText = window.t('auth.resetSubmitBtn', '確認重設密碼'); }
       }
     };
 
@@ -878,7 +878,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
       const toEmail = window.currentUser.contactEmail;
       if (!toEmail) { window.showToast(window.t('core.needFillEmailBeforeSave', '請先在上面填寫電郵地址，再按「儲存修改資料」'), '⚠️'); return; }
       const btn = document.getElementById('resend-verify-email-btn');
-      if (btn) { btn.disabled = true; btn.innerText = '發送中...'; }
+      if (btn) { btn.disabled = true; btn.innerText = window.t('common.sendingDots', '發送中...'); }
       try {
         const res = await window.sendVerificationEmail();
         if (res && res.alreadyVerified) {
@@ -894,7 +894,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
       } catch (e) {
         window.showToast(window.t('core.sendFailedTemplate', '發送失敗：{error}').replace('{error}', window.friendlyErrorText(e)), '❌');
       } finally {
-        if (btn) { btn.disabled = false; btn.innerText = '重新發送驗證電郵'; }
+        if (btn) { btn.disabled = false; btn.innerText = window.t('profile.resendVerifyBtn', '重新發送驗證電郵'); }
       }
     };
 
@@ -1002,7 +1002,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
       }
 
       const btn = document.getElementById('change-password-submit-btn');
-      if (btn) { btn.disabled = true; btn.innerText = '更改中...'; }
+      if (btn) { btn.disabled = true; btn.innerText = window.t('common.changing', '更改中...'); }
 
       try {
         const credential = EmailAuthProvider.credential(window.currentUser.email, currentPwd);
@@ -1022,7 +1022,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
           window.showToast(window.t('core.changePasswordFailedTemplate', '更改密碼失敗：{error}').replace('{error}', window.friendlyErrorText(error)), '❌');
         }
       } finally {
-        if (btn) { btn.disabled = false; btn.innerText = '更改密碼'; }
+        if (btn) { btn.disabled = false; btn.innerText = window.t('profile.changePasswordBtn', '更改密碼'); }
       }
     };
 
@@ -1679,7 +1679,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
         const optionsHtml = g.districts.map((d) => `<option value="${escAttr(d)}" data-district="${escAttr(d)}">${window.escapeHtml(translateDist(d))}</option>`).join('');
         return `<optgroup label="${window.escapeHtml(translateDist(g.region))}" data-district-label="${escAttr(g.region)}">${optionsHtml}</optgroup>`;
       }).join('');
-      districtSelect.innerHTML = `<option value="" data-i18n="reg.chooseDistrictFirst">請先選擇地區</option>${groupsHtml}`;
+      districtSelect.innerHTML = `<option value="" data-i18n="reg.chooseDistrictFirst">${window.t('reg.chooseDistrictFirst', '請先選擇地區')}</option>${groupsHtml}`;
       districtSelect.dataset.populated = '1';
     };
 
@@ -1721,7 +1721,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
 
       if (schoolWrap) schoolWrap.style.display = showSchool ? 'block' : 'none';
       schoolSelect.required = showSchool;
-      if (schoolLabel) schoolLabel.innerText = isTertiary ? '院校名稱 *' : '學校名稱 *';
+      if (schoolLabel) schoolLabel.innerText = isTertiary ? window.t('auth.institutionNameLabel', '院校名稱 *') : window.t('auth.schoolNameLabel', '學校名稱 *');
 
       // 「喜愛學科」／「討厭學科」跟中學課程科目設計，淨係揀咗中一至
       // 中六（showDistrict 已經等於「揀咗嘅係中學年級」）先會顯示；
@@ -1770,25 +1770,25 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
           if (!seen.has(name)) { seen.add(name); combined.push(name); }
         });
         const optionsHtml = combined.map((s) => `<option value="${escAttr(s)}">${s}</option>`).join('');
-        schoolSelect.innerHTML = `<option value="">請選擇院校</option>${optionsHtml}<option value="__other__">其他（自行輸入院校名稱）</option>`;
+        schoolSelect.innerHTML = `<option value="">${window.t('reg.chooseInstitution', '請選擇院校')}</option>${optionsHtml}<option value="__other__">${window.t('reg.otherInstitution', '其他（自行輸入院校名稱）')}</option>`;
         schoolSelect.disabled = false;
       } else {
         // 中學：維持「先揀地區、再揀學校」。
         const district = districtSelect.value;
         if (!district) {
-          schoolSelect.innerHTML = `<option value="">請先選擇地區</option>`;
+          schoolSelect.innerHTML = `<option value="">${window.t('reg.chooseDistrictFirst', '請先選擇地區')}</option>`;
           schoolSelect.disabled = true;
         } else {
           const schools = (window.HK_SECONDARY_SCHOOLS_BY_DISTRICT && window.HK_SECONDARY_SCHOOLS_BY_DISTRICT[district]) || [];
           const optionsHtml = schools.map((s) => `<option value="${escAttr(s)}">${s}</option>`).join('');
-          schoolSelect.innerHTML = `<option value="">請選擇學校</option>${optionsHtml}<option value="__other__">其他（自行輸入學校名稱）</option>`;
+          schoolSelect.innerHTML = `<option value="">${window.t('reg.chooseSchool', '請選擇學校')}</option>${optionsHtml}<option value="__other__">${window.t('reg.otherSchool', '其他（自行輸入學校名稱）')}</option>`;
           schoolSelect.disabled = false;
         }
       }
       if (customWrap) customWrap.style.display = 'none';
       if (customInput) {
         customInput.value = '';
-        customInput.placeholder = isTertiary ? '請輸入院校名稱' : '請輸入學校名稱';
+        customInput.placeholder = isTertiary ? window.t('core.enterInstitutionName', '請輸入院校名稱') : window.t('auth.schoolNameCustomPlaceholder', '請輸入學校名稱');
       }
     };
 
@@ -1814,14 +1814,14 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
       if (!yearSelect || !monthSelect) return;
       if (yearSelect.dataset.populated === '1') return;
       const currentYear = new Date().getFullYear();
-      let yearOptions = '<option value="">年</option>';
+      let yearOptions = '<option value="">' + window.t('auth.yearOption', '年') + '</option>';
       for (let y = currentYear - 8; y >= currentYear - 90; y--) {
         yearOptions += `<option value="${y}">${y}</option>`;
       }
       yearSelect.innerHTML = yearOptions;
-      let monthOptions = '<option value="">月</option>';
+      let monthOptions = '<option value="">' + window.t('auth.monthOption', '月') + '</option>';
       for (let m = 1; m <= 12; m++) {
-        monthOptions += `<option value="${m}">${m} 月</option>`;
+        monthOptions += `<option value="${m}">${window.t('reg.monthTemplate', '{m} 月').replace('{m}', m)}</option>`;
       }
       monthSelect.innerHTML = monthOptions;
       yearSelect.dataset.populated = '1';
@@ -1885,7 +1885,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
       const now = new Date();
       let age = now.getFullYear() - year;
       if ((now.getMonth() + 1) < month) age -= 1;
-      displayEl.innerText = (age >= 0 && age <= 120) ? `（現年約 ${age} 歲）` : '';
+      displayEl.innerText = (age >= 0 && age <= 120) ? window.t('reg.ageApproxTemplate', '（現年約 {age} 歲）').replace('{age}', age) : '';
 
       const tooOld = age > REG_SECONDARY_STUDENT_MAX_AGE;
 
@@ -2140,7 +2140,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
       const submitBtn = document.getElementById('login-submit-btn');
       const cancelBtn = document.getElementById('login-cancel-btn');
       const originalText = submitBtn ? submitBtn.innerText : '登入';
-      if (submitBtn) { submitBtn.disabled = true; submitBtn.innerText = '登入中...'; }
+      if (submitBtn) { submitBtn.disabled = true; submitBtn.innerText = window.t('auth.loggingIn', '登入中...'); }
       if (cancelBtn) cancelBtn.disabled = true;
       try {
         await window.loginWithFirebase(email, password);
