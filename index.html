@@ -6,7 +6,7 @@
        打開檔案唔使拉就見到，方便快速核對版本）
        ======================================== -->
   <script>
-    window.APP_VERSION = "v1.236.1"; // 每次推送 GitHub 前，喺呢度改版號
+    window.APP_VERSION = "v1.237.0"; // 每次推送 GitHub 前，喺呢度改版號
   </script>
 
   <!-- v1.227.8：全站確認／輸入視窗，取代瀏覽器原生 confirm()／prompt()，外觀同資訊卡一致。
@@ -222,7 +222,7 @@
       const msg = reason && (reason.message || (typeof reason === 'string' ? reason : ''));
       if (typeof msg === 'string' && msg.indexOf('Connection to Indexed Database server lost') !== -1) {
         if (typeof window.showToast === 'function') {
-          window.showToast('與瀏覽器資料庫失去連線（部分 iOS 裝置已知問題），請重新整理頁面', '🔄');
+          window.showToast((window.t ? window.t('err.idbLost', '與瀏覽器資料庫失去連線（部分 iOS 裝置已知問題），請重新整理頁面') : '與瀏覽器資料庫失去連線（部分 iOS 裝置已知問題），請重新整理頁面'), '🔄');
         } else {
           console.warn('IndexedDB 連線中斷，建議重新整理頁面');
         }
@@ -1845,7 +1845,7 @@
        「已開啟」先會顯示。 -->
   <div id="site-announcement-banner">
     <span id="site-announcement-text"></span>
-    <button type="button" id="site-announcement-close" onclick="window.dismissSiteAnnouncement()" title="關閉公告" aria-label="關閉公告"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    <button data-i18n-aria-label="html.s59" data-i18n-title="html.s59" type="button" id="site-announcement-close" onclick="window.dismissSiteAnnouncement()" title="關閉公告" aria-label="關閉公告"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
   </div>
 
   <div id="toast-box">
@@ -1894,7 +1894,7 @@
         <div class="landing-hero-art">
           <div class="landing-hero-art-visual">
             <div class="landing-hero-art-blob"></div>
-            <img id="landing-hero-mascot-img" src="assets/images/ottie-wave.png" alt="ConcenMate 書伴 Logo">
+            <img data-i18n-alt="html.s61" id="landing-hero-mascot-img" src="assets/images/ottie-wave.png" alt="ConcenMate 書伴 Logo">
             <div class="landing-hero-subjects">
               <div class="landing-hero-subject-tile" data-i18n="landing.subjectChinese">中文</div>
               <div class="landing-hero-subject-tile" data-i18n="landing.subjectEnglish">英文</div>
@@ -2007,13 +2007,13 @@
   <div id="app-shell" style="display:none;">
   <div id="app-top-sticky">
   <header>
-    <button class="mobile-nav-toggle" id="mobile-nav-toggle-btn" type="button" onclick="window.toggleMobileNav()" aria-label="開啟選單"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16"/><path d="M4 12h16"/><path d="M4 18h16"/></svg></button>
+    <button data-i18n-aria-label="html.s62" class="mobile-nav-toggle" id="mobile-nav-toggle-btn" type="button" onclick="window.toggleMobileNav()" aria-label="開啟選單"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16"/><path d="M4 12h16"/><path d="M4 18h16"/></svg></button>
     <div class="logo-box" onclick="switchTab('home')">
       <div class="logo-avatar" style="background:transparent; border:none; padding:0; width:40px; height:40px;"><img id="header-logo-img" src="assets/images/logo.png?v=2" width="36" height="36" alt="ConcenMate" style="border-radius:50%; object-fit:cover;"></div>
       <div>
         <div style="display:flex; align-items:center; gap:4px;">
           <span class="logo-title">ConcenMate</span>
-          <span class="badge">書伴</span>
+          <span class="badge" data-no-i18n>書伴</span>
         </div>
       </div>
     </div>
@@ -2034,9 +2034,9 @@
            （同 header 其他掣一致嘅收窄方式，見 .header-auth-text 呢類
            class 嘅做法）。 -->
       <button class="btn btn-outline" id="header-lang-btn" type="button" aria-label="Language / 語言" onclick="openModal('modal-language-switcher')" style="padding:6px 10px;"><svg class="header-lang-icon" aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.5 2.7 3.8 5.7 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-5.7-3.8-9S9.5 5.7 12 3z"/></svg><span class="header-lang-text" id="current-lang-label">繁體中文</span></button>
-      <button class="btn btn-outline" id="header-admin-btn" type="button" onclick="window.location.hash='admin'" style="padding:6px 10px; display:none;" aria-label="管理後台"><svg class="header-admin-icon" aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg><span class="header-admin-text">管理後台</span></button>
+      <button data-i18n-aria-label="html.s1" class="btn btn-outline" id="header-admin-btn" type="button" onclick="window.location.hash='admin'" style="padding:6px 10px; display:none;" aria-label="管理後台"><svg class="header-admin-icon" aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg><span data-i18n="html.s1" class="header-admin-text">管理後台</span></button>
       <button class="btn btn-primary" id="header-auth-btn" type="button" onclick="handleHeaderUserClick()" style="padding:6px 10px;">
-        <span class="header-auth-text">登入</span>
+        <span data-i18n="landing.navLogin" class="header-auth-text">登入</span>
       </button>
     </div>
   </header>
@@ -2054,7 +2054,7 @@
         </div>
       </div>
       <div style="width:1px; align-self:stretch; background:rgba(255,255,255,.3); flex-shrink:0;"></div>
-      <div style="flex:1; min-width:0; cursor:pointer;" onclick="openLevelInfoModal()" title="看升級詳情">
+      <div data-i18n-title="html.s63" style="flex:1; min-width:0; cursor:pointer;" onclick="openLevelInfoModal()" title="看升級詳情">
         <div style="display:flex; align-items:baseline; gap:4px; overflow:hidden;">
           <span id="global-level-badge" style="color:#fff; font-size:13px; font-weight:bold; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Lv.1 溫習新手 · 仍欠 20 EXP 升級</span>
           <span onclick="event.stopPropagation(); openPtsExpInfoModal();" title="PTS 及 EXP 如何獲得？" data-i18n-title="ptsExp.title" style="display:inline-flex; align-items:center; justify-content:center; width:15px; height:15px; border-radius:50%; background:rgba(255,255,255,.35); font-size:11px; font-weight:900; font-style:normal; flex-shrink:0; cursor:pointer;">!</span>
@@ -2103,30 +2103,30 @@
 
       <div id="unauth-screen" class="auth-wall-container" style="display:none;">
         <div style="font-size:52px; margin-bottom:12px;"></div>
-        <h2 style="font-size:22px; font-weight:bold; color:var(--brand-800);">請先登入 ConcenMate 書伴</h2>
+        <h2 data-i18n="html.s2" style="font-size:22px; font-weight:bold; color:var(--brand-800);">請先登入 ConcenMate 書伴</h2>
         <p style="font-size:14px; color:#666; margin-top:6px; line-height:1.5;">
-          登入後即可暢玩公開溫習大廳、建立專屬房間、<br>開啟即時 Canvas 鏡頭直播與參與線上讀書會！
+          <span data-i18n="html.s3">登入後即可暢玩公開溫習大廳、建立專屬房間、</span><br><span data-i18n="html.s4">開啟即時 Canvas 鏡頭直播與參與線上讀書會！</span>
         </p>
 
         <div style="display:flex; justify-content:center; gap:12px; margin-top:20px; flex-wrap:wrap;">
-          <button class="btn btn-primary" style="padding:10px 20px; font-size:16px;" onclick="typeof window.openModal==='function' && window.openModal('modal-login')">會員登入</button>
-          <button class="btn btn-amber" style="padding:10px 20px; font-size:16px;" onclick="typeof window.openModal==='function' && window.openModal('modal-register')">新用戶註冊</button>
+          <button data-i18n="auth.loginTitle" class="btn btn-primary" style="padding:10px 20px; font-size:16px;" onclick="typeof window.openModal==='function' && window.openModal('modal-login')">會員登入</button>
+          <button data-i18n="html.s5" class="btn btn-amber" style="padding:10px 20px; font-size:16px;" onclick="typeof window.openModal==='function' && window.openModal('modal-register')">新用戶註冊</button>
         </div>
       </div>
 
       <div id="verify-email-screen" class="auth-wall-container" style="display:none;">
         <div style="margin-bottom:12px; display:flex; justify-content:center; color:var(--brand-500);"><svg viewBox="0 0 24 24" width="52" height="52" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2z"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></div>
-        <h2 style="font-size:22px; font-weight:bold; color:var(--brand-800);">請先驗證你的電郵地址</h2>
+        <h2 data-i18n="html.s6" style="font-size:22px; font-weight:bold; color:var(--brand-800);">請先驗證你的電郵地址</h2>
         <p style="font-size:14px; color:#666; margin-top:6px; line-height:1.5;">
-          我們已經寄了一封驗證電郵去 <strong id="verify-gate-email">-</strong><br>
-          請點擊郵件內的連結完成驗證，方可開始使用 ConcenMate 書伴。
+          <span data-i18n="html.s7">我們已經寄了一封驗證電郵去</span> <strong id="verify-gate-email">-</strong><br>
+          <span data-i18n="html.s8">請點擊郵件內的連結完成驗證，方可開始使用 ConcenMate 書伴。</span>
         </p>
         <div style="display:flex; justify-content:center; gap:12px; margin-top:20px; flex-wrap:wrap;">
-          <button class="btn btn-primary" id="verify-gate-resend-btn" type="button" onclick="resendVerificationEmail()">重新發送驗證電郵</button>
-          <button class="btn btn-outline" type="button" onclick="recheckEmailVerification()">已經驗證了，重新整理</button>
-          <button class="btn btn-outline" type="button" onclick="logoutWithFirebase()">登出</button>
+          <button data-i18n="profile.resendVerifyBtn" class="btn btn-primary" id="verify-gate-resend-btn" type="button" onclick="resendVerificationEmail()">重新發送驗證電郵</button>
+          <button data-i18n="html.s9" class="btn btn-outline" type="button" onclick="recheckEmailVerification()">已經驗證了，重新整理</button>
+          <button data-i18n="html.s10" class="btn btn-outline" type="button" onclick="logoutWithFirebase()">登出</button>
         </div>
-        <p style="font-size:13px; color:#999; margin-top:16px;">收不到郵件？請檢查垃圾郵件夾，或按「重新發送」。</p>
+        <p data-i18n="html.s11" style="font-size:13px; color:#999; margin-top:16px;">收不到郵件？請檢查垃圾郵件夾，或按「重新發送」。</p>
       </div>
 
       <div id="authenticated-app-content">
@@ -2176,14 +2176,14 @@
                   <div class="home-stat-label" data-i18n="home.statStreak">連續天</div>
                 </div>
               </div>
-              <div class="home-stat-pill stat-tone-navy" id="home-stat-followers-pill" style="cursor:pointer;" onclick="openFollowListModal(window.currentUser && window.currentUser.uid, 'followers')" title="查看粉絲名單">
+              <div data-i18n-title="html.s64" class="home-stat-pill stat-tone-navy" id="home-stat-followers-pill" style="cursor:pointer;" onclick="openFollowListModal(window.currentUser && window.currentUser.uid, 'followers')" title="查看粉絲名單">
                 <span class="home-stat-icon"></span>
                 <div>
                   <div class="home-stat-val" id="home-stat-followers">0</div>
                   <div class="home-stat-label" data-i18n="home.statFollowers">粉絲</div>
                 </div>
               </div>
-              <div class="home-stat-pill stat-tone-yellow student-only-nav" id="home-stat-following-pill" style="cursor:pointer;" onclick="openFollowListModal(window.currentUser && window.currentUser.uid, 'following')" title="查看追蹤中名單">
+              <div data-i18n-title="html.s65" class="home-stat-pill stat-tone-yellow student-only-nav" id="home-stat-following-pill" style="cursor:pointer;" onclick="openFollowListModal(window.currentUser && window.currentUser.uid, 'following')" title="查看追蹤中名單">
                 <span class="home-stat-icon"></span>
                 <div>
                   <div class="home-stat-val" id="home-stat-following">0</div>
@@ -2230,13 +2230,13 @@
                    原本呢個卡通版闊，而家搬咗入左欄，同「視訊溫習室」
                    卡對齊，闊度一致 -->
               <div class="card" id="otter-pet-card" style="text-align:center; position:relative;">
-                <button type="button" onclick="openOtterRenameModal()" title="自訂我的水獺" style="position:absolute; top:8px; right:8px; background:none; border:none; cursor:pointer; font-size:16px; padding:4px; color:#A4B4D4; line-height:1;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button>
+                <button data-i18n-title="home.otterRenameTitle" type="button" onclick="openOtterRenameModal()" title="自訂我的水獺" style="position:absolute; top:8px; right:8px; background:none; border:none; cursor:pointer; font-size:16px; padding:4px; color:#A4B4D4; line-height:1;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button>
                 <h3 style="font-size:15px; font-weight:bold; margin-bottom:6px; color:var(--brand-800); display:flex; align-items:center; justify-content:center; gap:6px;">
                   <span id="otter-name-display">Ottiee</span>
                 </h3>
                 <div id="otter-pet-wrap" class="otter-mood-happy" style="display:inline-flex; align-items:center; justify-content:center; min-height:220px; margin:4px 0;">
                   <!-- 管理員如果有上傳自訂水獺相片，會優先顯示呢張相，取代下面嘅插畫 -->
-                  <img id="otter-photo-img" style="display:none; transition:opacity .25s ease; max-width:220px; max-height:220px; width:auto; height:auto; object-fit:contain;" alt="我的水獺">
+                  <img data-i18n-alt="html.s66" id="otter-photo-img" style="display:none; transition:opacity .25s ease; max-width:220px; max-height:220px; width:auto; height:auto; object-fit:contain;" alt="我的水獺">
                   <!-- 管理員未上傳呢個等級嘅相片時，顯示呢個簡單佔位圖示，唔會用返預設插畫 -->
                   <div id="otter-blank-placeholder" style="display:none; width:120px; height:120px; border-radius:50%; background:#EFEAE0; border:3px solid #C08B57; box-shadow:0 2px 10px rgba(0,0,0,.15); align-items:center; justify-content:center; font-size:44px;"></div>
                   <svg id="otter-pet-svg" width="120" height="120" viewBox="0 0 140 140" style="display:none;">
@@ -2402,7 +2402,7 @@
                   <button type="button" id="room-pool-pill-secondary" class="room-pool-pill" onclick="window.onRoomPoolPillClick && window.onRoomPoolPillClick('secondary')"></button>
                   <button type="button" id="room-pool-pill-public" class="room-pool-pill" onclick="window.onRoomPoolPillClick && window.onRoomPoolPillClick('public')"></button>
                 </div>
-                <button type="button" onclick="window.openRoomPoolInfoModal && window.openRoomPoolInfoModal()" title="了解公開溫習大廳的分類方式" style="display:flex; align-items:center; justify-content:center; width:20px; height:20px; border-radius:50%; border:none; background:var(--brand-200); color:var(--brand-800); font-size:13px; font-weight:bold; cursor:pointer; padding:0;">!</button>
+                <button data-i18n-title="html.s67" type="button" onclick="window.openRoomPoolInfoModal && window.openRoomPoolInfoModal()" title="了解公開溫習大廳的分類方式" style="display:flex; align-items:center; justify-content:center; width:20px; height:20px; border-radius:50%; border:none; background:var(--brand-200); color:var(--brand-800); font-size:13px; font-weight:bold; cursor:pointer; padding:0;">!</button>
               </div>
               <button class="btn btn-primary" type="button" onclick="typeof window.openModal==='function' && window.openModal('modal-create-room')">
                 <span data-i18n="room.createRoom">+ 建立新溫習房</span>
@@ -2443,7 +2443,7 @@
                    全螢幕模式都繼續顯示——唔係嘅話成個房名／科目嗰個 div 入咗全螢幕
                    會俾 .fs-hide-in-fullscreen 個 CSS 規則隱藏晒，個鎖 icon 會跟埋一齊
                    唔見咗。 -->
-              <button type="button" id="room-password-lock-btn" onclick="window.showRoomPasswordPopup()" title="查看房間密碼" style="display:none; align-items:center; justify-content:center; background:none; border:none; cursor:pointer; padding:2px;">
+              <button data-i18n-title="html.s68" type="button" id="room-password-lock-btn" onclick="window.showRoomPasswordPopup()" title="查看房間密碼" style="display:none; align-items:center; justify-content:center; background:none; border:none; cursor:pointer; padding:2px;">
                 <span class="nav-icon" id="nav-icon-roomLock" style="width:20px; height:20px;"></span>
               </button>
 
@@ -2451,7 +2451,7 @@
                 <button class="btn btn-primary" type="button" id="btn-camera" onclick="toggleCamera()" data-i18n="room.cameraOn">開啟鏡頭</button>
                 <button class="btn btn-red" type="button" id="btn-mic" onclick="toggleMic()" data-i18n="room.micMuted">已靜音</button>
                 <button class="btn btn-outline" type="button" id="btn-room-snapshot" onclick="openRoomSnapshot()" style="border-color:#D2D9E9; color:#29395C;" data-i18n="room.snapshotBtn">合照</button>
-                <label class="btn btn-outline" for="room-allow-photo-cb" title="勾選後，其他同學拍攝合照時會清楚顯示你的鏡頭；未勾選時以馬賽克遮蓋" style="border-color:#D2D9E9; color:#29395C; gap:6px; cursor:pointer;">
+                <label data-i18n-title="html.s69" class="btn btn-outline" for="room-allow-photo-cb" title="勾選後，其他同學拍攝合照時會清楚顯示你的鏡頭；未勾選時以馬賽克遮蓋" style="border-color:#D2D9E9; color:#29395C; gap:6px; cursor:pointer;">
                   <input type="checkbox" id="room-allow-photo-cb" onchange="window.setAllowGroupPhoto && window.setAllowGroupPhoto(this.checked)" style="width:16px; height:16px; margin:0; cursor:pointer;">
                   <span data-i18n="room.allowPhotoShort">容許合照</span>
                 </label>
@@ -2464,7 +2464,7 @@
                      擺喺呢個位置（開鏡頭／靜音之後）係跟返用家
                      喺全螢幕控制列想要嘅第 3 個位置。 -->
                 <div class="fs-bg-noise-only" style="display:none; position:relative;">
-                  <button class="btn btn-outline" type="button" id="fs-bg-noise-toggle-btn" onclick="toggleFsBgNoisePanel()" title="選擇背景音" style="border-color:#DDCABB; color:#29395C;" data-i18n="room.bgNoise">背景音</button>
+                  <button data-i18n-title="html.s70" class="btn btn-outline" type="button" id="fs-bg-noise-toggle-btn" onclick="toggleFsBgNoisePanel()" title="選擇背景音" style="border-color:#DDCABB; color:#29395C;" data-i18n="room.bgNoise">背景音</button>
                   <!-- ⚠️ position:fixed（唔係 absolute）：room-bar 喺橫向全螢幕
                        嗰陣係個 148px 闊嘅直向窄條，仲有 overflow-y:auto（會連
                        帶令 overflow-x 都變成 auto），如果個面板用 absolute
@@ -2485,7 +2485,7 @@
                     </select>
                     <div style="display:flex; align-items:center; gap:6px;">
                       <input type="range" id="fs-bg-noise-volume" min="0" max="1" step="0.05" value="0.39" style="flex:1;" oninput="setBgNoiseVolume(this.value)">
-                      <button type="button" id="fs-bg-noise-pause-btn" onclick="toggleBgNoisePause()" disabled title="暫停／繼續背景音" style="background:#333; color:#fff; border:1px solid #555; border-radius:6px; font-size:13px; padding:2px 6px; cursor:pointer; opacity:.4; line-height:1.4;">⏸️</button>
+                      <button data-i18n-title="html.s71" type="button" id="fs-bg-noise-pause-btn" onclick="toggleBgNoisePause()" disabled title="暫停／繼續背景音" style="background:#333; color:#fff; border:1px solid #555; border-radius:6px; font-size:13px; padding:2px 6px; cursor:pointer; opacity:.4; line-height:1.4;">⏸️</button>
                     </div>
                   </div>
                 </div>
@@ -2493,12 +2493,12 @@
                 <!-- 番茄鐘（專注／小休自動循環）功能已經整個移除。這次入房到
                      而家嘅「總溫習時間」：順時計，只在被判定為閒置、暫停計分
                      嗰陣先會跟住暫停累積 -->
-                <div id="room-total-time-widget" style="background:#fff; color:var(--brand-800); padding:6px 10px; border-radius:10px; font-size:13px; display:flex; align-items:center; gap:6px; border:1px solid var(--brand-200);" title="這次入房到現在的總溫習時間（正向計時，閒置暫停計分時會暫停累積）">
+                <div data-i18n-title="html.s72" id="room-total-time-widget" style="background:#fff; color:var(--brand-800); padding:6px 10px; border-radius:10px; font-size:13px; display:flex; align-items:center; gap:6px; border:1px solid var(--brand-200);" title="這次入房到現在的總溫習時間（正向計時，閒置暫停計分時會暫停累積）">
                   <span data-i18n="room.studiedTime">已溫習</span>
                   <span id="room-total-time" style="font-family:monospace; font-size:14px; font-weight:700; white-space:nowrap;">00:00</span>
                 </div>
 
-                <div class="fs-hide-in-fullscreen bg-noise-inline-row" style="background:#111; color:white; padding:4px 8px; border-radius:8px; font-size:13px; display:flex; align-items:center; gap:6px;" title="專注背景音，建議戴耳機使用">
+                <div data-i18n-title="html.s73" class="fs-hide-in-fullscreen bg-noise-inline-row" style="background:#111; color:white; padding:4px 8px; border-radius:8px; font-size:13px; display:flex; align-items:center; gap:6px;" title="專注背景音，建議戴耳機使用">
                   <span></span>
                   <select id="bg-noise-select" style="background:#222; color:#fff; border:1px solid #444; border-radius:6px; font-size:13px; padding:2px 4px;" onchange="setBgNoiseType(this.value)">
                     <option value="off" data-i18n="room.bgNoiseOff">背景音：關閉</option>
@@ -2511,10 +2511,10 @@
                     <option value="train2" data-i18n="room.train2">火車聲 2</option>
                   </select>
                   <input type="range" id="bg-noise-volume" min="0" max="1" step="0.05" value="0.39" style="width:60px;" oninput="setBgNoiseVolume(this.value)">
-                  <button type="button" id="bg-noise-pause-btn" onclick="toggleBgNoisePause()" disabled title="暫停／繼續背景音" style="background:#333; color:#fff; border:1px solid #555; border-radius:6px; font-size:13px; padding:2px 6px; cursor:pointer; opacity:.4; line-height:1.4;">⏸️</button>
+                  <button data-i18n-title="html.s71" type="button" id="bg-noise-pause-btn" onclick="toggleBgNoisePause()" disabled title="暫停／繼續背景音" style="background:#333; color:#fff; border:1px solid #555; border-radius:6px; font-size:13px; padding:2px 6px; cursor:pointer; opacity:.4; line-height:1.4;">⏸️</button>
                 </div>
 
-                <button class="btn btn-outline" type="button" id="video-fullscreen-btn" style="border-color:#DDCABB; color:#29395C;" onclick="toggleVideoFullscreenMode()" title="四格鏡頭放到全螢幕，一次過看清楚晒所有人" data-i18n="room.fullscreen">全螢幕</button>
+                <button data-i18n-title="html.s74" class="btn btn-outline" type="button" id="video-fullscreen-btn" style="border-color:#DDCABB; color:#29395C;" onclick="toggleVideoFullscreenMode()" title="四格鏡頭放到全螢幕，一次過看清楚晒所有人" data-i18n="room.fullscreen">全螢幕</button>
 
                 <button class="btn btn-outline fs-hide-in-fullscreen" type="button" style="border-color:#DDCABB; color:#29395C;" onclick="leaveRoom()" data-i18n="room.leaveRoom">退出房間</button>
               </div>
@@ -2526,7 +2526,7 @@
                    嗰陣 room-bar 只係頂部一張細細張卡，掣掛喺卡嘅角落先會
                    同個控制列視覺上連埋一齊，唔會孤伶伶咁飄喺成塊黑色畫面
                    最底。 -->
-              <button type="button" id="fs-room-bar-collapse-btn" onclick="toggleFsRoomBarCollapse()" title="收埋／顯示控制列" style="display:none; width:34px; height:34px; background:rgba(255,255,255,.16); color:#fff; border:1.5px solid rgba(255,255,255,.75); border-radius:10px; font-size:16px; padding:0; cursor:pointer; line-height:1; backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px);"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14"/></svg></button>
+              <button data-i18n-title="html.s75" type="button" id="fs-room-bar-collapse-btn" onclick="toggleFsRoomBarCollapse()" title="收埋／顯示控制列" style="display:none; width:34px; height:34px; background:rgba(255,255,255,.16); color:#fff; border:1.5px solid rgba(255,255,255,.75); border-radius:10px; font-size:16px; padding:0; cursor:pointer; line-height:1; backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px);"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14"/></svg></button>
             </div>
 
             <div id="video-grid-container" class="video-grid-container">
@@ -2560,12 +2560,12 @@
                      面板改為只喺撳返「😊」個切換掣，或者撳返畫面其他
                      地方（見 document click 監聽）先會關閉。 -->
                 <div class="emoji-reaction-toggle-wrap" onclick="event.stopPropagation();">
-                  <button type="button" class="emoji-reaction-toggle-btn" onclick="toggleEmojiReactionPanel()" title="表情反應" data-i18n-title="room.emojiReaction"><img src="assets/images/react-smile.png" alt="表情反應"></button>
+                  <button type="button" class="emoji-reaction-toggle-btn" onclick="toggleEmojiReactionPanel()" title="表情反應" data-i18n-title="room.emojiReaction"><img data-i18n-alt="room.emojiReaction" src="assets/images/react-smile.png" alt="表情反應"></button>
                   <div class="emoji-reaction-popover" id="emoji-reaction-popover" style="display:none;">
-                    <button type="button" onclick="sendDanmakuSticker('😆')" title="大笑"><img src="assets/images/react-laugh.png" alt="大笑"></button>
-                    <button type="button" onclick="sendDanmakuSticker('😍')" title="喜歡"><img src="assets/images/react-love.png" alt="喜歡"></button>
-                    <button type="button" onclick="sendDanmakuSticker('😭')" title="喊"><img src="assets/images/react-cry.png" alt="喊"></button>
-                    <button type="button" onclick="sendDanmakuSticker('😴')" title="瞓覺"><img src="assets/images/react-sleep.png" alt="瞓覺"></button>
+                    <button data-i18n-title="html.s76" type="button" onclick="sendDanmakuSticker('😆')" title="大笑"><img data-i18n-alt="html.s76" src="assets/images/react-laugh.png" alt="大笑"></button>
+                    <button data-i18n-title="html.s77" type="button" onclick="sendDanmakuSticker('😍')" title="喜歡"><img data-i18n-alt="html.s77" src="assets/images/react-love.png" alt="喜歡"></button>
+                    <button data-i18n-title="html.s78" type="button" onclick="sendDanmakuSticker('😭')" title="喊"><img data-i18n-alt="html.s78" src="assets/images/react-cry.png" alt="喊"></button>
+                    <button data-i18n-title="html.s79" type="button" onclick="sendDanmakuSticker('😴')" title="瞓覺"><img data-i18n-alt="html.s79" src="assets/images/react-sleep.png" alt="瞓覺"></button>
                   </div>
                 </div>
 
@@ -2734,7 +2734,7 @@
                 </div>
 
                 <div style="display:none;">
-                  <label style="font-size:13px; font-weight:bold; color:#555; display:block;">電子郵件 (Email)</label>
+                  <label data-i18n="html.s12" style="font-size:13px; font-weight:bold; color:#555; display:block;">電子郵件 (Email)</label>
                   <input type="email" id="prof-email" class="input-field" disabled style="background:#D2D9E9; cursor:not-allowed;">
                 </div>
 
@@ -2933,8 +2933,8 @@
              淨係擺幾個掛勾用嘅容器。 -->
         <section id="tab-tutor-materials" class="tab-content">
           <div class="card" style="background: linear-gradient(135deg, #E9EDF5, #D9C9B5); color:#29395C;">
-            <h2 style="font-size:18px; font-weight:bold;">管理教材</h2>
-            <p style="font-size:13px; color:#3F5585; margin-top:4px;">管理您的科目、課題分類，以及上架給學生購買的 PDF 筆記</p>
+            <h2 data-i18n="nav.tutorMaterials" style="font-size:18px; font-weight:bold;">管理教材</h2>
+            <p data-i18n="html.s13" style="font-size:13px; color:#3F5585; margin-top:4px;">管理您的科目、課題分類，以及上架給學生購買的 PDF 筆記</p>
           </div>
 
           <!-- 未批核／被拒嗰陣顯示（role !== 'tutor'），內容由
@@ -2945,10 +2945,10 @@
           <div id="tutor-materials-approved-panel" style="display:none;">
             <div class="card">
               <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                <h3 style="font-size:15px; font-weight:bold; color:var(--brand-800);">我的科目</h3>
+                <h3 data-i18n="html.s14" style="font-size:15px; font-weight:bold; color:var(--brand-800);">我的科目</h3>
                 <div style="display:flex; gap:6px;">
-                  <button class="btn btn-outline" type="button" style="font-size:12px; padding:5px 9px; color:#c0392b; border-color:#e0b0b0;" onclick="window.deleteTutorSubject(window.getSelectedTutorSubjectId())">刪除目前科目</button>
-                  <button class="btn btn-outline" type="button" style="font-size:13px; padding:5px 10px;" onclick="window.openTutorAddSubjectModal()">＋ 新增科目</button>
+                  <button data-i18n="html.s15" class="btn btn-outline" type="button" style="font-size:12px; padding:5px 9px; color:#c0392b; border-color:#e0b0b0;" onclick="window.deleteTutorSubject(window.getSelectedTutorSubjectId())">刪除目前科目</button>
+                  <button data-i18n="html.s16" class="btn btn-outline" type="button" style="font-size:13px; padding:5px 10px;" onclick="window.openTutorAddSubjectModal()">＋ 新增科目</button>
                 </div>
               </div>
               <div id="tutor-subject-tabs" style="display:flex; gap:6px; flex-wrap:wrap;"></div>
@@ -2956,10 +2956,10 @@
 
             <div class="card" id="tutor-topics-card" style="display:none;">
               <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                <h3 style="font-size:15px; font-weight:bold; color:var(--brand-800);">課題</h3>
+                <h3 data-i18n="html.s17" style="font-size:15px; font-weight:bold; color:var(--brand-800);">課題</h3>
                 <div style="display:flex; gap:6px;">
-                  <button class="btn btn-outline" type="button" style="font-size:12px; padding:5px 9px; color:#c0392b; border-color:#e0b0b0;" onclick="window.deleteTutorTopic(window.getSelectedTutorTopicId())">刪除目前課題</button>
-                  <button class="btn btn-outline" type="button" style="font-size:13px; padding:5px 10px;" onclick="window.promptCreateTutorTopic()">＋ 新增課題</button>
+                  <button data-i18n="html.s18" class="btn btn-outline" type="button" style="font-size:12px; padding:5px 9px; color:#c0392b; border-color:#e0b0b0;" onclick="window.deleteTutorTopic(window.getSelectedTutorTopicId())">刪除目前課題</button>
+                  <button data-i18n="html.s19" class="btn btn-outline" type="button" style="font-size:13px; padding:5px 10px;" onclick="window.promptCreateTutorTopic()">＋ 新增課題</button>
                 </div>
               </div>
               <div id="tutor-topic-tabs" style="display:flex; gap:6px; flex-wrap:wrap;"></div>
@@ -2967,8 +2967,8 @@
 
             <div class="card" id="tutor-notes-card" style="display:none;">
               <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                <h3 style="font-size:15px; font-weight:bold; color:var(--brand-800);">教材</h3>
-                <button class="btn btn-primary" type="button" style="font-size:13px; padding:5px 10px;" onclick="window.openTutorNoteUploadForm()">上傳教材</button>
+                <h3 data-i18n="html.s20" style="font-size:15px; font-weight:bold; color:var(--brand-800);">教材</h3>
+                <button data-i18n="html.s21" class="btn btn-primary" type="button" style="font-size:13px; padding:5px 10px;" onclick="window.openTutorNoteUploadForm()">上傳教材</button>
               </div>
               <div id="tutor-note-upload-panel" style="display:none; background:var(--brand-50); border:1px solid var(--brand-200); border-radius:10px; padding:12px; margin-bottom:12px;"></div>
               <div id="tutor-notes-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr)); gap:10px;"></div>
@@ -3036,7 +3036,7 @@
                 <div id="gacha-result-batch-grid" style="display:grid; grid-template-columns:repeat(5, minmax(0, 1fr)); gap:8px;"></div>
               </div>
               <!-- 扭蛋機外殼 SVG -->
-              <img id="gacha-machine-img" alt="扭蛋機" style="display:block; width:360px; max-width:100%; aspect-ratio:6/5; object-fit:contain; height:auto; margin:0 auto; opacity:0; transition:opacity .25s ease;">
+              <img data-i18n-alt="html.s80" id="gacha-machine-img" alt="扭蛋機" style="display:block; width:360px; max-width:100%; aspect-ratio:6/5; object-fit:contain; height:auto; margin:0 auto; opacity:0; transition:opacity .25s ease;">
 
               <!-- 蛋的動畫疊層 -->
               <div id="gacha-capsule-anim" style="
@@ -3110,7 +3110,7 @@
           <div style="background:#fff; border-radius:16px; padding:18px; max-width:520px; width:100%; max-height:82vh; overflow-y:auto;" onclick="event.stopPropagation();">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
               <h3 style="font-size:16px; font-weight:bold; color:#29395C;" data-i18n="gacha.myStickerBookTitle">我的貼圖圖鑑</h3>
-              <button type="button" onclick="closeStickerCollection()" class="icon-close-btn" aria-label="關閉" title="關閉"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+              <button data-i18n-aria-label="common.close" data-i18n-title="common.close" type="button" onclick="closeStickerCollection()" class="icon-close-btn" aria-label="關閉" title="關閉"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
             </div>
             <p style="font-size:13px; color:#344976; margin-bottom:10px; font-weight:bold;"><span data-i18n="gacha.collectedLabel">已收集</span> <span id="sticker-modal-progress-text">0/0</span></p>
             <div id="sticker-collection-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(88px, 1fr)); gap:8px;"></div>
@@ -3122,7 +3122,7 @@
           <div style="background:#fff; border-radius:16px; padding:18px; max-width:520px; width:100%; max-height:82vh; overflow-y:auto;" onclick="event.stopPropagation();">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
               <h3 style="font-size:16px; font-weight:bold; color:#29395C;" data-i18n="gacha.fragmentShopTitle">碎片兌換</h3>
-              <button type="button" onclick="closeFragmentShop()" class="icon-close-btn" aria-label="關閉" title="關閉"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+              <button data-i18n-aria-label="common.close" data-i18n-title="common.close" type="button" onclick="closeFragmentShop()" class="icon-close-btn" aria-label="關閉" title="關閉"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
             </div>
             <p style="font-size:13px; color:#344976; margin-bottom:4px; font-weight:bold;"><span data-i18n="gacha.fragmentLabel">我的碎片</span>：<span id="fragment-shop-count">0</span></p>
             <p style="font-size:12px; color:#6B7894; margin-bottom:10px;" data-i18n="gacha.fragmentShopDesc">選擇一張未擁有的貼圖，以碎片兌換。稀有度越高，所需碎片越多。</p>
@@ -3567,8 +3567,8 @@
   <!-- ===== 服務條款 Modal ===== -->
   <div class="modal-backdrop" id="modal-terms" style="display:none; align-items:flex-start; padding-top:40px;">
     <div class="modal-box" style="max-width:640px; max-height:85vh; overflow-y:auto;">
-      <h3 style="font-size:17px; font-weight:bold; color:var(--brand-800); margin-bottom:4px;">服務條款</h3>
-      <p style="font-size:12px; color:#999; margin-bottom:14px;">生效日期：2026 年 9 月 1 日　最後更新日期：2026 年 11 月 11 日</p>
+      <h3 data-i18n="landing.footerTerms" style="font-size:17px; font-weight:bold; color:var(--brand-800); margin-bottom:4px;">服務條款</h3>
+      <p data-i18n="html.s22" style="font-size:12px; color:#999; margin-bottom:14px;">生效日期：2026 年 9 月 1 日　最後更新日期：2026 年 11 月 11 日</p>
       <!-- 呢個div嘅內容而家可以由Admin後台「條款內容」分頁編輯（存喺
            Firestore admin_config/legalContent），見admin-panel.js嘅
            renderLegalContentBody()。管理員未編輯之前（Firestore入面
@@ -3624,15 +3624,15 @@
         <p style="font-weight:bold; margin-top:14px;">第十條　聯絡方式</p>
         <p>閣下如對本條款有任何疑問，請透過下列方式與本公司聯絡：電郵 support@concenmate.com</p>
       </div>
-      <button class="btn btn-primary" type="button" onclick="closeModal('modal-terms')" style="width:100%; margin-top:16px;">關閉</button>
+      <button data-i18n="common.close" class="btn btn-primary" type="button" onclick="closeModal('modal-terms')" style="width:100%; margin-top:16px;">關閉</button>
     </div>
   </div>
 
   <!-- ===== 私隱政策 Modal ===== -->
   <div class="modal-backdrop" id="modal-privacy-policy" style="display:none; align-items:flex-start; padding-top:40px;">
     <div class="modal-box" style="max-width:640px; max-height:85vh; overflow-y:auto;">
-      <h3 style="font-size:17px; font-weight:bold; color:var(--brand-800); margin-bottom:4px;">私隱政策</h3>
-      <p style="font-size:12px; color:#999; margin-bottom:14px;">生效日期：2026 年 9 月 1 日　最後更新日期：2026 年 11 月 11 日</p>
+      <h3 data-i18n="landing.footerPrivacy" style="font-size:17px; font-weight:bold; color:var(--brand-800); margin-bottom:4px;">私隱政策</h3>
+      <p data-i18n="html.s22" style="font-size:12px; color:#999; margin-bottom:14px;">生效日期：2026 年 9 月 1 日　最後更新日期：2026 年 11 月 11 日</p>
       <!-- 同上面modal-terms一樣，內容可以由Admin後台「條款內容」分頁
            編輯，未編輯之前保持顯示下面呢份寫死嘅繁體中文版本做預設。 -->
       <div id="privacy-content-body" style="font-size:13px; color:#444; line-height:1.8;">
@@ -3674,7 +3674,7 @@
         <p style="font-weight:bold; margin-top:14px;">第十一條　政策之修訂</p>
         <p>本公司保留隨時修訂本政策之權利。任何重大修訂將於本服務網站上公佈，並同時更新本文件頂部所載之「最後更新日期」。本公司建議閣下定期查閱本政策，以知悉最新內容。閣下於修訂公佈後繼續使用本服務，即視為閣下已接受該等修訂。</p>
       </div>
-      <button class="btn btn-primary" type="button" onclick="closeModal('modal-privacy-policy')" style="width:100%; margin-top:16px;">關閉</button>
+      <button data-i18n="common.close" class="btn btn-primary" type="button" onclick="closeModal('modal-privacy-policy')" style="width:100%; margin-top:16px;">關閉</button>
     </div>
   </div>
 
@@ -4506,7 +4506,7 @@
     .cm-bn-item .cm-bn-dot { position: absolute; top: 4px; left: calc(50% + 8px); min-width: 8px; height: 8px; border-radius: 4px; background: #C0524A; display: none; }
     .cm-bn-item .cm-bn-dot.show { display: block; }
   </style>
-  <nav id="cm-bottom-nav" aria-label="主要功能"></nav>
+  <nav data-i18n-aria-label="html.s81" id="cm-bottom-nav" aria-label="主要功能"></nav>
   <script>
   (function () {
     // 底部導覽列直接「鏡像」側邊欄的按鈕：顯示／隱藏、鎖定、圖示（包括後台自訂圖示）、文字（多語言）及目前分頁，
@@ -4688,14 +4688,14 @@
   })();
   </script>
 
-  <script src="js/i18n.js?v=1.236.1"></script>
+  <script src="js/i18n.js?v=1.237.0"></script>
 
-  <script src="js/app-features.js?v=1.236.1"></script>
+  <script src="js/app-features.js?v=1.237.0"></script>
 
-  <script type="module" src="js/app-core.js?v=1.236.1"></script>
+  <script type="module" src="js/app-core.js?v=1.237.0"></script>
 
-  <script src="js/room-video.js?v=1.236.1"></script>
-  <script src="js/stream.js?v=1.236.1"></script>
+  <script src="js/room-video.js?v=1.237.0"></script>
+  <script src="js/stream.js?v=1.237.0"></script>
   <!-- 房主退出房間選擇彈窗 -->
   <div class="modal-backdrop" id="modal-host-leave" style="display:none;">
     <div class="modal-box" style="text-align:center;">
@@ -4848,7 +4848,7 @@
 
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:10px;">
         <div>
-          <h1 style="font-size:20px; font-weight:bold; color:var(--brand-800);">ConcenMate 管理後台</h1>
+          <h1 data-i18n="html.s26" style="font-size:20px; font-weight:bold; color:var(--brand-800);">ConcenMate 管理後台</h1>
           <p style="font-size:13px; color:#888; margin-top:2px;" id="admin-panel-user-email"></p>
           <p style="font-size:13px; color:#888; margin-top:2px;" id="admin-panel-version"></p>
         </div>
@@ -4864,60 +4864,60 @@
            舊分頁名稱（例如 antiidle、subjects）仍然可用，會自動轉到合併後的分頁。 -->
       <div id="admin-tab-nav">
         <div id="admin-tab-group-overview">
-        <p class="admin-tab-group-label" style="font-size:12px; font-weight:bold; color:#999; margin:0 0 6px;">總覽</p>
+        <p data-i18n="html.s27" class="admin-tab-group-label" style="font-size:12px; font-weight:bold; color:#999; margin:0 0 6px;">總覽</p>
         <div style="display:flex; gap:8px; margin-bottom:14px; flex-wrap:wrap;">
-          <button class="btn btn-outline admin-tab-btn" data-tab="costs" onclick="switchAdminTab('costs')">營運開支</button>
-          <button class="btn btn-outline admin-tab-btn" data-tab="dashboard" onclick="switchAdminTab('dashboard')">數據總覽</button>
-          <button class="btn btn-outline admin-tab-btn" data-tab="mobileapp" onclick="switchAdminTab('mobileapp')">手機 App</button>
+          <button data-i18n="html.s28" class="btn btn-outline admin-tab-btn" data-tab="costs" onclick="switchAdminTab('costs')">營運開支</button>
+          <button data-i18n="html.s29" class="btn btn-outline admin-tab-btn" data-tab="dashboard" onclick="switchAdminTab('dashboard')">數據總覽</button>
+          <button data-i18n="html.s30" class="btn btn-outline admin-tab-btn" data-tab="mobileapp" onclick="switchAdminTab('mobileapp')">手機 App</button>
         </div>
         </div>
         <div id="admin-tab-group-daily">
-        <p class="admin-tab-group-label" style="font-size:12px; font-weight:bold; color:#999; margin:0 0 6px;">日常營運</p>
+        <p data-i18n="html.s31" class="admin-tab-group-label" style="font-size:12px; font-weight:bold; color:#999; margin:0 0 6px;">日常營運</p>
         <div style="display:flex; gap:8px; margin-bottom:14px; flex-wrap:wrap;">
-          <button class="btn btn-outline admin-tab-btn" data-tab="users" onclick="switchAdminTab('users')">用戶管理</button>
-          <button class="btn btn-outline admin-tab-btn" data-tab="reports" onclick="switchAdminTab('reports')">舉報處理 <span id="admin-reports-badge" style="display:none; background:#C0524A; color:#fff; border-radius:99px; font-size:13px; padding:1px 6px; margin-left:3px;">0</span></button>
-          <button class="btn btn-outline admin-tab-btn" data-tab="tutors" onclick="switchAdminTab('tutors')">導師申請 <span id="admin-tutors-badge" style="display:none; background:#C0524A; color:#fff; border-radius:99px; font-size:13px; padding:1px 6px; margin-left:3px;">0</span></button>
-          <button class="btn btn-outline admin-tab-btn" data-tab="schooldomains" onclick="switchAdminTab('schooldomains')">學校電郵審批 <span id="admin-schooldomains-badge" style="display:none; background:#C0524A; color:#fff; border-radius:99px; font-size:13px; padding:1px 6px; margin-left:3px;">0</span></button>
-          <button class="btn btn-outline admin-tab-btn" data-tab="rooms" onclick="switchAdminTab('rooms')">溫習室監察</button>
-          <button class="btn btn-outline admin-tab-btn" data-tab="qa" onclick="switchAdminTab('qa')">疑難解答區管理</button>
+          <button data-i18n="html.s32" class="btn btn-outline admin-tab-btn" data-tab="users" onclick="switchAdminTab('users')">用戶管理</button>
+          <button class="btn btn-outline admin-tab-btn" data-tab="reports" onclick="switchAdminTab('reports')"><span data-i18n="html.s33">舉報處理</span> <span id="admin-reports-badge" style="display:none; background:#C0524A; color:#fff; border-radius:99px; font-size:13px; padding:1px 6px; margin-left:3px;">0</span></button>
+          <button class="btn btn-outline admin-tab-btn" data-tab="tutors" onclick="switchAdminTab('tutors')"><span data-i18n="html.s34">導師申請</span> <span id="admin-tutors-badge" style="display:none; background:#C0524A; color:#fff; border-radius:99px; font-size:13px; padding:1px 6px; margin-left:3px;">0</span></button>
+          <button class="btn btn-outline admin-tab-btn" data-tab="schooldomains" onclick="switchAdminTab('schooldomains')"><span data-i18n="html.s35">學校電郵審批</span> <span id="admin-schooldomains-badge" style="display:none; background:#C0524A; color:#fff; border-radius:99px; font-size:13px; padding:1px 6px; margin-left:3px;">0</span></button>
+          <button data-i18n="html.s36" class="btn btn-outline admin-tab-btn" data-tab="rooms" onclick="switchAdminTab('rooms')">溫習室監察</button>
+          <button data-i18n="html.s37" class="btn btn-outline admin-tab-btn" data-tab="qa" onclick="switchAdminTab('qa')">疑難解答區管理</button>
         </div>
         </div>
         <div id="admin-tab-group-settings">
-        <p class="admin-tab-group-label" style="font-size:12px; font-weight:bold; color:#999; margin:0 0 6px;">溫習室及直播</p>
+        <p data-i18n="html.s38" class="admin-tab-group-label" style="font-size:12px; font-weight:bold; color:#999; margin:0 0 6px;">溫習室及直播</p>
         <div style="display:flex; gap:8px; margin-bottom:14px; flex-wrap:wrap;">
-          <button class="btn btn-outline admin-tab-btn" data-tab="roomsettings" onclick="switchAdminTab('roomsettings')">溫習室設定</button>
-          <button class="btn btn-outline admin-tab-btn" data-tab="turn" onclick="switchAdminTab('turn')">中轉伺服器</button>
-          <button class="btn btn-outline admin-tab-btn" data-tab="streaming" onclick="switchAdminTab('streaming')">直播設定</button>
+          <button data-i18n="html.s39" class="btn btn-outline admin-tab-btn" data-tab="roomsettings" onclick="switchAdminTab('roomsettings')">溫習室設定</button>
+          <button data-i18n="html.s40" class="btn btn-outline admin-tab-btn" data-tab="turn" onclick="switchAdminTab('turn')">中轉伺服器</button>
+          <button data-i18n="html.s41" class="btn btn-outline admin-tab-btn" data-tab="streaming" onclick="switchAdminTab('streaming')">直播設定</button>
         </div>
         </div>
         <div id="admin-tab-group-rewards">
-        <p class="admin-tab-group-label" style="font-size:12px; font-weight:bold; color:#999; margin:0 0 6px;">獎勵系統</p>
+        <p data-i18n="html.s42" class="admin-tab-group-label" style="font-size:12px; font-weight:bold; color:#999; margin:0 0 6px;">獎勵系統</p>
         <div style="display:flex; gap:8px; margin-bottom:14px; flex-wrap:wrap;">
-          <button class="btn btn-outline admin-tab-btn" data-tab="level" onclick="switchAdminTab('level')">等級系統</button>
-          <button class="btn btn-outline admin-tab-btn" data-tab="gacha" onclick="switchAdminTab('gacha')">扭蛋機貼圖</button>
+          <button data-i18n="html.s43" class="btn btn-outline admin-tab-btn" data-tab="level" onclick="switchAdminTab('level')">等級系統</button>
+          <button data-i18n="html.s44" class="btn btn-outline admin-tab-btn" data-tab="gacha" onclick="switchAdminTab('gacha')">扭蛋機貼圖</button>
         </div>
         </div>
         <div id="admin-tab-group-content">
-        <p class="admin-tab-group-label" style="font-size:12px; font-weight:bold; color:#999; margin:0 0 6px;">網站內容</p>
+        <p data-i18n="html.s45" class="admin-tab-group-label" style="font-size:12px; font-weight:bold; color:#999; margin:0 0 6px;">網站內容</p>
         <div style="display:flex; gap:8px; margin-bottom:14px; flex-wrap:wrap;">
-          <button class="btn btn-outline admin-tab-btn" data-tab="landing" onclick="switchAdminTab('landing')">首頁介紹文案</button>
-          <button class="btn btn-outline admin-tab-btn" data-tab="announcement" onclick="switchAdminTab('announcement')">全站公告</button>
-          <button class="btn btn-outline admin-tab-btn" data-tab="legal" onclick="switchAdminTab('legal')">條款內容</button>
-          <button class="btn btn-outline admin-tab-btn" data-tab="navmenu" onclick="switchAdminTab('navmenu')">功能表及圖示</button>
-          <button class="btn btn-outline admin-tab-btn" data-tab="snapshotbg" onclick="switchAdminTab('snapshotbg')">合照背景</button>
+          <button data-i18n="html.s46" class="btn btn-outline admin-tab-btn" data-tab="landing" onclick="switchAdminTab('landing')">首頁介紹文案</button>
+          <button data-i18n="html.s47" class="btn btn-outline admin-tab-btn" data-tab="announcement" onclick="switchAdminTab('announcement')">全站公告</button>
+          <button data-i18n="html.s48" class="btn btn-outline admin-tab-btn" data-tab="legal" onclick="switchAdminTab('legal')">條款內容</button>
+          <button data-i18n="html.s49" class="btn btn-outline admin-tab-btn" data-tab="navmenu" onclick="switchAdminTab('navmenu')">功能表及圖示</button>
+          <button data-i18n="html.s50" class="btn btn-outline admin-tab-btn" data-tab="snapshotbg" onclick="switchAdminTab('snapshotbg')">合照背景</button>
         </div>
         </div>
         <div id="admin-tab-group-lists">
-        <p class="admin-tab-group-label" style="font-size:12px; font-weight:bold; color:#999; margin:0 0 6px;">選項清單</p>
+        <p data-i18n="html.s51" class="admin-tab-group-label" style="font-size:12px; font-weight:bold; color:#999; margin:0 0 6px;">選項清單</p>
         <div style="display:flex; gap:8px; margin-bottom:14px; flex-wrap:wrap;">
-          <button class="btn btn-outline admin-tab-btn" data-tab="lists" onclick="switchAdminTab('lists')">科目、地區及學校</button>
+          <button data-i18n="html.s52" class="btn btn-outline admin-tab-btn" data-tab="lists" onclick="switchAdminTab('lists')">科目、地區及學校</button>
         </div>
         </div>
         <div id="admin-tab-group-governance">
-        <p class="admin-tab-group-label" style="font-size:12px; font-weight:bold; color:#999; margin:0 0 6px;">管治</p>
+        <p data-i18n="html.s53" class="admin-tab-group-label" style="font-size:12px; font-weight:bold; color:#999; margin:0 0 6px;">管治</p>
         <div style="display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap;">
-          <button class="btn btn-outline admin-tab-btn" data-tab="adminlist" onclick="switchAdminTab('adminlist')">管理員名單</button>
-          <button class="btn btn-outline admin-tab-btn" data-tab="auditlog" onclick="switchAdminTab('auditlog')">操作紀錄</button>
+          <button data-i18n="html.s54" class="btn btn-outline admin-tab-btn" data-tab="adminlist" onclick="switchAdminTab('adminlist')">管理員名單</button>
+          <button data-i18n="html.s55" class="btn btn-outline admin-tab-btn" data-tab="auditlog" onclick="switchAdminTab('auditlog')">操作紀錄</button>
         </div>
         </div>
       </div>
@@ -4957,13 +4957,13 @@
   <div id="admin-denied-container" style="display:none; min-height:100vh;">
     <div style="max-width:420px; margin:0 auto; padding-top:80px; text-align:center; padding-left:24px; padding-right:24px;">
       <div style="font-size:40px;"></div>
-      <h2 style="font-size:18px; font-weight:bold; color:var(--brand-800); margin-top:8px;">沒有權限進入這個頁面</h2>
-      <p style="font-size:13px; color:#666; margin-top:6px;">這個是管理員專用頁面，如有需要請聯絡系統管理員。</p>
-      <button class="btn btn-primary" type="button" style="margin-top:16px;" onclick="window.location.hash=''">返回主頁</button>
+      <h2 data-i18n="html.s56" style="font-size:18px; font-weight:bold; color:var(--brand-800); margin-top:8px;">沒有權限進入這個頁面</h2>
+      <p data-i18n="html.s57" style="font-size:13px; color:#666; margin-top:6px;">這個是管理員專用頁面，如有需要請聯絡系統管理員。</p>
+      <button data-i18n="html.s58" class="btn btn-primary" type="button" style="margin-top:16px;" onclick="window.location.hash=''">返回主頁</button>
     </div>
   </div>
 
-  <script src="js/admin-panel.js?v=1.236.1"></script>
+  <script src="js/admin-panel.js?v=1.237.0"></script>
   <!-- pdf.js：導師教材嘅 PDF 預覽（整份文件／學生視角）同教材卡嘅第一頁
        縮圖，都用呢個 library 自己畫落 <canvas>，唔再靠瀏覽器內建嘅PDF
        viewer（手機Safari個內建viewer塞喺iframe度揭唔到第二頁）。淨係
@@ -4990,7 +4990,7 @@
       return window._pdfJsLoading;
     };
   </script>
-  <script src="js/tutor-panel.js?v=1.236.1"></script>
+  <script src="js/tutor-panel.js?v=1.237.0"></script>
 
 </body>
 </html>
