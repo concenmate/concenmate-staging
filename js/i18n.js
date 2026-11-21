@@ -816,12 +816,12 @@
     'room.poolInfoTitle': { 'zh-Hant': '公開溫習大廳的分類方式', 'en': 'How the Public Study Lobby is grouped', 'yue': '公開溫習大廳點樣分類' },
     'room.poolInfoIntro': { 'zh-Hant': '為保障未成年使用者的安全，「公開溫習大廳」會根據帳戶類型，分成以下兩個獨立顯示的部分：', 'en': 'To help protect younger users, the Public Study Lobby is split into two separately-shown sections based on account type:', 'yue': '為咗保障未成年用戶嘅安全，「公開溫習大廳」會跟帳戶類型，分開以下兩個獨立顯示嘅部分：' },
     'room.poolInfoSecondaryLabel': { 'zh-Hant': '中學溫習室：', 'en': 'Secondary School Room: ', 'yue': '中學溫習室：' },
-    'room.poolInfoSecondaryDesc': { 'zh-Hant': '供已於帳戶內確認「本人現時為中學生」的使用者瀏覽及建立房間。', 'en': 'For users who have confirmed in their account that they are currently a secondary school student.', 'yue': '畀已經喺帳戶入面確認「本人現時為中學生」嘅用戶睇同開房。' },
+    'room.poolInfoSecondaryDesc': { 'zh-Hant': '供已完成學生身份驗證的中學生（中一至中六）瀏覽及建立房間。', 'en': 'For verified secondary students (S1–S6) to browse and create rooms.', 'yue': '畀已完成學生身份驗證嘅中學生（中一至中六）瀏覽同開房。' },
     'room.poolInfoPublicLabel': { 'zh-Hant': '公開溫習室：', 'en': 'Public Room: ', 'yue': '公開溫習室：' },
-    'room.poolInfoPublicDesc': { 'zh-Hant': '供其他使用者（包括大專生、自修生、成年人等）瀏覽及建立房間。', 'en': 'For other users (including tertiary students, self-studying learners, adults, etc.) to browse and create rooms.', 'yue': '畀其他用戶（包括大專生、自修生、成年人等等）睇同開房。' },
-    'room.poolInfoBullet1': { 'zh-Hant': '兩個部分互相獨立，使用者只能在大廳中瀏覽及加入與自己同一分類的公開房間。', 'en': 'The two sections are independent — you can only browse and join public rooms in the same category as your own account.', 'yue': '呢兩個部分係獨立嘅，你淨係可以喺大廳睇同加入同自己同一分類嘅公開房間。' },
+    'room.poolInfoPublicDesc': { 'zh-Hant': '供中四或以上的同學及其他使用者（包括大專生、自修生、成年人等）瀏覽及建立房間；中一至中三同學不可使用。', 'en': 'For S4 or above and other users (including tertiary students, self-study learners and adults) to browse and create rooms; S1–S3 students cannot use it.', 'yue': '畀中四或以上同學同其他用戶（包括大專生、自修生、成年人等）瀏覽同開房；中一至中三同學唔可以用。' },
+    'room.poolInfoBullet1': { 'zh-Hant': '中四至中六同學可自由切換兩個溫習室，在哪一個溫習室建立房間，房間就只會在該溫習室顯示；其他使用者只能瀏覽及加入自己可使用的溫習室。', 'en': 'S4–S6 students can switch between both study rooms; a room only appears in the study room it was created in. Other users can only browse and join the study rooms available to them.', 'yue': '中四至中六同學可以自由轉兩個溫習室，喺邊個溫習室開房，間房就只會喺嗰邊顯示；其他用戶只可以瀏覽同加入自己用得嘅溫習室。' },
     'room.poolInfoBullet2': { 'zh-Hant': '設有密碼鎖的房間，或透過好友邀請加入的房間，均不受此分類限制。', 'en': 'Rooms with a password lock, or rooms joined through a friend invite, are not affected by this grouping.', 'yue': '有密碼鎖嘅房間，或者透過好友邀請加入嘅房間，都唔受呢個分類限制。' },
-    'room.poolInfoBullet3': { 'zh-Hant': '此分類以帳戶註冊時（或於「我的帳戶」補充）填寫的「本人現時為中學生」聲明為依據，屬使用者自行申報，如發現虛報，帳戶可能會被暫停或終止使用資格。', 'en': 'This grouping is based on the self-declared "I am currently a secondary school student" statement made at registration (or added later in "My Account"). If a false declaration is found, the account may be suspended or have its access terminated.', 'yue': '呢個分類係跟返註冊嗰陣（或者喺「我的帳戶」補填）嘅「本人現時為中學生」自我申報，如果發現講大話，帳戶可能會被暫停或者終止使用資格。' },
+    'room.poolInfoBullet3': { 'zh-Hant': '此分類以帳戶填寫的年級及學生身份驗證結果為依據。年級屬使用者自行申報，如發現虛報，帳戶可能會被暫停或終止使用資格。', 'en': 'This classification is based on the grade on your account and your student verification result. Grade is self-declared; false declarations may lead to suspension or termination of your account.', 'yue': '呢個分類根據帳戶填寫嘅年級同學生身份驗證結果。年級係用戶自己申報，如果發現虛報，帳戶可能會被暫停或者終止使用資格。' },
     'room.gotIt': { 'zh-Hant': '知道了', 'en': 'Got it', 'yue': '知道喇' },
     'room.createModalTitle': { 'zh-Hant': '建立公開溫習房', 'en': 'Create a Public Study Room', 'yue': '開間公開溫習房' },
     'room.createModalSubtitle': { 'zh-Hant': '讓其他同學在公開大廳看到並加入你的房間', 'en': 'Let other students see and join your room in the public lobby', 'yue': '等其他同學喺公開大廳見到同加入你間房' },
@@ -2534,6 +2534,19 @@
     'profileDone.modalDesc': { 'zh-Hant': '填寫後即送 1 張免費扭蛋券。年級及學校儲存後不可自行更改，請如實填寫。', 'en': 'Get 1 free gashapon ticket once done. Grade and school can\'t be changed by yourself after saving, so please fill them in truthfully.', 'yue': '填完即刻送 1 張免費扭蛋券。年級同學校儲存咗之後唔可以自己改，請如實填寫。' },
     // v1.239.2 扭蛋機頂部顯示免費扭蛋券
     'gacha.ticketTopLabel': { 'zh-Hant': '免費扭蛋券', 'en': 'Free tickets', 'yue': '免費扭蛋券' },
+    // v1.240.0 溫習室分池：中四至中六可用兩邊、中一至中三不可用公開溫習室
+    'room.poolPillSwitchTip': { 'zh-Hant': '點擊切換到這個溫習室', 'en': 'Click to switch to this study room', 'yue': '撳一下轉去呢個溫習室' },
+    'room.poolHintNone': { 'zh-Hant': '你暫時未能使用溫習室：中一至中三同學需完成學生身份驗證後使用中學生溫習室；其他同學請先完成個人資料。', 'en': 'You can\'t use the study rooms yet: S1–S3 students need to complete student verification to use the Secondary Study Room; others please complete your profile first.', 'yue': '你暫時未用到溫習室：中一至中三同學要完成學生身份驗證先可以用中學生溫習室；其他同學請先完成個人資料。' },
+    'room.poolHintSecondaryBoth': { 'zh-Hant': '你在「中學生溫習室」：在這裏建立的房間只供中學生加入。你亦可切換到「公開溫習室」。', 'en': 'You\'re in the Secondary Study Room: rooms created here are for secondary students only. You can also switch to the Public Study Room.', 'yue': '你喺「中學生溫習室」：喺度開嘅房只限中學生加入。你都可以轉去「公開溫習室」。' },
+    'room.poolHintPublicBoth': { 'zh-Hant': '你在「公開溫習室」：在這裏建立的房間供中四或以上同學及其他用戶加入。你亦可切換到「中學生溫習室」。', 'en': 'You\'re in the Public Study Room: rooms created here are open to S4 or above and other users. You can also switch to the Secondary Study Room.', 'yue': '你喺「公開溫習室」：喺度開嘅房畀中四或以上同學同其他用戶加入。你都可以轉去「中學生溫習室」。' },
+    'room.poolHintPublicV2': { 'zh-Hant': '你在「公開溫習室」：供中四或以上同學及其他用戶使用，中一至中三同學不會在這裏出現。想和初中朋友一起溫習，可用好友邀請或密碼房。', 'en': 'You\'re in the Public Study Room: for S4 or above and other users; S1–S3 students are not here. To study with junior friends, use friend invites or password rooms.', 'yue': '你喺「公開溫習室」：畀中四或以上同學同其他用戶用，中一至中三同學唔會喺度出現。想同初中朋友一齊溫，可以用好友邀請或者密碼房。' },
+    'room.needProfileHint': { 'zh-Hant': '請先完成個人資料（年級及學校），才可以使用溫習室。要現在填寫嗎？', 'en': 'Please complete your profile (grade and school) before using the study rooms. Fill it in now?', 'yue': '請先完成個人資料（年級同學校），先可以用溫習室。而家填唔填？' },
+    'room.publicJuniorHint': { 'zh-Hant': '公開溫習室只開放給中四或以上的同學及其他用戶。中一至中三同學請使用中學生溫習室。', 'en': 'The Public Study Room is only open to S4 or above and other users. S1–S3 students please use the Secondary Study Room.', 'yue': '公開溫習室只開放畀中四或以上同學同其他用戶。中一至中三同學請用中學生溫習室。' },
+    'room.publicJuniorVerifyHint': { 'zh-Hant': '公開溫習室只開放給中四或以上的同學及其他用戶。中一至中三同學請先到「學生身份驗證」完成驗證，然後使用中學生溫習室。要現在前往嗎？', 'en': 'The Public Study Room is only open to S4 or above and other users. S1–S3 students please complete Verification first, then use the Secondary Study Room. Go there now?', 'yue': '公開溫習室只開放畀中四或以上同學同其他用戶。中一至中三同學請先去「學生身份驗證」完成驗證，然後用中學生溫習室。而家去唔去？' },
+    'room.youCanUseBoth': { 'zh-Hant': '你可以使用：中學生溫習室及公開溫習室', 'en': 'You can use: the Secondary Study Room and the Public Study Room', 'yue': '你可以用：中學生溫習室同公開溫習室' },
+    'room.youCanUseNone': { 'zh-Hant': '你暫時未能使用任何溫習室', 'en': 'You can\'t use any study room yet', 'yue': '你暫時未用到任何溫習室' },
+    'room.noAccessTitle': { 'zh-Hant': '你暫時未能使用溫習室', 'en': 'You can\'t use the study rooms yet', 'yue': '你暫時未用到溫習室' },
+    'room.noAccessBtn': { 'zh-Hant': '了解如何開始使用', 'en': 'How to get started', 'yue': '睇吓點樣開始用' },
   };
 
   // 目前語言：已登入用戶存喺 users/{uid} 文件嘅 language 欄位（跨裝置

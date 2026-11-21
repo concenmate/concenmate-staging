@@ -204,9 +204,20 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
       renderPublicRoomsList();
     };
 
+    let noRoomPoolAccess = false;
     function renderPublicRoomsList() {
       const roomsListEl = document.getElementById('public-rooms-container');
       if (!roomsListEl) return;
+      if (noRoomPoolAccess) {
+        roomsListEl.innerHTML = `
+          <div style="grid-column: 1 / -1; text-align:center; padding: 40px; background: white; border-radius: 16px; border: 1px solid var(--brand-200);">
+            <p style="font-size:14px; font-weight:bold; color:var(--brand-800);">${window.t('room.noAccessTitle', '你暫時未能使用溫習室')}</p>
+            <p style="font-size:13px; color:#666; margin-top:4px;">${window.t('room.poolHintNone', '你暫時未能使用溫習室：中一至中三同學需完成學生身份驗證後使用中學生溫習室；其他同學請先完成個人資料。')}</p>
+            <button class="btn btn-primary" type="button" style="margin-top:10px;" onclick="window.showRoomAccessHint && window.showRoomAccessHint(null)">${window.t('room.noAccessBtn', '了解如何開始使用')}</button>
+          </div>
+        `;
+        return;
+      }
 
       const filtered = roomSubjectFilter === '全部'
         ? latestRoomsData
@@ -281,8 +292,14 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
     // 公開池唔當中學池），唔可以兩邊各自寫一套、之後改壞咗一邊。
     // v1.229.0：中學生帳戶＝學歷中學生＋學校電郵已驗證＋本學年已確認學歷＋未滿 20 歲
     // （同 firestore.rules viewerRoomPool() 及 functions isSecondaryEligible() 一致）
+    // v1.240.0：一個用戶可以使用 0、1 或 2 個溫習室（見 app-features.js window.canUseRoomPool）。
+    // 呢度返回「而家揀咗」嘅溫習室：自己撳過就跟自己揀，否則預設中學生溫習室優先；
+    // 兩邊都用唔到就返回 null。
+    let userSelectedRoomPool = null;
     window.getViewerRoomPool = function() {
-      return window.isSecondaryEligible(window.currentUser) ? 'secondary' : 'public';
+      const allowed = typeof window.getAllowedRoomPools === 'function' ? window.getAllowedRoomPools(window.currentUser) : [];
+      if (userSelectedRoomPool && allowed.includes(userSelectedRoomPool)) return userSelectedRoomPool;
+      return allowed[0] || null;
     };
 
     // 管理員專用：撳「🛠️ 轉換溫習室」掣之後暫存嘅覆寫值。null 代表跟返
@@ -298,7 +315,9 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
       if (adminRoomPoolOverride && typeof window.isCurrentUserAdmin === 'function' && window.isCurrentUserAdmin()) {
         return adminRoomPoolOverride;
       }
-      return window.getViewerRoomPool();
+      const own = window.getViewerRoomPool();
+      if (!own && typeof window.isCurrentUserAdmin === 'function' && window.isCurrentUserAdmin()) return 'public';
+      return own;
     }
     window.getLobbyViewPool = getLobbyViewPool;
 
@@ -325,16 +344,26 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
         const el = document.getElementById('room-pool-pill-' + pool);
         if (!el) return;
         const mine = pool === viewPool;
+        const usable = isAdmin || (typeof window.canUseRoomPool === 'function' && window.canUseRoomPool(window.currentUser, pool));
         el.className = 'room-pool-pill ' + (mine ? 'is-mine' : 'is-other');
         el.setAttribute('aria-pressed', mine ? 'true' : 'false');
-        el.innerHTML = (!mine && !isAdmin ? lockSvg : '') + '<span>' + window.escapeHtml(label) + '</span>';
-        el.title = mine ? '' : (isAdmin ? window.t('room.poolPillAdminSwitch', '切換檢視此溫習室') : window.t('room.poolPillLockedTip', '你的帳戶不屬於這個溫習室，點擊了解原因'));
+        el.innerHTML = (!mine && !usable ? lockSvg : '') + '<span>' + window.escapeHtml(label) + '</span>';
+        el.title = mine ? '' : (isAdmin ? window.t('room.poolPillAdminSwitch', '切換檢視此溫習室') : (usable ? window.t('room.poolPillSwitchTip', '點擊切換到這個溫習室') : window.t('room.poolPillLockedTip', '你的帳戶不屬於這個溫習室，點擊了解原因')));
       });
       const hintEl = document.getElementById('room-pool-hint');
       if (hintEl) {
-        hintEl.innerText = viewPool === 'secondary'
-          ? window.t('room.poolHintSecondary', '你在「中學生溫習室」：只會看到中學生開的公開房間。想和非中學生的朋友一起溫習，可用好友邀請或密碼房。')
-          : window.t('room.poolHintPublic', '你在「公開溫習室」：中學生的公開房間不會在這裏顯示。想和中學生朋友一起溫習，可用好友邀請或密碼房。');
+        const bothUsable = !isAdmin && typeof window.getAllowedRoomPools === 'function' && window.getAllowedRoomPools(window.currentUser).length === 2;
+        if (!viewPool) {
+          hintEl.innerText = window.t('room.poolHintNone', '你暫時未能使用溫習室：中一至中三同學需完成學生身份驗證後使用中學生溫習室；其他同學請先完成個人資料。');
+        } else if (bothUsable) {
+          hintEl.innerText = viewPool === 'secondary'
+            ? window.t('room.poolHintSecondaryBoth', '你在「中學生溫習室」：在這裏建立的房間只供中學生加入。你亦可切換到「公開溫習室」。')
+            : window.t('room.poolHintPublicBoth', '你在「公開溫習室」：在這裏建立的房間供中四或以上同學及其他用戶加入。你亦可切換到「中學生溫習室」。');
+        } else {
+          hintEl.innerText = viewPool === 'secondary'
+            ? window.t('room.poolHintSecondary', '你在「中學生溫習室」：只會看到中學生開的公開房間。想和非中學生的朋友一起溫習，可用好友邀請或密碼房。')
+            : window.t('room.poolHintPublicV2', '你在「公開溫習室」：供中四或以上同學及其他用戶使用，中一至中三同學不會在這裏出現。想和初中朋友一起溫習，可用好友邀請或密碼房。');
+        }
       }
     };
     window.onRoomPoolPillClick = function(pool) {
@@ -345,11 +374,34 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
         listenToPublicRooms();
         return;
       }
-      // v1.239.0：未符合中學生資格的用戶點擊「中學溫習室」，提示先完成學生身份驗證
-      if (pool === 'secondary' && window.currentUser && typeof window.isSecondaryEligible === 'function' && !window.isSecondaryEligible(window.currentUser)) {
-        window.showSecondaryRoomHint();
+      // v1.240.0：可以用嘅溫習室就直接切換；用唔到就講原因
+      if (typeof window.canUseRoomPool === 'function' && window.canUseRoomPool(window.currentUser, pool)) {
+        userSelectedRoomPool = pool;
+        listenToPublicRooms();
         return;
       }
+      window.showRoomAccessHint(pool);
+    };
+    // 解釋點解用唔到某個溫習室（pool 為 null 代表兩個都用唔到，例如撳「建立新溫習房」）
+    window.showRoomAccessHint = async function(pool) {
+      const u = window.currentUser;
+      if (!u) return;
+      const ask = (msg) => (typeof window.appConfirm === 'function' ? window.appConfirm(msg) : Promise.resolve(window.confirm(msg)));
+      if (typeof window.isProfileComplete === 'function' && !window.isProfileComplete(u)) {
+        if (await ask(window.t('room.needProfileHint', '請先完成個人資料（年級及學校），才可以使用溫習室。要現在填寫嗎？'))) window.openCompleteProfileModal();
+        return;
+      }
+      if (pool === 'public' || (pool === null && window.isJuniorSecondary(u))) {
+        if (window.isSecondaryEligible(u)) {
+          await ask(window.t('room.publicJuniorHint', '公開溫習室只開放給中四或以上的同學及其他用戶。中一至中三同學請使用中學生溫習室。'));
+          return;
+        }
+        if (await ask(window.t('room.publicJuniorVerifyHint', '公開溫習室只開放給中四或以上的同學及其他用戶。中一至中三同學請先到「學生身份驗證」完成驗證，然後使用中學生溫習室。要現在前往嗎？'))) {
+          if (typeof window.switchTab === 'function') window.switchTab('verification', document.getElementById('nav-btn-verification'));
+        }
+        return;
+      }
+      if (pool === 'secondary' || pool === null) { window.showSecondaryRoomHint(); return; }
       window.openRoomPoolInfoModal();
     };
 
@@ -358,8 +410,11 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
     window.openRoomPoolInfoModal = function() {
       const hintEl = document.getElementById('room-lobby-you-are-in-hint');
       if (hintEl) {
-        const isSecondary = getLobbyViewPool() === 'secondary';
-        hintEl.innerText = isSecondary ? window.t('room.youAreInSecondary', '你目前屬於：中學溫習室') : window.t('room.youAreInPublic', '你目前屬於：公開溫習室');
+        const allowed = typeof window.getAllowedRoomPools === 'function' ? window.getAllowedRoomPools(window.currentUser) : [];
+        if (allowed.length === 2) hintEl.innerText = window.t('room.youCanUseBoth', '你可以使用：中學生溫習室及公開溫習室');
+        else if (allowed[0] === 'secondary') hintEl.innerText = window.t('room.youAreInSecondary', '你目前屬於：中學溫習室');
+        else if (allowed[0] === 'public') hintEl.innerText = window.t('room.youAreInPublic', '你目前屬於：公開溫習室');
+        else hintEl.innerText = window.t('room.youCanUseNone', '你暫時未能使用任何溫習室');
       }
       if (typeof window.openModal === 'function') window.openModal('modal-room-pool-info');
     };
@@ -383,6 +438,14 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
       // 房主重新開房就會用返新格式），唔使特登另外寫遷移邏輯。
       const viewerPool = getLobbyViewPool();
       window.updateRoomLobbyTitle();
+      // v1.240.0：兩個溫習室都用唔到，就唔查詢，大廳顯示原因
+      noRoomPoolAccess = !viewerPool;
+      if (!viewerPool) {
+        unsubscribeRooms = null;
+        latestRoomsData = [];
+        scheduleRenderPublicRoomsList();
+        return;
+      }
 
       // ⚠️ 管理員撳「🛠️ 轉換溫習室」睇緊唔屬於自己個池嗰邊（例如管理員
       // 本身屬於「公開溫習室」池，但撳咗轉去睇「中學溫習室」）嗰陣，
@@ -404,7 +467,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
       // 嘅效果一樣，淨係查詢方式唔同。一般用戶／管理員睇自己所屬嗰
       // 池嗰陣完全冇改變，繼續用返原本嘅 where 篩選。
       const isAdminViewer = typeof window.isCurrentUserAdmin === 'function' && window.isCurrentUserAdmin();
-      const viewingOwnPool = viewerPool === window.getViewerRoomPool();
+      const viewingOwnPool = typeof window.canUseRoomPool === 'function' ? window.canUseRoomPool(window.currentUser, viewerPool) : (viewerPool === window.getViewerRoomPool());
       const useUnfilteredAdminQuery = isAdminViewer && !viewingOwnPool;
 
       const roomsRef = useUnfilteredAdminQuery

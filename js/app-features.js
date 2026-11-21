@@ -131,6 +131,11 @@
     window.showToast = showToast;
 
     function openModal(id) {
+      // v1.240.0：未可使用任何溫習室的用戶不可建立房間，改為顯示原因
+      if (id === 'modal-create-room' && typeof window.getLobbyViewPool === 'function' && !window.getLobbyViewPool()) {
+        if (typeof window.showRoomAccessHint === 'function') window.showRoomAccessHint(null);
+        return;
+      }
       document.getElementById(id).style.display = 'flex';
       // 打開「註冊」視窗嗰陣，順便初始化學生嗰邊嘅「地區／學校」
       // 選單同「喜愛學科」剔選器——呢兩樣嘢淨係喺 setRegisterAccountType()
@@ -6239,6 +6244,30 @@
     if (!u) return false;
     const c = window.secondaryEligibilityChecks(u);
     return c.declared && c.underAge && c.emailVerified && c.confirmedThisYear;
+  };
+  // v1.240.0：溫習室使用資格
+  // 中學生溫習室：已驗證中學生（中一至中六）；公開溫習室：中四或以上及其他用戶，中一至中三不可使用。
+  // 「初中」＝年級為中一至中三，或自稱中學生但年級不是中四至中六（例如未填年級）。
+  // 必須同 firestore.rules 的 canUseRoomPool() 及 functions 的 canUseRoomPool() 一致。
+  const JUNIOR_GRADES = ['中一 (S1)', '中二 (S2)', '中三 (S3)'];
+  const SENIOR_GRADES = ['中四 (S4)', '中五 (S5)', '中六 (S6 DSE)'];
+  window.isJuniorSecondary = function (u) {
+    if (!u) return false;
+    const g = u.grade || '';
+    return JUNIOR_GRADES.includes(g) || (u.isSecondaryStudent === true && !SENIOR_GRADES.includes(g));
+  };
+  window.canUseRoomPool = function (u, pool) {
+    if (!u) return false;
+    if (pool === 'secondary') return window.isSecondaryEligible(u);
+    if (pool === 'public') {
+      // 未完成個人資料（未填年級）的學生暫不可使用，避免初中生未填年級就進入公開溫習室
+      if (typeof window.isProfileComplete === 'function' && !window.isProfileComplete(u)) return false;
+      return !window.isJuniorSecondary(u);
+    }
+    return false;
+  };
+  window.getAllowedRoomPools = function (u) {
+    return ['secondary', 'public'].filter((p) => window.canUseRoomPool(u, p));
   };
 
   function refreshPool() {
