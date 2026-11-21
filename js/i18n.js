@@ -603,7 +603,7 @@
     'gacha.legacyFragmentToastTemplate': { 'zh-Hant': '之前重複的貼圖已轉為 {n} 個碎片', 'en': 'Your earlier duplicate stickers turned into {n} fragments', 'yue': '之前重複嘅貼圖已經變咗 {n} 個碎片' },
     'gacha.collectedLabelShort': { 'zh-Hant': '已收集', 'en': 'Collected', 'yue': '已收集' },
     'features.saveFailedGeneric': { 'zh-Hant': '儲存失敗，請再試', 'en': 'Could not save, please try again', 'yue': '儲存唔到，請再試' },
-    'gacha.fragmentShopShortBtn': { 'zh-Hant': '兌換', 'en': 'Exchange', 'yue': '兌換' },
+    'gacha.fragmentShopShortBtn': { 'zh-Hant': '碎片兌換', 'en': 'Fragment exchange', 'yue': '碎片兌換' },
     'gacha.batchSummaryTemplate': { 'zh-Hant': '新貼圖 {a} 張 · 碎片 +{b}', 'en': '{a} new stickers · +{b} fragments', 'yue': '新貼圖 {a} 張 · 碎片 +{b}' },
     'gacha.tapToExchange': { 'zh-Hant': '點擊以碎片兌換', 'en': 'Tap to exchange with fragments', 'yue': '撳一下用碎片換' },
     'gacha.fragmentCostShortTemplate': { 'zh-Hant': '{n} 碎片', 'en': '{n} fragments', 'yue': '{n} 碎片' },
