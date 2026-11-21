@@ -6,7 +6,7 @@
        打開檔案唔使拉就見到，方便快速核對版本）
        ======================================== -->
   <script>
-    window.APP_VERSION = "v1.240.0"; // 每次推送 GitHub 前，喺呢度改版號
+    window.APP_VERSION = "v1.240.1"; // 每次推送 GitHub 前，喺呢度改版號
   </script>
 
   <!-- v1.227.8：全站確認／輸入視窗，取代瀏覽器原生 confirm()／prompt()，外觀同資訊卡一致。
@@ -3448,6 +3448,8 @@
 
         <!-- v1.239.0：學生的年級、是否中學生、學校、喜愛／討厭學科已移到
              「完成個人資料」視窗（#modal-complete-profile），註冊時毋須填寫 -->
+        <!-- v1.240.0：學生註冊提示——部分功能需要核實學生身份，鼓勵如實填寫年級及學校 -->
+        <div id="reg-student-verify-notice" style="font-size:13px; line-height:1.6; color:#8a6d1f; background:#FFF7E6; border:1px solid #F0D9A0; border-radius:10px; padding:10px 12px;" data-i18n="reg.studentVerifyNotice">請注意：部分功能及活動（例如中學生溫習室）需要核實學生身份才可參與，溫習排行榜亦會按你的年級及學校分類。註冊後請如實填寫年級及學校，資料不正確可能無法使用這些功能。</div>
         <!-- 導師專用欄位（導師申請資料）：揀「學生」嗰陣會隱藏並取消 required -->
         <div id="register-tutor-fields" style="display:none;">
           <div>
@@ -3619,6 +3621,7 @@
     <div class="modal-box" style="max-height:85vh; overflow-y:auto;">
       <h3 style="font-size:18px; font-weight:bold; color:var(--brand-800); text-align:center;" data-i18n="profileDone.modalTitle">完成個人資料</h3>
       <p style="font-size:13px; color:#555; text-align:center; margin:4px 0 12px;" data-i18n="profileDone.modalDesc">填寫後即送 1 張免費扭蛋券。年級及學校儲存後不可自行更改，請如實填寫。</p>
+      <p style="font-size:13px; line-height:1.6; color:#8a6d1f; background:#FFF7E6; border:1px solid #F0D9A0; border-radius:10px; padding:8px 12px; margin:0 0 12px;" data-i18n="profileDone.verifyNotice">部分功能及活動（例如中學生溫習室）需要核實學生身份才可參與，溫習排行榜亦會按你的年級及學校分類，請確保資料正確。</p>
         <!-- 學生資料欄位（v1.239.0 由註冊表格搬到這裡，id 維持 reg-* 以沿用現有選單邏輯） -->
         <div id="register-student-fields">
           <!-- 「現時年級」擺喺最先，因為下面「學校所在地區／學校名稱」
@@ -4715,14 +4718,14 @@
   })();
   </script>
 
-  <script src="js/i18n.js?v=1.240.0"></script>
+  <script src="js/i18n.js?v=1.240.1"></script>
 
-  <script src="js/app-features.js?v=1.240.0"></script>
+  <script src="js/app-features.js?v=1.240.1"></script>
 
-  <script type="module" src="js/app-core.js?v=1.240.0"></script>
+  <script type="module" src="js/app-core.js?v=1.240.1"></script>
 
-  <script src="js/room-video.js?v=1.240.0"></script>
-  <script src="js/stream.js?v=1.240.0"></script>
+  <script src="js/room-video.js?v=1.240.1"></script>
+  <script src="js/stream.js?v=1.240.1"></script>
   <!-- 房主退出房間選擇彈窗 -->
   <div class="modal-backdrop" id="modal-host-leave" style="display:none;">
     <div class="modal-box" style="text-align:center;">
@@ -4990,7 +4993,7 @@
     </div>
   </div>
 
-  <script src="js/admin-panel.js?v=1.240.0"></script>
+  <script src="js/admin-panel.js?v=1.240.1"></script>
   <!-- pdf.js：導師教材嘅 PDF 預覽（整份文件／學生視角）同教材卡嘅第一頁
        縮圖，都用呢個 library 自己畫落 <canvas>，唔再靠瀏覽器內建嘅PDF
        viewer（手機Safari個內建viewer塞喺iframe度揭唔到第二頁）。淨係
@@ -5017,7 +5020,7 @@
       return window._pdfJsLoading;
     };
   </script>
-  <script src="js/tutor-panel.js?v=1.240.0"></script>
+  <script src="js/tutor-panel.js?v=1.240.1"></script>
 
 </body>
 </html>
