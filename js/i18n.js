@@ -2532,6 +2532,8 @@
     'srv.e131': { 'zh-Hant': '請選擇學校所在地區', 'en': 'Please select your school\'s district', 'yue': '請揀學校所在地區' },
     'profileDone.modalTitle': { 'zh-Hant': '完成個人資料', 'en': 'Complete your profile', 'yue': '完成個人資料' },
     'profileDone.modalDesc': { 'zh-Hant': '填寫後即送 1 張免費扭蛋券。年級及學校儲存後不可自行更改，請如實填寫。', 'en': 'Get 1 free gashapon ticket once done. Grade and school can\'t be changed by yourself after saving, so please fill them in truthfully.', 'yue': '填完即刻送 1 張免費扭蛋券。年級同學校儲存咗之後唔可以自己改，請如實填寫。' },
+    // v1.239.2 扭蛋機頂部顯示免費扭蛋券
+    'gacha.ticketTopLabel': { 'zh-Hant': '免費扭蛋券', 'en': 'Free tickets', 'yue': '免費扭蛋券' },
   };
 
   // 目前語言：已登入用戶存喺 users/{uid} 文件嘅 language 欄位（跨裝置

@@ -3790,6 +3790,8 @@
       const btn = document.getElementById('gacha-draw-ticket-btn');
       const cnt = document.getElementById('gacha-ticket-count');
       if (cnt) cnt.innerText = n;
+      const cntTop = document.getElementById('gacha-ticket-count-top');
+      if (cntTop) cntTop.innerText = n;
       if (btn && btn.dataset.origHtml === undefined) btn.style.display = n > 0 ? '' : 'none';
     }
     window.refreshGachaTicketUI = refreshGachaTicketUI;
