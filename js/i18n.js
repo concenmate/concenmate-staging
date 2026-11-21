@@ -2547,6 +2547,9 @@
     'room.youCanUseNone': { 'zh-Hant': '你暫時未能使用任何溫習室', 'en': 'You can\'t use any study room yet', 'yue': '你暫時未用到任何溫習室' },
     'room.noAccessTitle': { 'zh-Hant': '你暫時未能使用溫習室', 'en': 'You can\'t use the study rooms yet', 'yue': '你暫時未用到溫習室' },
     'room.noAccessBtn': { 'zh-Hant': '了解如何開始使用', 'en': 'How to get started', 'yue': '睇吓點樣開始用' },
+    // v1.240.1 註冊／完成資料：核實學生身份提示
+    'reg.studentVerifyNotice': { 'zh-Hant': '請注意：部分功能及活動（例如中學生溫習室）需要核實學生身份才可參與，溫習排行榜亦會按你的年級及學校分類。註冊後請如實填寫年級及學校，資料不正確可能無法使用這些功能。', 'en': 'Please note: some features and activities (such as the Secondary Study Room) require student verification, and the study leaderboards are grouped by your grade and school. After registering, please fill in your grade and school truthfully, or you may not be able to use these features.', 'yue': '請注意：部分功能同活動（例如中學生溫習室）要核實學生身份先可以參與，溫習排行榜亦會按你嘅年級同學校分類。註冊之後請如實填寫年級同學校，資料唔啱可能用唔到呢啲功能。' },
+    'profileDone.verifyNotice': { 'zh-Hant': '部分功能及活動（例如中學生溫習室）需要核實學生身份才可參與，溫習排行榜亦會按你的年級及學校分類，請確保資料正確。', 'en': 'Some features and activities (such as the Secondary Study Room) require student verification, and the study leaderboards are grouped by your grade and school. Please make sure your details are correct.', 'yue': '部分功能同活動（例如中學生溫習室）要核實學生身份先可以參與，溫習排行榜亦會按你嘅年級同學校分類，請確保資料正確。' },
   };
 
   // 目前語言：已登入用戶存喺 users/{uid} 文件嘅 language 欄位（跨裝置

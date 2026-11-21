@@ -2139,6 +2139,8 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
       if (studentFields) studentFields.style.display = isTutor ? 'none' : 'block';
       if (tutorFields) tutorFields.style.display = isTutor ? 'block' : 'none';
       if (tutorHint) tutorHint.style.display = isTutor ? 'block' : 'none';
+      const verifyNotice = document.getElementById('reg-student-verify-notice');
+      if (verifyNotice) verifyNotice.style.display = isTutor ? 'none' : 'block';
 
       const schoolInput = document.getElementById('reg-school');
       const gradeInput = document.getElementById('reg-grade');
