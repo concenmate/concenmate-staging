@@ -35,7 +35,9 @@
     // 完」嗰一兩秒嘅保險網，唔會影響真正權限判斷（真正判斷永遠以
     // Firestore 安全規則嗰邊為準，前端呢個陣列淨係控制「顯唔顯示管理
     // 後台入口」）。
-    const ADMIN_LOGIN_IDS_FALLBACK = ['admin_main', 'admin_02', 'admin_03'];
+    // v1.241.0 安全修補：唔再喺公開程式碼寫死管理員帳號 ID；admin_config/adminIds
+    // 亦改為只限管理員讀取——讀得到就代表自己係管理員，讀唔到就當一般用戶。
+    const ADMIN_LOGIN_IDS_FALLBACK = [];
     window.ADMIN_LOGIN_IDS = ADMIN_LOGIN_IDS_FALLBACK.slice();
     // 管理員權限分級（第四階段第9項）：loginId -> 'super' | 'support'。
     // 冇出現喺呢個map嘅管理員（包括呢個功能推出之前已經存在嘅帳戶）
@@ -69,12 +71,17 @@
           window.ADMIN_ROLES = snap.data().roles;
         }
       } catch (e) {
-        console.warn('讀取管理員名單（admin_config/adminIds）失敗，暫時使用內建預設名單:', e);
+        // 一般用戶冇權讀取（正常情況），當作非管理員
+        window.ADMIN_LOGIN_IDS = [];
+        window.ADMIN_ROLES = {};
       }
       // 名單啱啱先攞到／有更新，要重新評估一次而家個用戶算唔算管理員
       // （例如岩岩登入嗰陣名單仲未攞到，管理後台入口掣冇顯示，攞到之後
       // 要補顯示返）。
       if (typeof window.updateAdminEntryButton === 'function') window.updateAdminEntryButton();
+      // v1.241.0：管理員名單改為登入後先讀到；如果管理員之前被「驗證電郵」畫面擋住，讀到名單後重新整理介面
+      const vs = document.getElementById('verify-email-screen');
+      if (isCurrentUserAdmin() && vs && vs.style.display !== 'none' && typeof window.updateUserAuthUI === 'function') window.updateUserAuthUI();
       if (typeof window.checkAdminHashRoute === 'function') window.checkAdminHashRoute();
       // 管理員身份啱啱確認咗，重新套用功能表顯示（管理員見到已關閉嘅項目）
       if (typeof window.applyNavVisibility === 'function') window.applyNavVisibility();
@@ -1941,8 +1948,11 @@
       const statusLabel = status === 'pending' ? window.t('admin.s269', '待處理') : (status === 'dismissed' ? window.t('admin.s270', '已駁回') : window.t('admin.s271', '已處理'));
       const statusColor = status === 'pending' ? '#C0524A' : '#999';
       const when = r.createdAt ? new Date(r.createdAt).toLocaleString('zh-HK') : '—';
-      const screenshotHtml = r.screenshot
-        ? `<img src="${r.screenshot}" style="width:100%; max-width:280px; border-radius:8px; border:1px solid #ddd; margin-top:6px; display:block; cursor:pointer;" onclick="window.open(this.src, '_blank')">`
+      // v1.241.0 安全修補：截圖網址及被舉報 uid 由用戶提交，顯示前一律過濾
+      const safeShot = window.safeImgSrc ? window.safeImgSrc(r.screenshot) : '';
+      const safeReportedUid = /^[A-Za-z0-9]{1,128}$/.test(r.reportedUid || '') ? r.reportedUid : '';
+      const screenshotHtml = safeShot
+        ? `<img src="${escapeHtml(safeShot)}" style="width:100%; max-width:280px; border-radius:8px; border:1px solid #ddd; margin-top:6px; display:block; cursor:pointer;" onclick="window.open(this.src, '_blank')">`
         : `<p style="font-size:13px; color:#c99; margin-top:6px;">${window.t('admin.s272', '當時無法取得截圖')}</p>`;
       return `
         <div class="admin-card" style="${status !== 'pending' ? 'opacity:.6;' : ''}">
@@ -1960,8 +1970,8 @@
           <div style="display:flex; gap:6px; flex-wrap:wrap; margin-top:10px;">
             ${status === 'pending' ? `<button class="btn btn-outline" style="font-size:13px; padding:4px 9px;" onclick="window.adminMarkReportStatus('${reportId}', 'dismissed')">${window.t('admin.s273', '駁回（沒問題）')}</button>` : ''}
             ${status === 'pending' ? `<button class="btn btn-outline" style="font-size:13px; padding:4px 9px;" onclick="window.adminMarkReportStatus('${reportId}', 'reviewed')">${window.t('admin.s274', '標記已處理')}</button>` : ''}
-            ${r.reportedUid && status === 'pending' ? `<button class="btn btn-red" style="font-size:13px; padding:4px 9px;" onclick="window.adminStrikeFromReport('${reportId}', '${r.reportedUid}', false)">${window.t('admin.s275', '確認違規並停權')}</button>` : ''}
-            ${r.reportedUid && status === 'pending' ? `<button class="btn btn-red" style="font-size:13px; padding:4px 9px;" onclick="window.adminStrikeFromReport('${reportId}', '${r.reportedUid}', true)">${window.t('admin.s276', '嚴重違規（永久封號）')}</button>` : ''}
+            ${safeReportedUid && status === 'pending' ? `<button class="btn btn-red" style="font-size:13px; padding:4px 9px;" onclick="window.adminStrikeFromReport('${reportId}', '${safeReportedUid}', false)">${window.t('admin.s275', '確認違規並停權')}</button>` : ''}
+            ${safeReportedUid && status === 'pending' ? `<button class="btn btn-red" style="font-size:13px; padding:4px 9px;" onclick="window.adminStrikeFromReport('${reportId}', '${safeReportedUid}', true)">${window.t('admin.s276', '嚴重違規（永久封號）')}</button>` : ''}
             ${r.action ? `<span style="font-size:13px; color:#888; align-self:center;">${window.t('admin.s279', '處理：')}${r.action === 'permanent' ? window.t('admin.s277', '永久封號') : (r.action === 'strike' ? window.t('admin.s278', '已按次數停權') : escapeHtml(r.action))}${r.handledBy ? '（' + escapeHtml(r.handledBy) + '）' : ''}</span>` : ''}
             ${status !== 'pending' ? `<button class="btn btn-outline" style="font-size:13px; padding:4px 9px; color:#999; border-color:#ccc;" onclick="window.adminDeleteReport('${reportId}')">${window.t('admin.s280', '刪除紀錄')}</button>` : ''}
           </div>

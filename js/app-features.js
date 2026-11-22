@@ -2444,7 +2444,7 @@
         headerAuthBtn.style.borderRadius = "20px";
         headerAuthBtn.style.padding = "4px 10px";
         headerAuthBtn.style.fontSize = "11px";
-        headerAuthBtn.innerHTML = `<span>${window.currentUser.username || window.currentUser.email}</span> <span style="color:#4A68A8; font-weight:bold;">✓</span>`;
+        headerAuthBtn.innerHTML = `<span>${escapeHtml(window.currentUser.username || window.currentUser.email || '')}</span> <span style="color:#4A68A8; font-weight:bold;">✓</span>`;
 
         document.getElementById('room-user-name-tag').innerText = (window.currentUser.username || window.t('common.user', '使用者')) + window.t('feat.s5', " (你)");
         const selfRankTag = document.getElementById('room-user-rank-tag');
