@@ -649,8 +649,8 @@
     //    Claude 起草，交 Alvis 覆核／修正）──
     'social.friendsTabBtn': { 'zh-Hant': '我的好友', 'en': 'My Friends', 'yue': '我嘅朋友' },
     'social.wallTabBtn': { 'zh-Hant': '尋找書伴留言牆', 'en': 'Find a Study Buddy', 'yue': '搵書伴留言牆' },
-    'social.searchTitle': { 'zh-Hant': '用帳號 ID 搜尋朋友', 'en': 'Search Friends by Account ID', 'yue': '用帳號 ID 搵朋友' },
-    'social.searchPlaceholder': { 'zh-Hant': '輸入完整帳號 ID，例如：student001', 'en': 'Enter the full account ID, e.g. student001', 'yue': '輸入完整帳號 ID，例如：student001' },
+    'social.searchTitle': { 'zh-Hant': '用公開 ID 搜尋朋友', 'en': 'Search Friends by Public ID', 'yue': '用公開 ID 搵朋友' },
+    'social.searchPlaceholder': { 'zh-Hant': '輸入 6 位公開 ID，例如：K7P2QX', 'en': 'Enter the 6-character public ID, e.g. K7P2QX', 'yue': '輸入 6 位公開 ID，例如：K7P2QX' },
     'social.searchBtn': { 'zh-Hant': '搜尋', 'en': 'Search', 'yue': '搜尋' },
     'social.requestsTitle': { 'zh-Hant': '收到的好友邀請', 'en': 'Friend Requests Received', 'yue': '收到嘅好友邀請' },
     'social.friendsCountPrefix': { 'zh-Hant': '我的好友（', 'en': 'My Friends (', 'yue': '我嘅好友（' },
@@ -693,12 +693,12 @@
     'social.postPublishedToast': { 'zh-Hant': '貼文已發佈！', 'en': 'Post published!', 'yue': '帖文出咗喇！' },
     'social.postFailedToast': { 'zh-Hant': '發佈失敗，請稍後再試', 'en': 'Failed to post, please try again later', 'yue': '出唔到帖，遲啲再試吓' },
     'social.searchingText': { 'zh-Hant': '搜尋中...', 'en': 'Searching...', 'yue': '搵緊...' },
-    'social.accountNotFoundText': { 'zh-Hant': '找不到這個帳號 ID，請檢查有沒有打錯', 'en': "Account ID not found — please check for typos", 'yue': '搵唔到呢個帳號 ID，睇吓係咪打錯咗' },
-    'social.thisIsYourOwnAccount': { 'zh-Hant': '這個是你自己的帳號 ID', 'en': 'This is your own account ID', 'yue': '呢個係你自己嘅帳號 ID' },
+    'social.accountNotFoundText': { 'zh-Hant': '找不到這個公開 ID，請檢查有沒有打錯', 'en': 'Public ID not found — please check for typos', 'yue': '搵唔到呢個公開 ID，請檢查有冇打錯' },
+    'social.thisIsYourOwnAccount': { 'zh-Hant': '這個是你自己的公開 ID', 'en': 'This is your own public ID', 'yue': '呢個係你自己嘅公開 ID' },
     'social.userDataNotFoundText': { 'zh-Hant': '找不到這位使用者的資料', 'en': "Couldn't find this user's data", 'yue': '搵唔到呢個用戶嘅資料' },
     'social.viewProfileAddFriendBtn': { 'zh-Hant': '看資料 / 加好友', 'en': 'View Profile / Add Friend', 'yue': '睇資料 / 加好友' },
     'social.searchFailedText': { 'zh-Hant': '搜尋失敗，請再試一次', 'en': 'Search failed, please try again', 'yue': '搵唔到，再試多次' },
-    'social.noFriendsYet': { 'zh-Hant': '尚未有好友，請使用上方的帳號 ID 搜尋並新增幾位！', 'en': 'No friends yet — use the account ID search above to add some!', 'yue': '仲未有好友，用返上面嘅帳號 ID 搜尋加幾個啦！' },
+    'social.noFriendsYet': { 'zh-Hant': '尚未有好友，請使用上方的公開 ID 搜尋並新增幾位！', 'en': 'No friends yet — use the public ID search above to add some!', 'yue': '未有好友，用上面嘅公開 ID 搜尋加幾位啦！' },
     'social.onlineLabel': { 'zh-Hant': '● 在線', 'en': '● Online', 'yue': '● 在線' },
     'social.sendMessageTitle': { 'zh-Hant': '傳送訊息', 'en': 'Send Message', 'yue': '傳送訊息' },
     'social.viewProfileLink': { 'zh-Hant': '看資料 ›', 'en': 'View Profile ›', 'yue': '睇資料 ›' },
@@ -2550,6 +2550,16 @@
     // v1.240.1 註冊／完成資料：核實學生身份提示
     'reg.studentVerifyNotice': { 'zh-Hant': '請注意：部分功能及活動（例如中學生溫習室）需要核實學生身份才可參與，溫習排行榜亦會按你的年級及學校分類。註冊後請如實填寫年級及學校，資料不正確可能無法使用這些功能。', 'en': 'Please note: some features and activities (such as the Secondary Study Room) require student verification, and the study leaderboards are grouped by your grade and school. After registering, please fill in your grade and school truthfully, or you may not be able to use these features.', 'yue': '請注意：部分功能同活動（例如中學生溫習室）要核實學生身份先可以參與，溫習排行榜亦會按你嘅年級同學校分類。註冊之後請如實填寫年級同學校，資料唔啱可能用唔到呢啲功能。' },
     'profileDone.verifyNotice': { 'zh-Hant': '部分功能及活動（例如中學生溫習室）需要核實學生身份才可參與，溫習排行榜亦會按你的年級及學校分類，請確保資料正確。', 'en': 'Some features and activities (such as the Secondary Study Room) require student verification, and the study leaderboards are grouped by your grade and school. Please make sure your details are correct.', 'yue': '部分功能同活動（例如中學生溫習室）要核實學生身份先可以參與，溫習排行榜亦會按你嘅年級同學校分類，請確保資料正確。' },
+    // v1.242.0 公開 ID、學校只限好友、溫習相片私隱設定
+    'myacc.publicIdLabel': { 'zh-Hant': '公開 ID：', 'en': 'Public ID: ', 'yue': '公開 ID：' },
+    'myacc.publicIdPending': { 'zh-Hant': '產生中…', 'en': 'Generating…', 'yue': '產生緊…' },
+    'myacc.loginIdLabel': { 'zh-Hant': '登入 ID（只有你看到）：', 'en': 'Login ID (only you can see this): ', 'yue': '登入 ID（只有你睇到）：' },
+    'viewprofile.schoolFriendsOnly': { 'zh-Hant': '只限好友查看', 'en': 'Visible to friends only', 'yue': '只限好友睇' },
+    'diary.photosPrivate': { 'zh-Hant': '這位同學的溫習相片只限好友查看。', 'en': 'This student\'s study photos are visible to friends only.', 'yue': '呢位同學嘅溫習相片只限好友睇。' },
+    'profile.photosPublicTitle': { 'zh-Hant': '公開我的溫習相片', 'en': 'Make my study photos public', 'yue': '公開我嘅溫習相片' },
+    'profile.photosPublicHint': { 'zh-Hant': '勾選後，所有用戶都可以查看你的溫習日記相片。未勾選時只限好友查看。此設定即時生效。', 'en': 'When checked, all users can see your study diary photos. When unchecked, only friends can see them. Takes effect immediately.', 'yue': '剔咗之後，所有用戶都可以睇你嘅溫習日記相片。唔剔就只限好友睇。即時生效。' },
+    'profile.photosPublicOnToast': { 'zh-Hant': '溫習相片已設為公開，所有用戶都可以查看', 'en': 'Study photos are now public; all users can see them', 'yue': '溫習相片已經設為公開，所有用戶都睇到' },
+    'profile.photosPublicOffToast': { 'zh-Hant': '溫習相片已設為私人，只限好友查看', 'en': 'Study photos are now private; only friends can see them', 'yue': '溫習相片已經設為私人，只限好友睇' },
   };
 
   // 目前語言：已登入用戶存喺 users/{uid} 文件嘅 language 欄位（跨裝置

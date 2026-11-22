@@ -1418,7 +1418,7 @@
       const emptyEl = document.getElementById(emptyId);
 
       if (reset && grid) grid.innerHTML = '';
-      if (reset && emptyEl) emptyEl.style.display = 'none';
+      if (reset && emptyEl) { emptyEl.style.display = 'none'; if (emptyEl.dataset.defaultText) emptyEl.innerText = emptyEl.dataset.defaultText; }
       if (moreBtn) moreBtn.style.display = 'none';
 
       try {
@@ -1445,7 +1445,14 @@
         state.done = snap.size < 10;
         if (moreBtn) moreBtn.style.display = state.done ? 'none' : 'block';
       } catch (e) {
-        console.error('讀取溫習相片失敗:', e);
+        // v1.242.0：對方設定咗「私人」，非好友讀唔到
+        if (e && e.code === 'permission-denied' && emptyEl) {
+          if (!emptyEl.dataset.defaultText) emptyEl.dataset.defaultText = emptyEl.innerText;
+          emptyEl.innerText = window.t('diary.photosPrivate', '這位同學的溫習相片只限好友查看。');
+          emptyEl.style.display = 'block';
+        } else {
+          console.error('讀取溫習相片失敗:', e);
+        }
       } finally {
         state.loading = false;
       }
@@ -2498,6 +2505,8 @@
         document.getElementById('prof-dislike').value = window.currentUser.dislikeSubjects || '';
         const allowPhotoCb = document.getElementById('prof-allow-group-photo');
         if (allowPhotoCb) allowPhotoCb.checked = window.currentUser.allowGroupPhoto === true;
+        const photosPublicCb = document.getElementById('prof-photos-public');
+        if (photosPublicCb) photosPublicCb.checked = window.currentUser.photosPublic === true;
         if (typeof window.setSecondaryStudentToggle === 'function') {
           window.setSecondaryStudentToggle('prof', window.currentUser.isSecondaryStudent ? 'yes' : 'no');
         }
@@ -2560,7 +2569,17 @@
 
       if (typeof window.renderUserAvatar === 'function') window.renderUserAvatar();
       setText('myacc-username', u.username || window.t('lb.defaultUsername', '同學'));
-      setText('myacc-loginid', u.loginId ? ('🆔 ' + u.loginId) : window.t('feat.s7', '🆔 未設定'));
+      // v1.242.0：公開 ID（加好友用，人人看到）同登入 ID（只有自己看到）分開顯示
+      const renderMyIds = (pid) => setText('myacc-loginid',
+        window.t('myacc.publicIdLabel', '公開 ID：') + (pid || window.t('myacc.publicIdPending', '產生中…')) +
+        '　' + window.t('myacc.loginIdLabel', '登入 ID（只有你看到）：') + (u.loginId || window.t('common.notFilled', '未填寫')));
+      renderMyIds(u.publicId);
+      if (!u.publicId && window.db && window.fs) {
+        window.fs.getDoc(window.fs.doc(window.db, 'users', u.uid)).then((snap) => {
+          const pid = snap.exists() ? snap.data().publicId : '';
+          if (pid) { u.publicId = pid; renderMyIds(pid); }
+        }).catch(() => {});
+      }
       setText('myacc-school', u.school || window.t('common.notFilled', '未填寫'));
       setText('myacc-grade', u.grade ? (window.translateGradeName ? window.translateGradeName(u.grade) : u.grade) : window.t('common.notFilled', '未填寫'));
       setText('myacc-fav', window.displayOptionalFieldValue ? window.displayOptionalFieldValue(u.favSubjects) : (u.favSubjects || window.t('common.notFilled', '未填寫')));
@@ -4428,8 +4447,16 @@
           }
         }
         if (nameEl) nameEl.innerText = u.username || window.t('lb.defaultUsername', '同學');
-        document.getElementById('pop-user-verified').innerText = u.loginId ? ('🆔 ' + u.loginId) : '';
-        document.getElementById('pop-user-school').innerText = u.school || window.t('common.notFilled', '未填寫');
+        document.getElementById('pop-user-verified').innerText = u.publicId ? (window.t('myacc.publicIdLabel', '公開 ID：') + u.publicId) : '';
+        // v1.242.0：學校只限好友查看（friendProfiles），非好友顯示提示
+        const schoolEl = document.getElementById('pop-user-school');
+        schoolEl.innerText = '';
+        window.fs.getDoc(window.fs.doc(window.db, 'friendProfiles', uid)).then((fp) => {
+          if (_popViewUid !== uid) return;
+          schoolEl.innerText = (fp.exists() && fp.data().school) ? fp.data().school : window.t('common.notFilled', '未填寫');
+        }).catch(() => {
+          if (_popViewUid === uid) schoolEl.innerText = window.t('viewprofile.schoolFriendsOnly', '只限好友查看');
+        });
         document.getElementById('pop-user-grade').innerText = u.grade ? (window.translateGradeName ? window.translateGradeName(u.grade) : u.grade) : window.t('common.notFilled', '未填寫');
         document.getElementById('pop-user-fav').innerText = window.displayOptionalFieldValue ? window.displayOptionalFieldValue(u.favSubjects) : (u.favSubjects || window.t('common.notFilled', '未填寫'));
         document.getElementById('pop-user-dislike').innerText = window.displayOptionalFieldValue ? window.displayOptionalFieldValue(u.dislikeSubjects) : (u.dislikeSubjects || window.t('common.notFilled', '未填寫'));
@@ -4449,6 +4476,20 @@
       }
     }
     window.viewUserProfile = viewUserProfile;
+
+    // v1.242.0：溫習相片公開／私人（只限好友），即時儲存
+    window.setPhotosPublic = async function(on) {
+      if (!window.currentUser || !window.db || !window.fs) return;
+      const cb = document.getElementById('prof-photos-public');
+      try {
+        await window.fs.updateDoc(window.fs.doc(window.db, 'users', window.currentUser.uid), { photosPublic: !!on });
+        window.currentUser.photosPublic = !!on;
+        window.showToast(on ? window.t('profile.photosPublicOnToast', '溫習相片已設為公開，所有用戶都可以查看') : window.t('profile.photosPublicOffToast', '溫習相片已設為私人，只限好友查看'), '');
+      } catch (e) {
+        if (cb) cb.checked = window.currentUser.photosPublic === true;
+        window.showToast(window.t('snapshot.settingFailed', '設定未能儲存，請稍後再試'), '');
+      }
+    };
 
     // 根據我同呢位用家之間的關係（陌生／已送邀請／等緊我回覆／已經是好友），
     // 在資料卡下面畫返啱的按鈕
@@ -4491,16 +4532,17 @@
           return;
         }
 
-        const safeLoginId = jsArg(targetUserData.loginId || '');
+        const safePublicId = jsArg(targetUserData.publicId || '');
         const safeUsername = jsArg(targetUserData.username || '');
-        container.innerHTML = `<button class="btn btn-primary" type="button" onclick="sendFriendRequest('${targetUid}', ${safeLoginId}, ${safeUsername})">${window.t('social.addFriendBtn', '加好友')}</button>`;
+        container.innerHTML = `<button class="btn btn-primary" type="button" onclick="sendFriendRequest('${targetUid}', ${safePublicId}, ${safeUsername})">${window.t('social.addFriendBtn', '加好友')}</button>`;
       } catch (e) {
         console.error('讀取好友狀態失敗:', e);
         container.innerHTML = `<p style="font-size:13px; color:#D9764A;">${window.t('social.loadFriendStatusFailed', '讀取好友狀態失敗')}</p>`;
       }
     }
 
-    window.sendFriendRequest = async function(targetUid, targetLoginId, targetUsername) {
+    // v1.242.0：好友邀請／好友名單改為記錄公開 ID，唔再記錄登入用嘅帳號 ID
+    window.sendFriendRequest = async function(targetUid, targetPublicId, targetUsername) {
       if (!window.currentUser || !window.db || !window.fs) return;
       if (targetUid === window.currentUser.uid) { window.showToast(window.t('social.cannotAddSelfToast', '不可以將自己加為好友'), '😅'); return; }
       const reqId = friendRequestDocId(window.currentUser.uid, targetUid);
@@ -4518,9 +4560,9 @@
         await window.fs.setDoc(reqRef, {
           fromUid: window.currentUser.uid,
           toUid: targetUid,
-          fromLoginId: window.currentUser.loginId || '',
+          fromPublicId: window.currentUser.publicId || '',
           fromUsername: window.currentUser.username || '',
-          toLoginId: targetLoginId || '',
+          toPublicId: targetPublicId || '',
           toUsername: targetUsername || '',
           status: 'pending',
           createdAt: Date.now(),
@@ -4528,7 +4570,7 @@
         });
         window.showToast(window.t('social.requestSentToast', '好友邀請已送出，等對方接受'), '🤝');
         if (window.cmPush) window.cmPush.askAfterAction();
-        renderFriendActionButtons(targetUid, { loginId: targetLoginId, username: targetUsername });
+        renderFriendActionButtons(targetUid, { publicId: targetPublicId, username: targetUsername });
       } catch (e) {
         window.showToast(window.t('social.sendRequestFailedTemplate', `送出邀請失敗：${e.message || e}`).replace('{msg}', e.message || e), '❌');
       }
@@ -4546,10 +4588,10 @@
           const now = Date.now();
           await window.fs.updateDoc(reqRef, { status: 'accepted', respondedAt: now });
           await window.fs.setDoc(window.fs.doc(window.db, 'users', data.toUid, 'friends', data.fromUid), {
-            uid: data.fromUid, loginId: data.fromLoginId, username: data.fromUsername, addedAt: now
+            uid: data.fromUid, publicId: data.fromPublicId || '', username: data.fromUsername, addedAt: now
           });
           await window.fs.setDoc(window.fs.doc(window.db, 'users', data.fromUid, 'friends', data.toUid), {
-            uid: data.toUid, loginId: data.toLoginId, username: data.toUsername, addedAt: now
+            uid: data.toUid, publicId: data.toPublicId || '', username: data.toUsername, addedAt: now
           });
           window.showToast(window.t('social.becameFriendsToast', '已成為好友！'), '🤝');
           if (window.cmPush) window.cmPush.askAfterAction();
@@ -4861,7 +4903,7 @@
         window.showToast && window.showToast(window.t('social.cannotAddSelfToast', '不可以將自己加為好友'), '😅');
         return;
       }
-      window.sendFriendRequest(post.authorUid, post.authorLoginId || '', post.authorName || '');
+      window.sendFriendRequest(post.authorUid, post.authorPublicId || '', post.authorName || '');
     };
 
     window.deleteBuddyPost = async function(postId) {
@@ -4957,7 +4999,7 @@
         await window.fs.addDoc(window.fs.collection(window.db, 'buddyPosts'), {
           authorUid: window.currentUser.uid,
           authorName: window.currentUser.username || '同學',
-          authorLoginId: window.currentUser.loginId || '',
+          authorPublicId: window.currentUser.publicId || '',
           role: roleInput.value,
           subjects,
           content: content.slice(0, 150),
@@ -4980,14 +5022,19 @@
       const input = document.getElementById('friend-search-input');
       const resultEl = document.getElementById('friend-search-result');
       if (!input || !resultEl) return;
-      const raw = input.value.trim().replace(/^@/, '');
+      const raw = input.value.trim().replace(/^[@#]/, '');
       if (!raw) return;
       if (!window.currentUser) { openModal('modal-login'); return; }
       if (!window.db || !window.fs) return;
+      // v1.242.0：改用公開 ID 搜尋（6 位英數字），唔再用登入帳號 ID
+      const idLower = raw.toUpperCase();
+      if (!/^[2-9A-HJ-NP-Z]{6}$/.test(idLower)) {
+        resultEl.innerHTML = `<p style="font-size:13px; color:#D9764A;">${window.t('social.accountNotFoundText', '找不到這個公開 ID，請檢查有沒有打錯')}</p>`;
+        return;
+      }
       resultEl.innerHTML = `<p style="font-size:13px; color:#999;">${window.t('social.searchingText', '搜尋中...')}</p>`;
-      const idLower = raw.toLowerCase();
       try {
-        const mapSnap = await window.fs.getDoc(window.fs.doc(window.db, 'usernames', idLower));
+        const mapSnap = await window.fs.getDoc(window.fs.doc(window.db, 'publicIds', idLower));
         if (!mapSnap.exists()) {
           resultEl.innerHTML = `<p style="font-size:13px; color:#D9764A;">${window.t('social.accountNotFoundText', '找不到這個帳號 ID，請檢查有沒有打錯')}</p>`;
           return;
@@ -5018,7 +5065,7 @@
               <div class="avatar-circle" style="width:40px; height:40px; font-size:16px;">${(u.username||'U').charAt(0).toUpperCase()}</div>
               <div>
                 <div style="font-weight:bold; color:var(--brand-800); font-size:14px;">${escapeHtml(u.username||window.t('lb.defaultUsername', '同學'))}</div>
-                <div style="font-size:13px; color:#888;">${escapeHtml(u.loginId || idLower)}</div>
+                <div style="font-size:13px; color:#888;">${escapeHtml(u.publicId || idLower)}</div>
               </div>
             </div>
             <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
@@ -5098,7 +5145,7 @@
               </div>
               <div style="min-width:0;">
                 <div style="font-weight:bold; color:var(--brand-800); font-size:14px;">${escapeHtml(f.username||window.t('lb.defaultUsername', '同學'))} <span style="font-weight:normal; font-size:13px; color:${online ? '#4CAF50' : '#999'};">${online ? window.t('social.onlineLabel', '● 在線') : ''}</span></div>
-                <div style="font-size:13px; color:#888;">${escapeHtml(f.loginId||'')}</div>
+                <div style="font-size:13px; color:#888;">${escapeHtml(f.publicId||'')}</div>
               </div>
             </div>
             <div style="display:flex; align-items:center; gap:6px; flex-shrink:0;">
@@ -5149,7 +5196,7 @@
             <div class="card" style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:8px; flex-wrap:wrap;">
               <div style="cursor:pointer;" onclick="viewUserProfile('${r.fromUid}')">
                 <div style="font-weight:bold; color:var(--brand-800); font-size:14px;">${escapeHtml(r.fromUsername||window.t('lb.defaultUsername', '同學'))}</div>
-                <div style="font-size:13px; color:#888;">${escapeHtml(r.fromLoginId||'')}</div>
+                <div style="font-size:13px; color:#888;">${escapeHtml(r.fromPublicId||'')}</div>
               </div>
               <div style="display:flex; gap:6px;">
                 <button class="btn btn-primary" type="button" style="font-size:13px; padding:5px 10px;" onclick="respondFriendRequest('${d.id}', true)">${window.t('social.acceptBtn', '接受')}</button>
@@ -6020,7 +6067,7 @@
             </div>
             <div>
               <div style="font-weight:bold; color:var(--brand-800); font-size:13px;">${escapeHtml(f.username||window.t('lb.defaultUsername', '同學'))} <span style="font-weight:normal; font-size:13px; color:${online ? '#4CAF50' : '#999'};">${online ? window.t('room.onlineIndicator', '● 在線') : ''}</span></div>
-              <div style="font-size:13px; color:#888;">${escapeHtml(f.loginId||'')}</div>
+              <div style="font-size:13px; color:#888;">${escapeHtml(f.publicId||'')}</div>
             </div>
           </div>
           <button class="btn btn-primary" type="button" style="font-size:13px; padding:5px 10px;" onclick="inviteFriendToRoom('${f.uid}', ${jsArg(f.username||window.t('lb.defaultUsername', '同學'))})">${window.t('room.inviteBtnShort', '邀請')}</button>
