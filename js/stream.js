@@ -85,12 +85,20 @@
   }
   // v1.227.5：記住上次是否顯示，重新載入時即時套用，避免功能表遲半秒才彈出
   const NAV_KEY = 'swmNavVisible';
+  // v1.242.2：記住上次「灰色／正常」狀態；未讀到直播設定或未確認管理員身份之前沿用，避免先灰後正常
+  const NAV_LOCK_KEY = 'swmNavLocked';
+  let settingsLoaded = false;
+  function cachedLocked() {
+    try { return localStorage.getItem(NAV_LOCK_KEY) === '1'; } catch (_) { return false; }
+  }
   function refreshNav() {
     const btn = document.getElementById('nav-btn-stream');
     const show = canSee();
     if (btn) {
       btn.style.display = show ? '' : 'none';
-      const locked = show && isLocked();
+      const ready = settingsLoaded && window.adminIdsLoaded === true;
+      const locked = show && (ready ? isLocked() : cachedLocked());
+      if (ready) { try { localStorage.setItem(NAV_LOCK_KEY, locked ? '1' : '0'); } catch (_) {} }
       btn.classList.toggle('nav-btn-locked', locked);
       btn.setAttribute('aria-disabled', locked ? 'true' : 'false');
       btn.title = locked ? t('stream.notOpen', '直播功能暫未開放') : '';
@@ -106,11 +114,12 @@
       toast(t('stream.notOpen', '直播功能暫未開放'), '');
     }
   }, true);
+  window.onAdminStatusKnown = function () { try { refreshNav(); } catch (_) {} };
   (function applyCachedNav() {
     let cached = null;
     try { cached = localStorage.getItem(NAV_KEY); } catch (_) {}
     if (cached !== '1') return;
-    const apply = () => { const b = document.getElementById('nav-btn-stream'); if (b) b.style.display = ''; };
+    const apply = () => { const b = document.getElementById('nav-btn-stream'); if (b) { b.style.display = ''; b.classList.toggle('nav-btn-locked', cachedLocked()); } };
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', apply); else apply();
   })();
 
@@ -122,6 +131,7 @@
     if (settingsUnsub) settingsUnsub();
     settingsUnsub = window.fs.onSnapshot(window.fs.doc(window.db, 'admin_config', 'streaming'), (snap) => {
       settings = Object.assign({ enabled: false, requiredDays: 30, minMinutesPerDay: 15, minStreamAge: 16 }, snap.exists() ? snap.data() : {});
+      settingsLoaded = true;
       refreshNav();
       if (st.mode === 'lobby' && isTabOpen()) renderLobby();
     }, () => {});
@@ -130,7 +140,7 @@
   let navTicks = 0;
   function navTick() {
     if (window.currentUser && window.currentUser.uid) init();
-    else if (initUid) { initUid = null; refreshNav(); }
+    else if (initUid) { initUid = null; settingsLoaded = false; window.adminIdsLoaded = false; refreshNav(); }
     navTicks++;
     setTimeout(navTick, navTicks < 33 ? 300 : 2000);
   }

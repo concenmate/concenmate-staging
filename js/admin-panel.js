@@ -78,6 +78,9 @@
       // 名單啱啱先攞到／有更新，要重新評估一次而家個用戶算唔算管理員
       // （例如岩岩登入嗰陣名單仲未攞到，管理後台入口掣冇顯示，攞到之後
       // 要補顯示返）。
+      // v1.242.2：標記管理員身份已確認，並通知其他模組（例如 Study with me 功能表按鈕）重新判斷
+      window.adminIdsLoaded = true;
+      if (typeof window.onAdminStatusKnown === 'function') window.onAdminStatusKnown();
       if (typeof window.updateAdminEntryButton === 'function') window.updateAdminEntryButton();
       // v1.241.0：管理員名單改為登入後先讀到；如果管理員之前被「驗證電郵」畫面擋住，讀到名單後重新整理介面
       const vs = document.getElementById('verify-email-screen');
