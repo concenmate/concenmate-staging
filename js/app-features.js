@@ -294,7 +294,19 @@
       { id: 'diary', key: 'nav.diary', label: '溫習日記' },
       { id: 'verification', key: 'nav.verification', label: '學生身份驗證' }
     ];
+    // v1.242.1：記住上次讀到的功能表設定，下次開網站即時套用，避免功能先出現再消失；
+    // 第一次開（未有記錄）就先隱藏可關閉的功能，等設定讀到先顯示（最多等 4 秒）。
+    const NAV_CACHE_KEY = 'cm_navHidden';
+    let navCacheLoaded = false;
+    try {
+      const cached = localStorage.getItem(NAV_CACHE_KEY);
+      if (cached) { window.navHiddenFeatures = JSON.parse(cached) || {}; navCacheLoaded = true; }
+    } catch (e) {}
     window.navHiddenFeatures = window.navHiddenFeatures || {};
+    if (!navCacheLoaded) {
+      document.documentElement.classList.add('nav-config-pending');
+      setTimeout(() => document.documentElement.classList.remove('nav-config-pending'), 4000);
+    }
 
     function navViewerIsAdmin() {
       return typeof window.isCurrentUserAdmin === 'function' && window.isCurrentUserAdmin();
@@ -326,6 +338,11 @@
       if (roomCard) roomCard.classList.toggle('nav-feature-off', !!hidden.room && !isAdmin);
     };
 
+    if (navCacheLoaded) {
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => window.applyNavVisibility());
+      else window.applyNavVisibility();
+    }
+
     let navVisibilityUnsub = null;
     window.startNavVisibilityListener = function() {
       if (navVisibilityUnsub || !window.db || !window.fs || !window.fs.onSnapshot) return;
@@ -335,12 +352,15 @@
           (snap) => {
             const data = snap.exists() ? snap.data() : null;
             window.navHiddenFeatures = (data && data.hidden && typeof data.hidden === 'object') ? data.hidden : {};
+            try { localStorage.setItem(NAV_CACHE_KEY, JSON.stringify(window.navHiddenFeatures)); } catch (e) {}
+            document.documentElement.classList.remove('nav-config-pending');
             window.applyNavVisibility();
             if (typeof window.onNavVisibilityChanged === 'function') window.onNavVisibilityChanged();
           },
           (err) => {
             // 登出之後會因為冇權限讀而斷線，清返，下次登入再開過
             console.warn('功能表顯示設定監聽中斷:', err && err.code);
+            document.documentElement.classList.remove('nav-config-pending');
             navVisibilityUnsub = null;
           }
         );
