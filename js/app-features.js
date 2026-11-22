@@ -519,7 +519,7 @@
       const clickAttr = clickable ? ` onclick="viewUserProfile('${uid}')" style="cursor:pointer;"` : '';
       const avatarHtml = clickable ? `
             <div style="width:32px; height:32px; border-radius:50%; background:var(--brand-100); color:var(--brand-800); display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:bold; flex-shrink:0; overflow:hidden;">
-              ${avatarBase64 ? `<img src="${avatarBase64}" style="width:100%; height:100%; object-fit:cover;" alt="${window.t('lb.avatarAlt', '頭像')}">` : escapeHtml((primaryText || window.t('lb.defaultUsername', '同學')).charAt(0).toUpperCase())}
+              ${avatarBase64 ? `<img loading="lazy" decoding="async" src="${escapeHtml(safeImgSrc(avatarBase64))}" style="width:100%; height:100%; object-fit:cover;" alt="${window.t('lb.avatarAlt', '頭像')}">` : escapeHtml((primaryText || window.t('lb.defaultUsername', '同學')).charAt(0).toUpperCase())}
             </div>
       ` : '';
       return `
@@ -557,7 +557,7 @@
       const clickAttr = clickable ? ` onclick="viewUserProfile('${uid}')" style="cursor:pointer;"` : '';
       const avatarHtml = clickable ? `
             <div style="width:32px; height:32px; border-radius:50%; background:var(--brand-100); color:var(--brand-800); display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:bold; flex-shrink:0; overflow:hidden;">
-              ${avatarBase64 ? `<img src="${avatarBase64}" style="width:100%; height:100%; object-fit:cover;" alt="${window.t('lb.avatarAlt', '頭像')}">` : escapeHtml((primaryText || window.t('lb.defaultUsername', '同學')).charAt(0).toUpperCase())}
+              ${avatarBase64 ? `<img loading="lazy" decoding="async" src="${escapeHtml(safeImgSrc(avatarBase64))}" style="width:100%; height:100%; object-fit:cover;" alt="${window.t('lb.avatarAlt', '頭像')}">` : escapeHtml((primaryText || window.t('lb.defaultUsername', '同學')).charAt(0).toUpperCase())}
             </div>
       ` : '';
       return `
@@ -1957,6 +1957,7 @@
       }
       if (avatarSticker && avatarSticker.photo && window.GACHA_CONFIG_LOADED && String(avatarSticker.photo).length < 2048) {
         try { localStorage.setItem(lookCacheKey, JSON.stringify({ id: avatarSticker.id, photo: avatarSticker.photo, rarity: avatarSticker.rarity || 'common' })); } catch (e) { /* 忽略 */ }
+        try { localStorage.setItem('cm_otter_look_last', avatarSticker.photo); } catch (e) { /* 忽略 */ }
       }
 
       // 稀有／限定貼圖有場景背景，改用唔擺動嘅浮動效果
@@ -2101,7 +2102,7 @@
           <span>${escapeHtml(label)}</span>${countText ? `<span style="font-size:12px; color:var(--brand-500);">${countText}</span>` : ''}
         </div>`;
       const thumbOf = (st) => st.photo
-        ? `<img src="${st.photo}" style="width:100%; aspect-ratio:1; object-fit:contain; border-radius:6px;">`
+        ? `<img loading="lazy" decoding="async" src="${st.photo}" style="width:100%; aspect-ratio:1; object-fit:contain; border-radius:6px;">`
         : `<img src="assets/images/ottie-full.png" style="width:100%; aspect-ratio:1; object-fit:contain; border-radius:6px;" alt="">`;
 
       let html = headHtml(window.t('home.otterDefaultLook', '預設 Ottie'), '');
@@ -2900,7 +2901,7 @@
       list.innerHTML = posts.map(p => {
         const isOwn = window.currentUser && p.uid === window.currentUser.uid;
         const photos = (p.photos || []).map(src =>
-          `<img src="${escapeHtml(safeImgSrc(src))}" class="qa-photo-thumb" onclick="event.stopPropagation(); openLightbox(${jsArg(safeImgSrc(src))})">`
+          `<img loading="lazy" decoding="async" src="${escapeHtml(safeImgSrc(src))}" class="qa-photo-thumb" onclick="event.stopPropagation(); openLightbox(${jsArg(safeImgSrc(src))})">`
         ).join('');
         return `
           <div class="qa-post-card" onclick="openQADetail('${p.id}')">
@@ -2932,7 +2933,8 @@
       const list = document.getElementById('qa-post-list');
       if (list) list.innerHTML = `<div style="text-align:center; padding:30px; color:#A4B4D4; font-size:13px;">${window.t('qa.loading', '載入中…')}</div>`;
 
-      let ref = window.fs.collection(window.db, 'qa_posts');
+      // v1.243.0：只即時訂閱最新 200 個問題（之前會下載成個 collection，問題愈多愈慢）
+      let ref = window.fs.query(window.fs.collection(window.db, 'qa_posts'), window.fs.orderBy('createdAt', 'desc'), window.fs.limit(200));
       qaUnsubscribe = window.fs.onSnapshot(ref, (snapshot) => {
         qaPostsCache = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
         renderQAPostsList();
@@ -3112,7 +3114,7 @@
         const myUid = window.currentUser ? window.currentUser.uid : null;
         commentList.innerHTML = comments.map(c => {
           const cPhotos = (c.photos || []).map(src =>
-            `<img src="${escapeHtml(safeImgSrc(src))}" class="qa-photo-thumb" style="width:70px;height:70px;" onclick="openLightbox(${jsArg(safeImgSrc(src))})">`
+            `<img loading="lazy" decoding="async" src="${escapeHtml(safeImgSrc(src))}" class="qa-photo-thumb" style="width:70px;height:70px;" onclick="openLightbox(${jsArg(safeImgSrc(src))})">`
           ).join('');
           const isOwn = myUid && c.uid === myUid;
           const editedNote = c.editedAt
@@ -3596,7 +3598,7 @@
         const count = owned[st.id] || 0;
         if (count > 0) {
           const thumb = st.photo
-            ? `<img src="${st.photo}" style="width:100%; aspect-ratio:1; object-fit:contain; border-radius:8px;">`
+            ? `<img loading="lazy" decoding="async" src="${st.photo}" style="width:100%; aspect-ratio:1; object-fit:contain; border-radius:8px;">`
             : `<div style="font-size:28px;">${escapeHtml(st.emoji || '🦦')}</div>`;
           const nm = gachaItemName(st);
           const rs = GACHA_RARITY_STYLE[gachaRarityOf(st)];
@@ -3696,7 +3698,7 @@
           const ok = !isOwned && have >= price;
           const rs = GACHA_RARITY_STYLE[gachaRarityOf(st)];
           const thumb = st.photo
-            ? `<img src="${st.photo}" alt="${escapeHtml(gachaItemName(st))}" style="width:100%; aspect-ratio:1; object-fit:contain; border-radius:8px;">`
+            ? `<img loading="lazy" decoding="async" src="${st.photo}" alt="${escapeHtml(gachaItemName(st))}" style="width:100%; aspect-ratio:1; object-fit:contain; border-radius:8px;">`
             : `<div style="font-size:28px;">${escapeHtml(st.emoji || '')}</div>`;
           const idArg = JSON.stringify(st.id).replace(/"/g, '&quot;');
           return `<div data-shop-sticker="${escapeHtml(String(st.id))}" style="text-align:center; background:#F6F7FB; border:2px solid ${rs.border}; border-radius:10px; padding:6px 4px; display:flex; flex-direction:column; gap:4px; min-width:0; transition:box-shadow .3s;">
@@ -4145,7 +4147,7 @@
       const gridEl = document.getElementById('gacha-result-batch-grid');
       gridEl.innerHTML = rolls.map(({ sticker, isNew, fragments }, idx) => {
         const thumb = sticker.photo
-          ? `<img src="${sticker.photo}" alt="${escapeHtml(gachaItemName(sticker))}" style="width:100%; max-width:64px; aspect-ratio:1; object-fit:contain; border-radius:8px; display:block; margin:0 auto;">`
+          ? `<img loading="lazy" decoding="async" src="${sticker.photo}" alt="${escapeHtml(gachaItemName(sticker))}" style="width:100%; max-width:64px; aspect-ratio:1; object-fit:contain; border-radius:8px; display:block; margin:0 auto;">`
           : `<span style="font-size:30px;">${escapeHtml(sticker.emoji || '🦦')}</span>`;
         const badgeColor = isNew ? '#C0524A' : '#344976';
         const badgeText = isNew ? window.t('gacha.newStickerShort', '新貼圖') : window.t('gacha.fragmentPlusTemplate', '碎片 +{n}').replace('{n}', fragments);
@@ -4263,7 +4265,8 @@
         if (emptyEl) emptyEl.style.display = 'none';
       }
       try {
-        const snap = await window.fs.getDocs(window.fs.collection(window.db, 'users', window.currentUser.uid, 'gachaHistory'));
+        // v1.243.0：只讀最近 30 條中獎記錄（畫面本身只顯示 30 條），唔再下載全部
+        const snap = await window.fs.getDocs(window.fs.query(window.fs.collection(window.db, 'users', window.currentUser.uid, 'gachaHistory'), window.fs.orderBy('ts', 'desc'), window.fs.limit(30)));
         let entries = snap.docs.map(d => d.data());
         entries.sort((a, b) => (b.ts || 0) - (a.ts || 0));
         entries = entries.slice(0, 30);
