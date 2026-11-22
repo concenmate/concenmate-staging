@@ -737,5 +737,6 @@
     'admin.s788': { 'zh-Hant': '上載中…（', 'en': 'Uploading… (', 'yue': '上載中…（' },
     'admin.s789': { 'zh-Hant': '已發佈 v', 'en': 'Published v', 'yue': '已發佈 v' },
     'admin.s790': { 'zh-Hant': '，App 下次打開時會自動下載', 'en': '. The app will download it automatically next time it opens', 'yue': '，App 下次打開時會自動下載' },
+    'admin.costLevelOk': { 'zh-Hant': '正常', 'en': 'Normal', 'yue': '正常' },
   });
 })();

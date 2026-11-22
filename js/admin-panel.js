@@ -3690,13 +3690,14 @@
 // 未到 70% 為正常（藍色），70%–89% 需留意（黃色），90% 或以上需立即處理（紅色）。
 (function () {
   const HKD = 7.8;
+  // v1.245.1：改用 getter，切換語言後即時顯示新語言
   const LEVEL = {
-    ok: { color: '#4A68A8', label: window.t('admin.s324', '正常') },
-    watch: { color: '#E8B321', label: window.t('admin.s644', '需要留意') },
-    urgent: { color: '#C0392B', label: window.t('admin.s645', '立即處理') },
-    unknown: { color: '#A4B4D4', label: window.t('admin.s646', '未有數據') }
+    ok: { color: '#4A68A8', get label() { return window.t('admin.costLevelOk', '正常'); } },
+    watch: { color: '#E8B321', get label() { return window.t('admin.s644', '需要留意'); } },
+    urgent: { color: '#C0392B', get label() { return window.t('admin.s645', '立即處理'); } },
+    unknown: { color: '#A4B4D4', get label() { return window.t('admin.s646', '未有數據'); } }
   };
-  const SOURCE = { official: window.t('admin.s647', '官方數據'), count: window.t('admin.s648', '系統點數'), estimate: window.t('admin.s649', '系統估算'), unavailable: window.t('admin.s650', '未能取得') };
+  const SOURCE = { get official() { return window.t('admin.s647', '官方數據'); }, get count() { return window.t('admin.s648', '系統點數'); }, get estimate() { return window.t('admin.s649', '系統估算'); }, get unavailable() { return window.t('admin.s650', '未能取得'); } };
   const PIE_COLORS = ['#29395C', '#4A68A8', '#7F96C6', '#FFD84D', '#E8A33C', '#A4B4D4', '#C0392B', '#6B7894', '#344976'];
   const esc = (s) => (window.escapeHtml ? window.escapeHtml(String(s == null ? '' : s)) : String(s == null ? '' : s));
   const fmt = (n, d) => (n == null ? '—' : Number(n).toLocaleString('zh-HK', { maximumFractionDigits: d == null ? 1 : d }));
