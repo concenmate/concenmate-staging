@@ -2560,6 +2560,8 @@
     'profile.photosPublicHint': { 'zh-Hant': '勾選後，所有用戶都可以查看你的溫習日記相片。未勾選時只限好友查看。此設定即時生效。', 'en': 'When checked, all users can see your study diary photos. When unchecked, only friends can see them. Takes effect immediately.', 'yue': '剔咗之後，所有用戶都可以睇你嘅溫習日記相片。唔剔就只限好友睇。即時生效。' },
     'profile.photosPublicOnToast': { 'zh-Hant': '溫習相片已設為公開，所有用戶都可以查看', 'en': 'Study photos are now public; all users can see them', 'yue': '溫習相片已經設為公開，所有用戶都睇到' },
     'profile.photosPublicOffToast': { 'zh-Hant': '溫習相片已設為私人，只限好友查看', 'en': 'Study photos are now private; only friends can see them', 'yue': '溫習相片已經設為私人，只限好友睇' },
+    // v1.244.0 管理後台按需載入
+    'admin.loadFailed': { 'zh-Hant': '管理後台載入失敗，請重新整理頁面', 'en': 'Failed to load the admin panel. Please refresh the page.', 'yue': '管理後台載入唔到，請重新整理頁面' },
   };
 
   // 目前語言：已登入用戶存喺 users/{uid} 文件嘅 language 欄位（跨裝置
