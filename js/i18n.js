@@ -1884,6 +1884,8 @@
     if (typeof window.updateOtterStatsCard === 'function') window.updateOtterStatsCard();
     if (typeof window.renderStudyCalendar === 'function') window.renderStudyCalendar();
     if (typeof window.updateMicButtonUI === 'function') window.updateMicButtonUI();
+    // v1.245.2：喺管理後台切換語言，重新畫一次後台（分類列、返回主頁掣、目前分頁內容）
+    if (window.location.hash === '#admin' && typeof window.checkAdminHashRoute === 'function') window.checkAdminHashRoute();
     if (typeof window.closeModal === 'function') {
       window.closeModal('modal-language-switcher');
     } else {
