@@ -10,13 +10,21 @@
 window.ensureAdminPanelLoaded = function () {
   if (window.adminPanelLoaded) return Promise.resolve();
   if (window._adminPanelLoading) return window._adminPanelLoading;
-  window._adminPanelLoading = new Promise(function (resolve, reject) {
-    var s = document.createElement('script');
-    s.src = 'js/admin-panel.js?v=' + String(window.APP_VERSION || '').replace(/^v/, '');
-    s.onload = function () { window.adminPanelLoaded = true; resolve(); };
-    s.onerror = function () { window._adminPanelLoading = null; reject(new Error('admin-panel load failed')); };
-    document.body.appendChild(s);
-  });
+  var ver = String(window.APP_VERSION || '').replace(/^v/, '');
+  function load(src) {
+    return new Promise(function (resolve, reject) {
+      var el = document.createElement('script');
+      el.src = src + '?v=' + ver;
+      el.onload = resolve;
+      el.onerror = function () { reject(new Error(src + ' load failed')); };
+      document.body.appendChild(el);
+    });
+  }
+  // v1.245.0：先載入後台專用翻譯（i18n-admin.js），再載入管理後台程式
+  window._adminPanelLoading = load('js/i18n-admin.js')
+    .then(function () { return load('js/admin-panel.js'); })
+    .then(function () { window.adminPanelLoaded = true; })
+    .catch(function (e) { window._adminPanelLoading = null; throw e; });
   return window._adminPanelLoading;
 };
 
