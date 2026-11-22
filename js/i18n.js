@@ -1831,6 +1831,10 @@
     'profile.photosPublicOffToast': { 'zh-Hant': '溫習相片已設為私人，只限好友查看', 'en': 'Study photos are now private; only friends can see them', 'yue': '溫習相片已經設為私人，只限好友睇' },
     // v1.244.0 管理後台按需載入
     'admin.loadFailed': { 'zh-Hant': '管理後台載入失敗，請重新整理頁面', 'en': 'Failed to load the admin panel. Please refresh the page.', 'yue': '管理後台載入唔到，請重新整理頁面' },
+    // v1.246.0 疑難解答區相片 AI 審查
+    'qa.photoBlocked': { 'zh-Hant': '有相片可能含有不當內容，請更換相片後再發佈。', 'en': 'One or more photos may contain inappropriate content. Please replace them and try again.', 'yue': '有相片可能有唔適當內容，請換過相片再發佈。' },
+    'qa.photosRemovedNote': { 'zh-Hant': '部分相片因可能含有不當內容，已被系統移除。', 'en': 'Some photos were removed by the system because they may contain inappropriate content.', 'yue': '部分相片可能有唔適當內容，已經俾系統移除。' },
+    'srv.e132': { 'zh-Hant': '相片檢測服務暫時無法使用，請稍後再試', 'en': 'The photo check service is temporarily unavailable. Please try again later.', 'yue': '相片檢測服務暫時用唔到，請稍後再試' },
   };
 
   // 目前語言：已登入用戶存喺 users/{uid} 文件嘅 language 欄位（跨裝置

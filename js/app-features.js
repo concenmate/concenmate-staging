@@ -3017,6 +3017,14 @@
           img.src = url;
         })));
 
+        // v1.246.0：相片先經 AI 審查，有問題就唔發佈
+        if (photos.length) {
+          const chk = await window.callCloudFunction('checkImagesSafe', { images: photos });
+          if (!chk || !chk.ok) {
+            window.showToast(window.t('qa.photoBlocked', '有相片可能含有不當內容，請更換相片後再發佈。'), '');
+            return;
+          }
+        }
         const newPostData = {
           uid: window.currentUser.uid,
           authorName: window.currentUser.username || window.t('qa.anonymousStudent', '匿名同學'),
@@ -3083,7 +3091,8 @@
 
       const photos = (p.photos || []).map(src =>
         `<img src="${escapeHtml(safeImgSrc(src))}" class="qa-photo-thumb" style="width:90px;height:90px;" onclick="openLightbox(${jsArg(safeImgSrc(src))})">`
-      ).join('');
+      ).join('') +
+        (p.photosRemoved ? `<p style="font-size:12px; color:#888; margin-top:4px;">${window.t('qa.photosRemovedNote', '部分相片因可能含有不當內容，已被系統移除。')}</p>` : '');
 
       document.getElementById('qa-detail-content').innerHTML = `
         <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px;">
@@ -3169,6 +3178,14 @@
           img.src = url;
         })));
 
+        // v1.246.0：相片先經 AI 審查，有問題就唔發佈
+        if (photos.length) {
+          const chk = await window.callCloudFunction('checkImagesSafe', { images: photos });
+          if (!chk || !chk.ok) {
+            window.showToast(window.t('qa.photoBlocked', '有相片可能含有不當內容，請更換相片後再發佈。'), '');
+            return;
+          }
+        }
         await window.fs.addDoc(window.fs.collection(window.db, 'qa_posts', qaCurrentPostId, 'comments'), {
           uid: window.currentUser.uid,
           authorName: window.currentUser.username || window.t('qa.anonymousStudent', '匿名同學'),
