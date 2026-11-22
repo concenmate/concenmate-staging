@@ -6,7 +6,7 @@
        打開檔案唔使拉就見到，方便快速核對版本）
        ======================================== -->
   <script>
-    window.APP_VERSION = "v1.242.2"; // 每次推送 GitHub 前，喺呢度改版號
+    window.APP_VERSION = "v1.243.0"; // 每次推送 GitHub 前，喺呢度改版號
   </script>
 
   <!-- v1.227.8：全站確認／輸入視窗，取代瀏覽器原生 confirm()／prompt()，外觀同資訊卡一致。
@@ -229,10 +229,26 @@
       }
     });
   </script>
-  <script
+  <!-- v1.243.0：錯誤監察改為 defer，唔再阻住畫面首次顯示 -->
+  <script defer
     src="https://js.sentry-cdn.com/e8090dad66b95efd4dd99b863a016f9e.min.js"
     crossorigin="anonymous"
   ></script>
+  <!-- v1.243.0：提早連線 Firebase 伺服器，縮短登入及載入資料的等候時間 -->
+  <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://firestore.googleapis.com" crossorigin>
+  <link rel="preconnect" href="https://firebasestorage.googleapis.com" crossorigin>
+  <script>
+    // v1.243.0：預先下載上次主頁顯示的貼圖，令主頁貼圖更快出現
+    try {
+      var cmLastLook = localStorage.getItem('cm_otter_look_last');
+      if (cmLastLook && /^https:\/\//.test(cmLastLook)) {
+        var cmPre = document.createElement('link');
+        cmPre.rel = 'preload'; cmPre.as = 'image'; cmPre.href = cmLastLook;
+        document.head.appendChild(cmPre);
+      }
+    } catch (e) {}
+  </script>
 
   <!-- 📧 電郵（驗證電郵、忘記密碼）由 v1.201.0 起全部由 Cloud Functions
        經 EmailJS REST API 寄出（見 functions/index.js 的 sendVerificationEmail／
@@ -1971,7 +1987,7 @@
        淨係呢個 splash 預設顯示；updateUserAuthUI() 一判斷完狀態，就會
        將呢個收埋、換做啱嘅嗰個顯示出嚟。 -->
   <div id="initial-loading-screen" style="position:fixed; inset:0; z-index:99999; background:var(--brand-50); display:flex; align-items:center; justify-content:center;">
-    <img src="assets/images/logo.png?v=2" alt="ConcenMate" width="56" height="56" style="border-radius:50%; opacity:.9;">
+    <img src="assets/images/logo.png?v=3" alt="ConcenMate" width="56" height="56" style="border-radius:50%; opacity:.9;">
   </div>
   <script>
     // v1.232.6：App 內的載入畫面改成和 Android 啟動畫面一模一樣（深藍底＋Ottie 圓形），
@@ -2013,7 +2029,7 @@
   <header>
     <button data-i18n-aria-label="html.s62" class="mobile-nav-toggle" id="mobile-nav-toggle-btn" type="button" onclick="window.toggleMobileNav()" aria-label="開啟選單"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16"/><path d="M4 12h16"/><path d="M4 18h16"/></svg></button>
     <div class="logo-box" onclick="switchTab('home')">
-      <div class="logo-avatar" style="background:transparent; border:none; padding:0; width:40px; height:40px;"><img id="header-logo-img" src="assets/images/logo.png?v=2" width="36" height="36" alt="ConcenMate" style="border-radius:50%; object-fit:cover;"></div>
+      <div class="logo-avatar" style="background:transparent; border:none; padding:0; width:40px; height:40px;"><img id="header-logo-img" src="assets/images/logo.png?v=3" width="36" height="36" alt="ConcenMate" style="border-radius:50%; object-fit:cover;"></div>
       <div>
         <div style="display:flex; align-items:center; gap:4px;">
           <span class="logo-title">ConcenMate</span>
@@ -2141,7 +2157,7 @@
           <!-- ── Hero 歡迎列 ── -->
           <div class="home-hero">
             <div class="home-hero-left">
-              <img id="home-hero-avatar" src="assets/images/logo.png?v=2" width="52" height="52" alt="ConcenMate"
+              <img id="home-hero-avatar" src="assets/images/logo.png?v=3" width="52" height="52" alt="ConcenMate"
                 style="border-radius:50%; object-fit:cover; flex-shrink:0; border:2px solid rgba(255,255,255,.4);">
               <div>
                 <div class="home-hero-greeting"><span data-i18n="home.greeting">你好，</span><span id="home-username">同學</span></div>
@@ -2577,10 +2593,10 @@
                 <div class="emoji-reaction-toggle-wrap" onclick="event.stopPropagation();">
                   <button type="button" class="emoji-reaction-toggle-btn" onclick="toggleEmojiReactionPanel()" title="表情反應" data-i18n-title="room.emojiReaction"><img data-i18n-alt="room.emojiReaction" src="assets/images/react-smile.png" alt="表情反應"></button>
                   <div class="emoji-reaction-popover" id="emoji-reaction-popover" style="display:none;">
-                    <button data-i18n-title="html.s76" type="button" onclick="sendDanmakuSticker('😆')" title="大笑"><img data-i18n-alt="html.s76" src="assets/images/react-laugh.png" alt="大笑"></button>
-                    <button data-i18n-title="html.s77" type="button" onclick="sendDanmakuSticker('😍')" title="喜歡"><img data-i18n-alt="html.s77" src="assets/images/react-love.png" alt="喜歡"></button>
-                    <button data-i18n-title="html.s78" type="button" onclick="sendDanmakuSticker('😭')" title="喊"><img data-i18n-alt="html.s78" src="assets/images/react-cry.png" alt="喊"></button>
-                    <button data-i18n-title="html.s79" type="button" onclick="sendDanmakuSticker('😴')" title="瞓覺"><img data-i18n-alt="html.s79" src="assets/images/react-sleep.png" alt="瞓覺"></button>
+                    <button data-i18n-title="html.s76" type="button" onclick="sendDanmakuSticker('😆')" title="大笑"><img loading="lazy" data-i18n-alt="html.s76" src="assets/images/react-laugh.png" alt="大笑"></button>
+                    <button data-i18n-title="html.s77" type="button" onclick="sendDanmakuSticker('😍')" title="喜歡"><img loading="lazy" data-i18n-alt="html.s77" src="assets/images/react-love.png" alt="喜歡"></button>
+                    <button data-i18n-title="html.s78" type="button" onclick="sendDanmakuSticker('😭')" title="喊"><img loading="lazy" data-i18n-alt="html.s78" src="assets/images/react-cry.png" alt="喊"></button>
+                    <button data-i18n-title="html.s79" type="button" onclick="sendDanmakuSticker('😴')" title="瞓覺"><img loading="lazy" data-i18n-alt="html.s79" src="assets/images/react-sleep.png" alt="瞓覺"></button>
                   </div>
                 </div>
 
@@ -3064,7 +3080,7 @@
                 <div id="gacha-result-batch-grid" style="display:grid; grid-template-columns:repeat(5, minmax(0, 1fr)); gap:8px;"></div>
               </div>
               <!-- 扭蛋機外殼 SVG -->
-              <img data-i18n-alt="html.s80" id="gacha-machine-img" alt="扭蛋機" style="display:block; width:360px; max-width:100%; aspect-ratio:6/5; object-fit:contain; height:auto; margin:0 auto; opacity:0; transition:opacity .25s ease;">
+              <img loading="lazy" data-i18n-alt="html.s80" id="gacha-machine-img" alt="扭蛋機" style="display:block; width:360px; max-width:100%; aspect-ratio:6/5; object-fit:contain; height:auto; margin:0 auto; opacity:0; transition:opacity .25s ease;">
 
               <!-- 蛋的動畫疊層 -->
               <div id="gacha-capsule-anim" style="
@@ -4733,14 +4749,14 @@
   })();
   </script>
 
-  <script src="js/i18n.js?v=1.242.2"></script>
+  <script src="js/i18n.js?v=1.243.0"></script>
 
-  <script src="js/app-features.js?v=1.242.2"></script>
+  <script src="js/app-features.js?v=1.243.0"></script>
 
-  <script type="module" src="js/app-core.js?v=1.242.2"></script>
+  <script type="module" src="js/app-core.js?v=1.243.0"></script>
 
-  <script src="js/room-video.js?v=1.242.2"></script>
-  <script src="js/stream.js?v=1.242.2"></script>
+  <script src="js/room-video.js?v=1.243.0"></script>
+  <script src="js/stream.js?v=1.243.0"></script>
   <!-- 房主退出房間選擇彈窗 -->
   <div class="modal-backdrop" id="modal-host-leave" style="display:none;">
     <div class="modal-box" style="text-align:center;">
@@ -5008,7 +5024,7 @@
     </div>
   </div>
 
-  <script src="js/admin-panel.js?v=1.242.2"></script>
+  <script src="js/admin-panel.js?v=1.243.0"></script>
   <!-- pdf.js：導師教材嘅 PDF 預覽（整份文件／學生視角）同教材卡嘅第一頁
        縮圖，都用呢個 library 自己畫落 <canvas>，唔再靠瀏覽器內建嘅PDF
        viewer（手機Safari個內建viewer塞喺iframe度揭唔到第二頁）。淨係
@@ -5035,7 +5051,7 @@
       return window._pdfJsLoading;
     };
   </script>
-  <script src="js/tutor-panel.js?v=1.242.2"></script>
+  <script src="js/tutor-panel.js?v=1.243.0"></script>
 
 </body>
 </html>
