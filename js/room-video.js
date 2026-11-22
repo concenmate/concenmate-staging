@@ -358,7 +358,7 @@
       const panel = document.getElementById('webrtc-debug-log');
       if (!panel) return;
       const line = document.createElement('div');
-      const time = new Date().toLocaleTimeString('zh-HK', { hour12: false });
+      const time = new Date().toLocaleTimeString(window.dateLocale(), { hour12: false });
       line.textContent = `${time}  ${msg}`;
       panel.appendChild(line);
       panel.scrollTop = panel.scrollHeight;

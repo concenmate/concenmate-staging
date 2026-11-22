@@ -3327,8 +3327,8 @@
     function formatTime(ts) {
       if (!ts) return '';
       const d = new Date(ts);
-      return d.toLocaleDateString('zh-HK', { month:'short', day:'numeric' }) + ' ' +
-             d.toLocaleTimeString('zh-HK', { hour:'2-digit', minute:'2-digit', hour12:false });
+      return d.toLocaleDateString(window.dateLocale(), { month:'short', day:'numeric' }) + ' ' +
+             d.toLocaleTimeString(window.dateLocale(), { hour:'2-digit', minute:'2-digit', hour12:false });
     }
 
     // ===================== 扭蛋機系統 =====================
@@ -4294,7 +4294,7 @@
           return;
         }
         listEl.innerHTML = entries.map(e => {
-          const time = e.ts ? new Date(e.ts).toLocaleString('zh-HK', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }) : '';
+          const time = e.ts ? new Date(e.ts).toLocaleString(window.dateLocale(), { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }) : '';
           const thumb = e.photo
             ? `<img src="${e.photo}" style="width:20px; height:20px; object-fit:cover; border-radius:6px;">`
             : `<span style="font-size:20px;">${escapeHtml(e.emoji || '🦦')}</span>`;
@@ -4331,7 +4331,7 @@
       if (!card) return;
 
       const cost = typeof costOverride === 'number' ? costOverride : GACHA_COST[type];
-      const time = new Date().toLocaleTimeString('zh-HK', { hour: '2-digit', minute: '2-digit' });
+      const time = new Date().toLocaleTimeString(window.dateLocale(), { hour: '2-digit', minute: '2-digit' });
       gachaHistoryEntries.unshift({ sticker, type, cost, time, isNew: !!isNew });
       renderGachaHistoryList();
     }
@@ -5675,7 +5675,7 @@
       const dockDebugEl = document.getElementById('chat-dock-debug');
       if (dockDebugEl) {
         dockDebugEl.style.color = '#A4B4D4';
-        dockDebugEl.innerText = `${window.chatDockData.length} 個（我 uid: ${myUid.slice(0, 8)}…，${new Date().toLocaleTimeString('zh-HK')}）`;
+        dockDebugEl.innerText = `${window.chatDockData.length} 個（我 uid: ${myUid.slice(0, 8)}…，${new Date().toLocaleTimeString(window.dateLocale())}）`;
       }
       window.renderChatDockPanel();
     }

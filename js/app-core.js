@@ -98,8 +98,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
     };
     window.suspensionMessage = function(u, fallback) {
       if (u && u.suspended !== true && typeof u.suspendedUntil === 'number') {
-        const lang = (window.getAppLanguage && window.getAppLanguage()) === 'en' ? 'en-GB' : 'zh-HK';
-        const when = new Date(u.suspendedUntil).toLocaleString(lang, { year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+        const when = new Date(u.suspendedUntil).toLocaleString(window.dateLocale(), { year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' });
         return window.t('core.accountSuspendedUntilTemplate', '你的帳戶因違反使用守則被暫停使用，直至 {date}。如有疑問請聯絡管理員。').replace('{date}', when);
       }
       return fallback;

@@ -1263,7 +1263,7 @@
     function suspensionLabelHtml(u) {
       const parts = [];
       if (u.suspended === true) parts.push(window.t('admin.s265', '已永久停權'));
-      else if (typeof u.suspendedUntil === 'number' && u.suspendedUntil > Date.now()) parts.push(window.t('admin.s266', '停權至 ') + new Date(u.suspendedUntil).toLocaleString('zh-HK', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' }));
+      else if (typeof u.suspendedUntil === 'number' && u.suspendedUntil > Date.now()) parts.push(window.t('admin.s266', '停權至 ') + new Date(u.suspendedUntil).toLocaleString(window.dateLocale(), { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' }));
       if (typeof u.strikeCount === 'number' && u.strikeCount > 0) parts.push(window.t('admin.s267', '違規 ') + u.strikeCount + window.t('admin.s268', ' 次'));
       return parts.length ? ` <span style="color:#c0392b; font-size:13px;">（${parts.join('，')}）</span>` : '';
     }
@@ -1286,7 +1286,7 @@
       const status = r.status || 'pending';
       const statusLabel = status === 'pending' ? window.t('admin.s269', '待處理') : (status === 'dismissed' ? window.t('admin.s270', '已駁回') : window.t('admin.s271', '已處理'));
       const statusColor = status === 'pending' ? '#C0524A' : '#999';
-      const when = r.createdAt ? new Date(r.createdAt).toLocaleString('zh-HK') : '—';
+      const when = r.createdAt ? new Date(r.createdAt).toLocaleString(window.dateLocale()) : '—';
       // v1.241.0 安全修補：截圖網址及被舉報 uid 由用戶提交，顯示前一律過濾
       const safeShot = window.safeImgSrc ? window.safeImgSrc(r.screenshot) : '';
       const safeReportedUid = /^[A-Za-z0-9]{1,128}$/.test(r.reportedUid || '') ? r.reportedUid : '';
@@ -1604,7 +1604,7 @@
       const status = a.status || 'pending';
       const statusLabel = status === 'pending' ? window.t('admin.s315', '待審批') : (status === 'approved' ? window.t('admin.s316', '已批准') : window.t('admin.s270', '已駁回'));
       const statusColor = status === 'pending' ? '#C0524A' : (status === 'approved' ? '#2F6B3A' : '#999');
-      const when = a.submittedAt ? new Date(a.submittedAt).toLocaleString('zh-HK') : '—';
+      const when = a.submittedAt ? new Date(a.submittedAt).toLocaleString(window.dateLocale()) : '—';
       const subjectsHtml = (a.subjectsIntended || [])
         .map(s => `<span class="tag" style="background:#F6F7FB; color:#29395C; margin-right:4px;">${escapeHtml(s)}</span>`)
         .join('');
@@ -2251,7 +2251,7 @@
       }
 
       const s = adminDashboardStats;
-      const lastUpdateText = adminDashboardLoadedAt ? new Date(adminDashboardLoadedAt).toLocaleString('zh-HK') : '—';
+      const lastUpdateText = adminDashboardLoadedAt ? new Date(adminDashboardLoadedAt).toLocaleString(window.dateLocale()) : '—';
       const refreshingNow = adminDashboardLoading;
 
       const cards = [
@@ -2395,7 +2395,7 @@
       const suspended = window.isSuspendedNow ? window.isSuspendedNow(d) : !!d.suspended;
       const displayEmail = d.contactEmail || d.email || '—';
       const createdMs = typeof d.createdAt === 'number' ? d.createdAt : (d.createdAt ? new Date(d.createdAt).getTime() : 0);
-      const createdDisplay = createdMs ? new Date(createdMs).toLocaleString('zh-HK') : '—';
+      const createdDisplay = createdMs ? new Date(createdMs).toLocaleString(window.dateLocale()) : '—';
       const lastLoginDisplay = (typeof formatLastLoginDisplay === 'function') ? formatLastLoginDisplay(d.lastLoginAt) : '—';
 
       const stickerOptions = GACHA_STICKERS.map(s => `<option value="${s.id}" ${adminSupportStickerGrantDraft.stickerId === s.id ? 'selected' : ''}>${escapeHtml(s.name)}（#${s.id}）</option>`).join('');
@@ -2841,7 +2841,7 @@
         return;
       }
       const rows = adminAuditLogEntries.map(e => {
-        const when = e.createdAt ? new Date(e.createdAt).toLocaleString('zh-HK') : '—';
+        const when = e.createdAt ? new Date(e.createdAt).toLocaleString(window.dateLocale()) : '—';
         const who = e.adminLoginId || e.adminEmail || '—';
         const detailsText = e.details ? (typeof e.details === 'string' ? e.details : JSON.stringify(e.details)) : '';
         return `<tr><td style="white-space:nowrap;">${when}</td><td>${escapeHtml(who)}</td><td>${escapeHtml(e.action || '—')}</td><td style="font-size:12px; color:#888; max-width:320px; word-break:break-all;">${escapeHtml(detailsText)}</td></tr>`;
@@ -3259,47 +3259,97 @@
 # 第十條　聯絡方式
 閣下如對本條款有任何疑問，請透過下列方式與本公司聯絡：電郵 support@concenmate.com`;
 
-    const DEFAULT_PRIVACY_ZH = `ConcenMate 書伴（下稱「本服務」）由 ConcenMate 書伴（下稱「本公司」或「我們」）營運及管理。本公司高度重視使用者（下稱「閣下」或「使用者」）之個人資料私隱，並致力遵守香港特別行政區《個人資料（私隱）條例》（香港法例第486章，下稱「該條例」）之相關規定。
+    const DEFAULT_PRIVACY_ZH = `ConcenMate 書伴（下稱「本服務」）由 ConcenMate 書伴（下稱「本公司」或「我們」）營運及管理。本公司高度重視使用者（下稱「閣下」或「使用者」）之個人資料私隱，並致力遵守香港特別行政區《個人資料（私隱）條例》（香港法例第486章，下稱「該條例」）及其附表一所載之六項保障資料原則。
 
-閣下透過瀏覽器登入、使用或以任何方式存取本服務，即表示閣下已閱讀、理解並同意接受本私隱政策（下稱「本政策」）所載之全部條款。倘若閣下不同意本政策之任何部分，請立即停止使用本服務。
+閣下登入、使用或以任何方式存取本服務，即表示閣下已閱讀、理解並同意接受本私隱政策（下稱「本政策」）所載之全部條款。倘若閣下不同意本政策之任何部分，請立即停止使用本服務。
 
 # 第一條　本政策之適用範圍
-本政策適用於閣下透過 concenmate.com 及其任何相關子網域使用本服務之情況。倘若閣下未滿十八歲，本公司建議由閣下之家長或監護人陪同閱讀本政策，並就使用本服務一事給予同意。
+本政策適用於閣下透過 concenmate.com 及其任何相關子網域，以及透過本服務之 Android 及 iOS 應用程式使用本服務之情況。倘若閣下未滿十八歲，本公司建議由閣下之家長或監護人陪同閱讀本政策，並就使用本服務一事給予同意。
 
 # 第二條　本公司所收集之資料類別
-本公司因提供本服務之需要，可能收集以下類別之資料：帳戶資料（登入識別碼、電郵地址、顯示暱稱、頭像選項，於帳戶註冊時收集）；學歷及學校電郵（學歷聲明、每學年確認紀錄，以及中學生用作核實身份之學校電郵地址；學校電郵只用作核實身份，不會公開）；學習記錄（累積溫習時數、經驗值、等級、貼紙收藏紀錄，於使用服務過程中自動記錄）；社交互動資料（好友名單、即時通訊內容、討論區發帖及留言，於使用者主動使用相關功能時收集）；溫習室及視訊相關資料（房間設定、加入及離開時間、建立視像連線所需之協調訊息，於使用視訊溫習室功能時收集）；直播相關資料（直播標題、科目、開始及結束時間、觀看人數、直播留言、封鎖紀錄，以及未成年使用者就直播取得父母或監護人同意之確認紀錄，於使用者使用直播功能時收集）；舉報資料（舉報內容及相關佐證，於使用者提交舉報時收集）；違規及停權紀錄（於本公司處理舉報時記錄）；技術資料（瀏覽器類型、裝置資訊、網際網路協定（IP）位址，於連接本服務時由基礎設施自動記錄）。
+本公司因提供本服務之需要，可能收集以下類別之資料：
+（一）帳戶資料：登入識別碼、電郵地址、聯絡電郵、密碼及顯示名稱，於帳戶註冊時收集。密碼經 Firebase 身份驗證服務加密處理，本公司無法讀取。如閣下選擇以 Google 帳戶註冊或登入，本公司只會從 Google 取得閣下之電郵地址，用作識別帳戶；
+（二）公開 ID：系統自動編配之六位字元代碼，供其他使用者搜尋閣下及加入好友之用，與閣下之登入識別碼分開，其他使用者無法藉此得知閣下之登入識別碼；
+（三）個人檔案資料：出生年月、學歷、年級、學校、學校所在地區、喜愛及不喜愛之科目及頭像，部分於註冊時收集，其餘由閣下於「完成個人資料」時自行提供；
+（四）學生身份核實資料：中學生用作核實身份之學校電郵地址，以及每學年之學歷確認紀錄；學校電郵只用作核實身份，不會公開；
+（五）學習記錄：累積溫習時數、經驗值、等級、積分、扭蛋券、貼圖收藏及扭蛋紀錄，於使用服務過程中自動記錄；
+（六）相片：閣下上載之溫習相片、頭像，以及疑難解答區之提問及回答所附相片；
+（七）社交互動資料：好友名單、追蹤紀錄、即時通訊內容、疑難解答區之提問及回答，於閣下主動使用相關功能時收集；
+（八）溫習室及視訊相關資料：房間設定、加入及離開時間，以及建立視像連線所需之協調訊息，於閣下使用視訊溫習室功能時收集；
+（九）直播相關資料：直播標題、科目、開始及結束時間、觀看人數、直播留言、封鎖紀錄，以及未成年使用者就直播取得父母或監護人同意之確認紀錄，於閣下使用直播功能時收集；
+（十）舉報資料：舉報內容及相關佐證（包括截圖），於閣下提交舉報時收集；
+（十一）違規及停權紀錄：於本公司處理舉報時記錄；
+（十二）推送通知資料：如閣下於應用程式啟用推送通知，本公司會儲存閣下裝置之通知識別碼及閣下之通知設定；
+（十三）技術資料：瀏覽器類型、裝置資訊、網際網路協定（IP）位址，以及程式錯誤報告，於閣下連接本服務時由基礎設施自動記錄。
 
 關於視訊及語音資料之特別聲明：本服務之視訊溫習室功能採用點對點即時通訊技術（WebRTC），使用者之鏡頭及咪高峰畫面一般於瀏覽器之間直接傳輸；如雙方無法直接連線，則會經 Cloudflare 之中轉伺服器以加密方式轉送。本服務之直播功能則經本公司租用之直播伺服器（由 Vultr 提供，位於日本）即時轉送直播主之鏡頭畫面予觀眾。上述影像及聲音均只作即時傳送，本公司不會錄製或儲存。本公司之資料庫僅用作交換建立連線所需之協調（signaling）訊息。
 
-關於直播之公開資料：直播期間，直播主之顯示名稱、直播標題、科目及鏡頭畫面，會向所有已登入本服務之使用者公開；觀眾於直播發表之留言及其顯示名稱，會向該直播之所有觀眾公開。
-
 本公司不會收集閣下之身份證明文件號碼、住址、電話號碼，或信用卡及其他付款工具資料；本服務於現階段並不涉及任何收費功能。
 
-# 第三條　收集資料之目的
-本公司收集及處理閣下之個人資料，僅限於下列目的：（一）提供及維持本服務之核心功能，包括帳戶登入、溫習室運作、學習進度追蹤及社交互動功能；（二）維護帳戶安全及防止濫用行為，包括偵測異常操作、處理舉報事宜、執行本公司服務條款所載之違規處理，以及保障使用者（特別是未成年使用者）之安全；（三）透過第三方服務提供者發送電郵驗證訊息（詳見第五條）；（四）分析及改善本服務之功能與使用體驗。本公司承諾不會將閣下之個人資料用於向第三方廣告商進行行銷推廣之目的。
+# 第三條　提供資料屬自願或必須
+註冊帳戶時，閣下必須提供登入識別碼、電郵地址、密碼及顯示名稱；如未能提供，本公司將無法為閣下開設帳戶。出生年月、學歷、年級、學校、地區及科目等資料屬自願提供，惟本服務部分功能須按閣下之年齡或學歷決定使用資格，包括中學生溫習室、公開溫習室、直播功能及學校排行榜。如閣下未有提供該等資料，或所提供之學生身份未經核實，閣下可能無法使用相關功能。
 
-# 第四條　資料儲存地點及保安措施
-閣下之個人資料儲存於 Google Firebase（包括 Firestore 資料庫及 Cloud Storage 儲存空間），該等服務由 Google Cloud Platform 提供。資料於傳輸過程中，均以超文本傳輸安全協定（HTTPS/TLS）加密。本公司並已採取下列保安措施：（一）Firebase App Check（結合 reCAPTCHA Enterprise），用以識別及阻截非經正常途徑發出之存取請求；（二）資料庫及儲存空間存取規則，訂明使用者僅可存取屬於自己之資料，唯獲授權之管理員方可存取管理功能；（三）單次資料變更幅度限制，就學習進度等敏感數值之單次變更設有上限，以防止篡改。
+# 第四條　收集資料之目的
+本公司收集及處理閣下之個人資料，僅限於下列目的：
+（一）提供及維持本服務之核心功能，包括帳戶登入、溫習室運作、學習進度追蹤、排行榜及社交互動功能；
+（二）按閣下之年齡及學歷決定閣下可使用之溫習室及功能，以保障未成年使用者之安全；
+（三）維護帳戶安全及防止濫用行為，包括偵測異常操作、審查上載之相片、處理舉報事宜，以及執行本公司服務條款所載之違規處理；
+（四）發送電郵驗證、學校電郵驗證及重設密碼訊息（詳見第七條），以及發送閣下已選擇接收之推送通知；
+（五）分析及改善本服務之功能與使用體驗，以及偵測及修正程式錯誤。
+本公司不會將閣下之個人資料用於直接促銷，亦不會將閣下之個人資料提供予任何第三方作直接促銷之用。如本公司日後擬將閣下之個人資料用於直接促銷，必須事先取得閣下之同意。
 
-# 第五條　資料之披露及第三方服務提供者
-本公司不會出售或出租閣下之個人資料予任何第三方。惟為提供本服務所需之技術支援，本公司會將有限度之資料傳送予下列第三方服務提供者：（一）Google Firebase——提供資料庫、身份驗證、檔案儲存及防濫用機制等服務；（二）EmailJS——用於發送電郵驗證、學校電郵驗證及重設密碼訊息，僅會接觸相關電郵地址；（三）Cloudflare——提供視訊溫習室之中轉伺服器，只作即時轉送加密影像及聲音；（四）Vultr——提供直播伺服器，只作即時轉送直播影像。倘若本公司因法律程序而有責任披露閣下之個人資料，本公司將依法配合，並於法律容許之範圍內事先通知閣下；如涉及懷疑刑事罪行或兒童安全，本公司可依法向執法機關披露相關資料。
+# 第五條　向其他使用者公開之資料
+為提供社交功能，下列資料會向本服務之其他使用者公開：閣下之顯示名稱、公開 ID、頭像、年級、喜愛及不喜愛之科目、累積溫習時數、經驗值、等級、帳戶類型，以及粉絲及追蹤人數。閣下之學校於個人檔案中只向閣下之好友顯示；惟如閣下已填寫學校，閣下之顯示名稱、頭像、年級及溫習時數會出現於所屬學校及地區之溫習排行榜，因此其他使用者可從排行榜得知閣下所屬之學校及地區。閣下之溫習相片預設只向閣下本人及閣下之好友顯示；如閣下於「我的帳戶」中將溫習相片設定為公開，則所有已登入之使用者均可查看。閣下於疑難解答區發佈之提問、回答及所附相片，會向所有已登入之使用者公開。
 
-# 第六條　Cookie 及本地儲存技術
-本服務會利用瀏覽器之本地儲存功能（localStorage）記錄閣下之登入狀態，以省卻閣下每次重新登入之需要。該等資料儲存於閣下自身之裝置內，本公司並不藉此透過第三方追蹤 Cookie 監察閣下於其他網站之瀏覽活動。
+閣下之登入識別碼、電郵地址、聯絡電郵、出生年月及學校電郵不會向其他使用者公開。
 
-# 第七條　未成年使用者
-本公司理解本服務之使用者當中，不乏未滿十八歲之學生。倘若閣下為家長或監護人，並發現閣下之子女未經閣下同意而建立帳戶，或閣下希望查閱、更正或刪除該等未成年人士之個人資料，歡迎透過第十條所載之聯絡方式與本公司聯絡，本公司將優先處理該等請求。
+關於直播之公開資料：直播期間，直播主之顯示名稱、直播標題、科目及鏡頭畫面，會向所有已登入本服務之使用者公開；觀眾於直播發表之留言及其顯示名稱，會向該直播之所有觀眾公開。
 
-# 第八條　使用者之權利
-根據該條例，閣下就本公司所持有關於閣下之個人資料，享有下列權利：（一）查閱權；（二）更正權；（三）刪除權（惟因安全審查需要而須保留之資料，或經匿名化處理而無法識別個人身份之統計數據，則不在此限）；（四）停止使用權。閣下如欲行使上述任何權利，請透過第十條所載之聯絡方式提出申請，本公司將於合理時間內作出回覆及處理。
+# 第六條　資料儲存地點及保安措施
+閣下之個人資料儲存於 Google Firebase（包括 Firestore 資料庫及 Cloud Storage 儲存空間），該等服務由 Google Cloud Platform 提供。資料於傳輸過程中，均以超文本傳輸安全協定（HTTPS/TLS）加密。本公司並已採取下列保安措施：
+（一）Firebase App Check（結合 reCAPTCHA Enterprise），用以識別及阻截非經正常途徑發出之存取請求；
+（二）資料庫及儲存空間存取規則，訂明使用者僅可存取屬於自己或獲准查看之資料，唯獲授權之管理員方可存取管理功能；
+（三）單次資料變更幅度限制，就學習進度等敏感數值之單次變更設有上限，以防止篡改；
+（四）重設密碼及登入等功能設有次數限制，以防止濫用；
+（五）資料庫每日自動備份，備份資料保留七日，以便於發生故障時還原資料。
 
-# 第九條　資料保留期限
-本公司將於閣下之帳戶維持活躍狀態期間，保留閣下之個人資料。直播紀錄及直播留言於直播結束後保存九十日，其後自動刪除；違規及停權紀錄於帳戶存續期間保存，帳戶被永久終止後，本公司會繼續保留有關紀錄，以處理覆核申請及防止重新註冊。倘若閣下申請刪除帳戶，本公司將於合理時間內刪除或將閣下之個人可識別資料進行匿名化處理，惟因安全審查或法律責任而須予保留之資料，則不受此限。
+# 第七條　資料之披露、第三方服務提供者及跨境轉移
+本公司不會出售或出租閣下之個人資料予任何第三方。惟為提供本服務所需之技術支援，本公司會將有限度之資料傳送予下列第三方服務提供者：
+（一）Google Firebase 及 Google Cloud——提供資料庫、身份驗證、檔案儲存、伺服器運算、推送通知及防濫用機制等服務；
+（二）Google Cloud Vision——自動審查閣下上載之頭像及相片是否含有不當內容。相片只作即時分析之用；
+（三）EmailJS——用於發送電郵驗證、學校電郵驗證及重設密碼訊息，僅會接觸相關電郵地址；
+（四）Cloudflare——提供視訊溫習室之中轉伺服器，只作即時轉送加密影像及聲音；
+（五）Vultr——提供直播伺服器，只作即時轉送直播影像；
+（六）Sentry——收集程式錯誤報告（包括瀏覽器類型、裝置資訊及發生錯誤之頁面），用作偵測及修正程式錯誤；
+（七）Apple 及 Google——如閣下使用應用程式並啟用推送通知，通知會經 Apple 推送通知服務或 Firebase 雲端通訊傳送至閣下之裝置。
 
-# 第十條　聯絡方式
-閣下如對本政策有任何疑問，或欲行使第八條所載之任何權利，請透過下列方式與本公司聯絡：電郵 support@concenmate.com
+上述服務提供者之伺服器可能位於香港以外之地區（包括亞洲、美國及歐洲）。本公司只會將提供本服務所需之資料轉移至該等地區，並只選用具備合理資料保安措施之服務提供者。
 
-# 第十一條　政策之修訂
+倘若本公司因法律程序而有責任披露閣下之個人資料，本公司將依法配合，並於法律容許之範圍內事先通知閣下；如涉及懷疑刑事罪行或兒童安全，本公司可依法向執法機關披露相關資料。
+
+# 第八條　自動審查
+為保障使用者（特別是未成年使用者）之安全，本服務會以自動化方式審查閣下上載之頭像、溫習相片及疑難解答區相片。被判定為可能含有不當內容之相片將不會發佈，或會被自動移除，並轉交管理員覆核。如閣下認為審查結果有誤，可透過第十二條所載之聯絡方式提出覆核。
+
+# 第九條　Cookie 及本地儲存技術
+本服務會利用瀏覽器之本地儲存功能（包括 localStorage 及 IndexedDB）記錄閣下之登入狀態、語言設定及部分畫面設定，以省卻閣下每次重新登入或設定之需要，並加快頁面載入速度。該等資料儲存於閣下自身之裝置內。本服務不使用廣告 Cookie，亦不會透過第三方追蹤 Cookie 監察閣下於其他網站之瀏覽活動。
+
+# 第十條　未成年使用者
+本公司理解本服務之使用者當中，不乏未滿十八歲之學生。本服務為保障未成年使用者，設有下列措施：初中學生（中一至中三）只可使用經核實之中學生溫習室；直播功能只限十六歲或以上之使用者使用；所有上載相片均經自動審查。倘若閣下為家長或監護人，並發現閣下之子女未經閣下同意而建立帳戶，或閣下希望查閱、更正或刪除該等未成年人士之個人資料，歡迎透過第十二條所載之聯絡方式與本公司聯絡，本公司將優先處理該等請求。
+
+# 第十一條　使用者之權利及資料保留期限
+根據該條例，閣下就本公司所持有關於閣下之個人資料，享有下列權利：
+（一）查閱權：閣下可要求查閱本公司所持有關於閣下之個人資料；
+（二）更正權：閣下可於「我的帳戶」自行更正大部分資料，或要求本公司更正不準確之資料；
+（三）刪除權：閣下可於「我的帳戶」自行刪除帳戶，系統會即時刪除閣下之帳戶及個人資料；
+（四）停止使用權：閣下可隨時停止使用本服務，或於設定中關閉推送通知。
+本公司將於收到查閱資料要求後四十日內作出回覆。本公司可就處理查閱資料要求收取不超乎適度之費用。
+
+資料保留期限：本公司將於閣下之帳戶維持活躍狀態期間，保留閣下之個人資料。直播紀錄及直播留言於直播結束後保存九十日，其後自動刪除。帳戶刪除後，閣下之個人資料會從資料庫中刪除，惟備份資料最長會保留七日，其後自動刪除。違規及停權紀錄於帳戶存續期間保存；帳戶被永久終止後，本公司會繼續保留有關紀錄，以處理覆核申請及防止重新註冊。經匿名化處理而無法識別個人身份之統計數據，以及因法律責任而須予保留之資料，則不受此限。
+
+# 第十二條　聯絡方式
+閣下如對本政策有任何疑問，或欲行使第十一條所載之任何權利，請透過下列方式與本公司聯絡：電郵 support@concenmate.com
+
+# 第十三條　政策之修訂
 本公司保留隨時修訂本政策之權利。任何重大修訂將於本服務網站上公佈，並同時更新本文件頂部所載之「最後更新日期」。本公司建議閣下定期查閱本政策，以知悉最新內容。閣下於修訂公佈後繼續使用本服務，即視為閣下已接受該等修訂。`;
     let adminLegalActiveDoc = 'terms';
     let adminLegalActiveLang = 'zh-Hant';
@@ -3800,11 +3850,11 @@
     if (errs.google) errNotes.push(window.t('admin.s661', 'Google 用量數據（資料庫、伺服器程式、相片儲存）未能取得：') + errs.google);
     if (errs.vultr) errNotes.push(window.t('admin.s662', 'Vultr 數據未能取得，直播流量改用系統估算：') + errs.vultr);
     const s = d.settings || {};
-    const updated = new Date(d.at).toLocaleString('zh-HK', { hour12: false });
+    const updated = new Date(d.at).toLocaleString(window.dateLocale(), { hour12: false });
     // v1.230.1：每月預算自動控制狀態
     const g = d.budgetGuard || {};
     const budget = Number(s.monthlyBudgetUSD) || 0;
-    const fmtTime = (ms) => ms ? new Date(ms).toLocaleString('zh-HK', { hour12: false }) : '';
+    const fmtTime = (ms) => ms ? new Date(ms).toLocaleString(window.dateLocale(), { hour12: false }) : '';
     let budgetHtml;
     if (g.paused) {
       budgetHtml = `<div class="card" style="padding:16px; border:2px solid #C0392B; background:#FDF1EF;">
@@ -4001,7 +4051,7 @@
     for (let i = 0; i < 3; i++) { if ((pa[i] || 0) !== (pb[i] || 0)) return (pa[i] || 0) - (pb[i] || 0); }
     return 0;
   }
-  function fmtTime(ms) { if (!ms) return '—'; const d = new Date(ms); return d.toLocaleString('zh-HK', { hour12: false }); }
+  function fmtTime(ms) { if (!ms) return '—'; const d = new Date(ms); return d.toLocaleString(window.dateLocale(), { hour12: false }); }
   function listObj(o) {
     const ks = Object.keys(o || {}).sort((a, b) => (o[b] - o[a]));
     return ks.length ? ks.map(k => `${esc(k)}：${o[k]}`).join('　') : '—';

@@ -1835,6 +1835,8 @@
     'qa.photoBlocked': { 'zh-Hant': '有相片可能含有不當內容，請更換相片後再發佈。', 'en': 'One or more photos may contain inappropriate content. Please replace them and try again.', 'yue': '有相片可能有唔適當內容，請換過相片再發佈。' },
     'qa.photosRemovedNote': { 'zh-Hant': '部分相片因可能含有不當內容，已被系統移除。', 'en': 'Some photos were removed by the system because they may contain inappropriate content.', 'yue': '部分相片可能有唔適當內容，已經俾系統移除。' },
     'srv.e132': { 'zh-Hant': '相片檢測服務暫時無法使用，請稍後再試', 'en': 'The photo check service is temporarily unavailable. Please try again later.', 'yue': '相片檢測服務暫時用唔到，請稍後再試' },
+    // v1.247.0：私隱政策更新日期
+    'legal.privacyDates': { 'zh-Hant': '生效日期：2026 年 9 月 1 日　最後更新日期：2026 年 11 月 22 日', 'en': 'Effective date: 1 September 2026   Last updated: 22 November 2026', 'yue': '生效日期：2026 年 9 月 1 日　最後更新日期：2026 年 11 月 22 日' },
   };
 
   // 目前語言：已登入用戶存喺 users/{uid} 文件嘅 language 欄位（跨裝置
@@ -1850,6 +1852,11 @@
       if (saved && window.SUPPORTED_LANGUAGES.indexOf(saved) !== -1) return saved;
     } catch (e) { /* 私隱模式等場合讀唔到 localStorage，忽略 */ }
     return 'zh-Hant';
+  };
+
+  // v1.247.0：日期／時間格式跟返介面語言（英文介面唔好再出「下午」）
+  window.dateLocale = function () {
+    return window.getAppLanguage() === 'en' ? 'en-GB' : 'zh-HK';
   };
 
   // key 查字典；查唔到（呢個階段絕大部分字都仲未搬入字典）就用返
