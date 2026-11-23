@@ -1836,7 +1836,12 @@
     'qa.photosRemovedNote': { 'zh-Hant': '部分相片因可能含有不當內容，已被系統移除。', 'en': 'Some photos were removed by the system because they may contain inappropriate content.', 'yue': '部分相片可能有唔適當內容，已經俾系統移除。' },
     'srv.e132': { 'zh-Hant': '相片檢測服務暫時無法使用，請稍後再試', 'en': 'The photo check service is temporarily unavailable. Please try again later.', 'yue': '相片檢測服務暫時用唔到，請稍後再試' },
     // v1.247.0：私隱政策更新日期
-    'legal.privacyDates': { 'zh-Hant': '生效日期：2026 年 9 月 1 日　最後更新日期：2026 年 11 月 22 日', 'en': 'Effective date: 1 September 2026   Last updated: 22 November 2026', 'yue': '生效日期：2026 年 9 月 1 日　最後更新日期：2026 年 11 月 22 日' },
+    'legal.privacyDates': { 'zh-Hant': '生效日期：2026 年 9 月 1 日　最後更新日期：2026 年 11 月 23 日', 'en': 'Effective date: 1 September 2026   Last updated: 23 November 2026', 'yue': '生效日期：2026 年 9 月 1 日　最後更新日期：2026 年 11 月 23 日' },
+    // v1.248.0：同意接收補習資訊
+    'profile.tutorOptInTitle': { 'zh-Hant': '我願意接收補習導師及補習社的資訊', 'en': 'I\'d like to receive information about tutors and tutoring centres', 'yue': '我願意收補習導師同補習社嘅資訊' },
+    'profile.tutorOptInHint': { 'zh-Hant': '勾選後，本平台日後或會按你的地區、年級及科目，在平台內向你提供經審核的補習導師及補習社資訊。你的個人資料不會提供予導師或補習社。你可隨時取消勾選。此設定即時生效。', 'en': 'If ticked, we may in future show you information about vetted tutors and tutoring centres on the platform, based on your district, grade and subjects. Your personal data will not be given to tutors or tutoring centres. You can untick this at any time. This setting takes effect immediately.', 'yue': '剔咗之後，平台日後可能會按你嘅地區、年級同科目，喺平台入面俾你睇經審核嘅補習導師同補習社資訊。你嘅個人資料唔會俾導師或者補習社。你隨時都可以取消。呢個設定即時生效。' },
+    'profile.tutorOptInOnToast': { 'zh-Hant': '已同意接收補習導師及補習社的資訊', 'en': 'You\'ll receive information about tutors and tutoring centres', 'yue': '已經同意收補習導師同補習社嘅資訊' },
+    'profile.tutorOptInOffToast': { 'zh-Hant': '已取消接收補習導師及補習社的資訊', 'en': 'You\'ll no longer receive information about tutors and tutoring centres', 'yue': '已經取消收補習導師同補習社嘅資訊' },
   };
 
   // 目前語言：已登入用戶存喺 users/{uid} 文件嘅 language 欄位（跨裝置

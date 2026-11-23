@@ -2528,6 +2528,8 @@
         if (allowPhotoCb) allowPhotoCb.checked = window.currentUser.allowGroupPhoto === true;
         const photosPublicCb = document.getElementById('prof-photos-public');
         if (photosPublicCb) photosPublicCb.checked = window.currentUser.photosPublic === true;
+        const tutorOptInCb = document.getElementById('prof-tutor-info-optin');
+        if (tutorOptInCb) tutorOptInCb.checked = window.currentUser.tutorInfoOptIn === true;
         if (typeof window.setSecondaryStudentToggle === 'function') {
           window.setSecondaryStudentToggle('prof', window.currentUser.isSecondaryStudent ? 'yes' : 'no');
         }
@@ -4527,6 +4529,22 @@
         window.showToast(on ? window.t('profile.photosPublicOnToast', '溫習相片已設為公開，所有用戶都可以查看') : window.t('profile.photosPublicOffToast', '溫習相片已設為私人，只限好友查看'), '');
       } catch (e) {
         if (cb) cb.checked = window.currentUser.photosPublic === true;
+        window.showToast(window.t('snapshot.settingFailed', '設定未能儲存，請稍後再試'), '');
+      }
+    };
+
+    // v1.248.0：同意接收補習導師／補習社資訊（私隱條例直接促銷同意），記低同意／取消時間
+    window.setTutorInfoOptIn = async function(on) {
+      if (!window.currentUser || !window.db || !window.fs) return;
+      const cb = document.getElementById('prof-tutor-info-optin');
+      const at = Date.now();
+      try {
+        await window.fs.updateDoc(window.fs.doc(window.db, 'users', window.currentUser.uid), { tutorInfoOptIn: !!on, tutorInfoOptInAt: at });
+        window.currentUser.tutorInfoOptIn = !!on;
+        window.currentUser.tutorInfoOptInAt = at;
+        window.showToast(on ? window.t('profile.tutorOptInOnToast', '已同意接收補習導師及補習社的資訊') : window.t('profile.tutorOptInOffToast', '已取消接收補習導師及補習社的資訊'), '');
+      } catch (e) {
+        if (cb) cb.checked = window.currentUser.tutorInfoOptIn === true;
         window.showToast(window.t('snapshot.settingFailed', '設定未能儲存，請稍後再試'), '');
       }
     };

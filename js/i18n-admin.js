@@ -534,7 +534,7 @@
     'admin.s584': { 'zh-Hant': '載入中條款內容設定...', 'en': 'Loading terms settings...', 'yue': '載入中條款內容設定...' },
     'admin.s585': { 'zh-Hant': '這是網站目前顯示的版本，可以直接修改。', 'en': 'This is the version shown on the site now; you can edit it directly.', 'yue': '這是網站目前顯示的版本，可以直接修改。' },
     'admin.s586': { 'zh-Hant': '如留空，此語言會自動顯示繁體中文版本（', 'en': 'If empty, this language shows the Traditional Chinese version (', 'yue': '如留空，此語言會自動顯示繁體中文版本（' },
-    'admin.s587': { 'zh-Hant': '未填寫亦不會出現空白）。', 'en': 'won\'t appear blank if not filled in).', 'yue': '未填寫亦不會出現空白）。' },
+    'admin.s587': { 'zh-Hant': '未填寫亦不會出現空白）。', 'en': ' won\'t appear blank if not filled in).', 'yue': '未填寫亦不會出現空白）。' },
     'admin.s588': { 'zh-Hant': '此處編輯「服務條款」及「私隱政策」的內容，三種語言可以分開編輯。段落之間留一行空白；如需粗體小標題（例如「第一條　服務內容」），請在該行開頭輸入「#」。注意：English 及廣東話版本的翻譯準確性及法律效力，請自行核實或諮詢專業人士。', 'en': 'Edit the Terms of Service and Privacy Policy here; each language can be edited separately. Leave a blank line between paragraphs; for a bold heading (e.g. 第一條　服務內容), start the line with "#". Note: please verify the accuracy and legal effect of the English and Cantonese versions yourself or with a professional.', 'yue': '此處編輯「服務條款」及「私隱政策」的內容，三種語言可以分開編輯。段落之間留一行空白；如需粗體小標題（例如「第一條　服務內容」），請在該行開頭輸入「#」。注意：English 及廣東話版本的翻譯準確性及法律效力，請自行核實或諮詢專業人士。' },
     'admin.s589': { 'zh-Hant': '儲存全部語言', 'en': 'Save all languages', 'yue': '儲存全部語言' },
     'admin.s590': { 'zh-Hant': '確定要儲存嗎？此改動會即時影響全站顯示的服務條款／私隱政策內容。', 'en': 'Save? This immediately changes the Terms of Service / Privacy Policy shown across the site.', 'yue': '確定要儲存嗎？此改動會即時影響全站顯示的服務條款／私隱政策內容。' },
