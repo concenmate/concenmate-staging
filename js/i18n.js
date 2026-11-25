@@ -845,7 +845,7 @@
     'room.createSubmit': { 'zh-Hant': '立即建立並廣播', 'en': 'Create & Broadcast Now', 'yue': '即刻開房廣播' },
 
     // ── 會員個人資料／帳戶設定 ──
-    'profile.heading': { 'zh-Hant': '會員個人資料', 'en': 'Member Profile', 'yue': '會員個人資料' },
+    'profile.heading': { 'zh-Hant': '我的帳戶', 'en': 'My Account', 'yue': '我的帳戶' },
     'profile.logout': { 'zh-Hant': '登出帳號', 'en': 'Log Out', 'yue': '登出帳號' },
     'profile.tabInfo': { 'zh-Hant': '個人資料', 'en': 'Profile', 'yue': '個人資料' },
     'profile.tabPassword': { 'zh-Hant': '更改登入密碼', 'en': 'Change Password', 'yue': '改登入密碼' },
@@ -1836,12 +1836,25 @@
     'qa.photosRemovedNote': { 'zh-Hant': '部分相片因可能含有不當內容，已被系統移除。', 'en': 'Some photos were removed by the system because they may contain inappropriate content.', 'yue': '部分相片可能有唔適當內容，已經俾系統移除。' },
     'srv.e132': { 'zh-Hant': '相片檢測服務暫時無法使用，請稍後再試', 'en': 'The photo check service is temporarily unavailable. Please try again later.', 'yue': '相片檢測服務暫時用唔到，請稍後再試' },
     // v1.247.0：私隱政策更新日期
-    'legal.privacyDates': { 'zh-Hant': '生效日期：2026 年 9 月 1 日　最後更新日期：2026 年 11 月 23 日', 'en': 'Effective date: 1 September 2026   Last updated: 23 November 2026', 'yue': '生效日期：2026 年 9 月 1 日　最後更新日期：2026 年 11 月 23 日' },
+    'legal.privacyDates': { 'zh-Hant': '生效日期：2026 年 9 月 1 日　最後更新日期：2026 年 11 月 24 日', 'en': 'Effective date: 1 September 2026   Last updated: 24 November 2026', 'yue': '生效日期：2026 年 9 月 1 日　最後更新日期：2026 年 11 月 24 日' },
     // v1.248.0：同意接收補習資訊
     'profile.tutorOptInTitle': { 'zh-Hant': '我願意接收補習導師及補習社的資訊', 'en': 'I\'d like to receive information about tutors and tutoring centres', 'yue': '我願意收補習導師同補習社嘅資訊' },
-    'profile.tutorOptInHint': { 'zh-Hant': '勾選後，本平台日後或會按你的地區、年級及科目，在平台內向你提供經審核的補習導師及補習社資訊。你的個人資料不會提供予導師或補習社。你可隨時取消勾選。此設定即時生效。', 'en': 'If ticked, we may in future show you information about vetted tutors and tutoring centres on the platform, based on your district, grade and subjects. Your personal data will not be given to tutors or tutoring centres. You can untick this at any time. This setting takes effect immediately.', 'yue': '剔咗之後，平台日後可能會按你嘅地區、年級同科目，喺平台入面俾你睇經審核嘅補習導師同補習社資訊。你嘅個人資料唔會俾導師或者補習社。你隨時都可以取消。呢個設定即時生效。' },
+    'profile.tutorOptInHint': { 'zh-Hant': '勾選後，本平台日後或會按你的地區、年級及科目，在平台內向你提供經審核的補習導師、補習社及學習資源資訊。你的個人資料不會提供予導師或補習社。你可隨時取消勾選。此設定即時生效。', 'en': 'If ticked, we may in future show you information about vetted tutors, tutoring centres and learning resources on the platform, based on your district, grade and subjects. Your personal data will not be given to tutors or tutoring centres. You can untick this at any time. This setting takes effect immediately.', 'yue': '剔咗之後，平台日後可能會按你嘅地區、年級同科目，喺平台入面俾你睇經審核嘅補習導師、補習社同學習資源資訊。你嘅個人資料唔會俾導師或者補習社。你隨時都可以取消。呢個設定即時生效。' },
     'profile.tutorOptInOnToast': { 'zh-Hant': '已同意接收補習導師及補習社的資訊', 'en': 'You\'ll receive information about tutors and tutoring centres', 'yue': '已經同意收補習導師同補習社嘅資訊' },
     'profile.tutorOptInOffToast': { 'zh-Hant': '已取消接收補習導師及補習社的資訊', 'en': 'You\'ll no longer receive information about tutors and tutoring centres', 'yue': '已經取消收補習導師同補習社嘅資訊' },
+    // v1.249.0：註冊時補習資訊同意提示
+    'reg.tutorOptInShortHint': { 'zh-Hant': '日後可收到你所在地區的補習導師、補習社及學習資源資訊。可隨時在「我的帳戶」取消。', 'en': 'Get information about tutors, tutoring centres and learning resources in your district. You can cancel any time in "My Account".', 'yue': '日後可以收到你嗰區嘅補習導師、補習社同學習資源資訊。隨時可以喺「我的帳戶」取消。' },
+    'reg.optInNudgeTitle': { 'zh-Hant': '想收到附近的補習資訊嗎？', 'en': 'Want to hear about tutoring near you?', 'yue': '想唔想收到附近嘅補習資訊？' },
+    'reg.optInNudgeBody': { 'zh-Hant': '勾選後，日後可收到你所在地區經審核的補習導師、補習社及學習資源資訊，方便你找到合適的補習。你的個人資料不會提供予導師或補習社，亦可隨時在「我的帳戶」取消。', 'en': 'If you agree, you can get information about vetted tutors, tutoring centres and learning resources in your district, to help you find the right tutoring. Your personal data will not be given to tutors or tutoring centres, and you can cancel any time in "My Account".', 'yue': '剔咗之後，日後可以收到你嗰區經審核嘅補習導師、補習社同學習資源資訊，方便你搵啱嘅補習。你嘅個人資料唔會俾導師或者補習社，隨時都可以喺「我的帳戶」取消。' },
+    'reg.optInNudgeYes': { 'zh-Hant': '好，我想收到', 'en': 'Yes, I\'d like that', 'yue': '好，我想收' },
+    'reg.optInNudgeNo': { 'zh-Hant': '暫時不用，繼續註冊', 'en': 'Not now, continue', 'yue': '暫時唔使，繼續註冊' },
+    // v1.250.0：地區補習廣告
+    'ads.label': { 'zh-Hant': '廣告', 'en': 'Ad', 'yue': '廣告' },
+    'ads.previewTag': { 'zh-Hant': '管理員預覽（未開放）', 'en': 'Admin preview (not live)', 'yue': '管理員預覽（未開放）' },
+    'ads.learnMore': { 'zh-Hant': '了解更多', 'en': 'Learn more', 'yue': '了解多啲' },
+    'ads.nudgeTitle': { 'zh-Hant': '想收到更多你地區的補習資訊嗎？', 'en': 'Want more tutoring news from your district?', 'yue': '想唔想收到更多你嗰區嘅補習資訊？' },
+    'ads.nudgeBody': { 'zh-Hant': '同意後，日後有新的補習導師、補習社優惠或學習資源時，我們會在平台內通知你。你的個人資料不會提供予導師或補習社，亦可隨時在「我的帳戶」取消。', 'en': 'If you agree, we\'ll let you know on the platform when there are new tutors, tutoring centre offers or learning resources. Your personal data will not be given to tutors or tutoring centres, and you can cancel any time in "My Account".', 'yue': '同意之後，日後有新嘅補習導師、補習社優惠或者學習資源，我哋會喺平台入面通知你。你嘅個人資料唔會俾導師或者補習社，隨時都可以喺「我的帳戶」取消。' },
+    'ads.nudgeNo': { 'zh-Hant': '暫時不用', 'en': 'Not now', 'yue': '暫時唔使' },
   };
 
   // 目前語言：已登入用戶存喺 users/{uid} 文件嘅 language 欄位（跨裝置

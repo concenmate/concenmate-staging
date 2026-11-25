@@ -88,6 +88,7 @@
       else if (tab === 'streaming') renderAdminStreamingTab();
       else if (tab === 'schooldomains') window.renderAdminSchoolDomainsTab();
       else if (tab === 'mobileapp') window.renderAdminMobileAppTab();
+      else if (tab === 'tutorads') renderAdminTutorAdsTab();
     }
 
     function renderAdminGachaTab() {
@@ -3280,7 +3281,7 @@
 （十）舉報資料：舉報內容及相關佐證（包括截圖），於閣下提交舉報時收集；
 （十一）違規及停權紀錄：於本公司處理舉報時記錄；
 （十二）推送通知資料：如閣下於應用程式啟用推送通知，本公司會儲存閣下裝置之通知識別碼及閣下之通知設定；
-（十三）補習資訊同意紀錄：閣下是否同意接收補習導師及補習社之資訊，以及同意或取消之時間；
+（十三）補習資訊同意紀錄：閣下是否同意接收補習導師、補習社及學習資源之資訊，以及同意或取消之時間；
 （十四）技術資料：瀏覽器類型、裝置資訊、網際網路協定（IP）位址，以及程式錯誤報告，於閣下連接本服務時由基礎設施自動記錄。
 
 關於視訊及語音資料之特別聲明：本服務之視訊溫習室功能採用點對點即時通訊技術（WebRTC），使用者之鏡頭及咪高峰畫面一般於瀏覽器之間直接傳輸；如雙方無法直接連線，則會經 Cloudflare 之中轉伺服器以加密方式轉送。本服務之直播功能則經本公司租用之直播伺服器（由 Vultr 提供，位於日本）即時轉送直播主之鏡頭畫面予觀眾。上述影像及聲音均只作即時傳送，本公司不會錄製或儲存。本公司之資料庫僅用作交換建立連線所需之協調（signaling）訊息。
@@ -3297,7 +3298,9 @@
 （三）維護帳戶安全及防止濫用行為，包括偵測異常操作、審查上載之相片、處理舉報事宜，以及執行本公司服務條款所載之違規處理；
 （四）發送電郵驗證、學校電郵驗證及重設密碼訊息（詳見第七條），以及發送閣下已選擇接收之推送通知；
 （五）分析及改善本服務之功能與使用體驗，以及偵測及修正程式錯誤。
-直接促銷：本公司只會在取得閣下同意後，方會將閣下之個人資料用於直接促銷。如閣下於「我的帳戶」勾選「我願意接收補習導師及補習社的資訊」，本公司會使用閣下之地區、年級及科目，在本服務內向閣下提供經本公司審核之補習導師及補習社之服務資訊。本公司不會將閣下之個人資料提供予任何補習導師、補習社或其他第三方作直接促銷之用。閣下可隨時於「我的帳戶」取消勾選，或透過第十二條所載之聯絡方式通知本公司；本公司其後將停止將閣下之個人資料用於直接促銷，閣下無須支付任何費用。除上述情況外，本公司不會將閣下之個人資料用於任何其他直接促銷。
+直接促銷：本公司只會在取得閣下同意後，方會將閣下之個人資料用於直接促銷。如閣下於「我的帳戶」勾選「我願意接收補習導師及補習社的資訊」，本公司會使用閣下之地區、年級及科目，在本服務內向閣下提供經本公司審核之補習導師、補習社及學習資源之資訊。閣下可於註冊時或日後於「我的帳戶」選擇是否同意。本公司不會將閣下之個人資料提供予任何補習導師、補習社或其他第三方作直接促銷之用。閣下可隨時於「我的帳戶」取消勾選，或透過第十二條所載之聯絡方式通知本公司；本公司其後將停止將閣下之個人資料用於直接促銷，閣下無須支付任何費用。除上述情況外，本公司不會將閣下之個人資料用於任何其他直接促銷。
+
+廣告：本服務或會在部分頁面（例如溫習排行榜）顯示標明為「廣告」之補習服務廣告。此類廣告按該頁面所顯示之內容（例如所顯示之地區）選取，不會使用閣下之個人資料選取，本公司亦不會將閣下之個人資料提供予廣告客戶。廣告點擊次數只作整體統計，不會記錄點擊者身份。
 
 # 第五條　向其他使用者公開之資料
 為提供社交功能，下列資料會向本服務之其他使用者公開：閣下之顯示名稱、公開 ID、頭像、年級、喜愛及不喜愛之科目、累積溫習時數、經驗值、等級、帳戶類型，以及粉絲及追蹤人數。閣下之學校於個人檔案中只向閣下之好友顯示；惟如閣下已填寫學校，閣下之顯示名稱、頭像、年級及溫習時數會出現於所屬學校及地區之溫習排行榜，因此其他使用者可從排行榜得知閣下所屬之學校及地區。閣下之溫習相片預設只向閣下本人及閣下之好友顯示；如閣下於「我的帳戶」中將溫習相片設定為公開，則所有已登入之使用者均可查看。閣下於疑難解答區發佈之提問、回答及所附相片，會向所有已登入之使用者公開。
@@ -3582,6 +3585,215 @@
         if (typeof window.logAdminAction === 'function') window.logAdminAction(show ? '開啟功能' : '關閉功能', { feature: id, label });
       } catch (e) {
         if (input) input.checked = !show;
+        window.showToast(window.t('admin.s138', '儲存失敗：') + (e.message || e), '');
+      } finally {
+        if (input) input.disabled = false;
+      }
+    };
+
+    // ===================== 地區補習廣告（v1.250.0） =====================
+    // 廣告存喺 tutorAds 集合；圖片上載去 Storage 的 tutor_ads/。
+    // 總開關：admin_config/navVisibility.adsEnabled（預設關閉，關閉時只有管理員喺排行榜見到預覽）。
+    let adminTutorAdsList = [];
+    let adminTutorAdEditing = null; // null = 未開表格；{} = 新增；{id,...} = 編輯
+    const tA = (k, d) => window.t('adminAds.' + k, d);
+    function adEsc(v) { return (window.escapeHtml ? window.escapeHtml(v == null ? '' : String(v)) : String(v == null ? '' : v)); }
+
+    async function renderAdminTutorAdsTab() {
+      const panel = document.getElementById('admin-tab-tutorads');
+      if (!panel) return;
+      panel.innerHTML = `<p style="text-align:center; color:#999; padding:20px;">${tA('loading', '載入中…')}</p>`;
+      try {
+        const snap = await window.fs.getDocs(window.fs.collection(window.db, 'tutorAds'));
+        adminTutorAdsList = snap.docs.map(d => Object.assign({ id: d.id }, d.data()))
+          .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+      } catch (e) {
+        panel.innerHTML = `<p style="color:#A33A2F; padding:20px;">${tA('loadFailed', '載入失敗：')}${adEsc(e.message || e)}</p>`;
+        return;
+      }
+      const enabled = window.tutorAdsEnabled === true;
+      const today = new Date().toISOString().slice(0, 10);
+      const translateDist = window.translateDistrictName || ((n) => n);
+      const rows = adminTutorAdsList.map(a => {
+        const ds = (a.districts || []).length ? a.districts.map(translateDist).join('、') : tA('allHk', '全港');
+        const expired = a.endDate && a.endDate < today;
+        const status = !a.active ? tA('statusOff', '已停用') : (expired ? tA('statusExpired', '已過期') : (a.startDate && a.startDate > today ? tA('statusScheduled', '未開始') : tA('statusOn', '刊登中')));
+        return `<div style="display:flex; gap:12px; align-items:flex-start; padding:10px 12px; border:1px solid #E9EDF5; border-radius:10px; background:#fff;">
+          <div style="flex:1; min-width:0;">
+            <div style="font-weight:bold; color:#29395C;">${adEsc(a.title)} <span style="font-size:12px; color:#888; font-weight:normal;">${adEsc(a.advertiser || '')}</span></div>
+            <div style="font-size:12px; color:#666; margin-top:2px;">${tA('colDistricts', '地區：')}${adEsc(ds)}　${tA('colDates', '日期：')}${adEsc(a.startDate || '—')} ~ ${adEsc(a.endDate || '—')}</div>
+            <div style="font-size:12px; color:#666;">${tA('colStatus', '狀態：')}<strong>${status}</strong>　${tA('colClicks', '點擊次數：')}${Number(a.clicks || 0)}</div>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:4px;">
+            <button class="btn btn-outline" style="padding:3px 10px; font-size:12px;" onclick="window.adminEditTutorAd(${JSON.stringify(a.id).replace(/"/g, '&quot;')})">${tA('edit', '編輯')}</button>
+            <button class="btn btn-outline" style="padding:3px 10px; font-size:12px; color:#A33A2F;" onclick="window.adminDeleteTutorAd(${JSON.stringify(a.id).replace(/"/g, '&quot;')})">${tA('delete', '刪除')}</button>
+          </div>
+        </div>`;
+      }).join('') || `<p style="color:#999; font-size:13px;">${tA('empty', '暫時未有廣告。')}</p>`;
+
+      panel.innerHTML = `
+        <div class="card" style="padding:16px;">
+          <h3 style="margin:0 0 6px;">${tA('title', '地區補習廣告')}</h3>
+          <p style="font-size:13px; color:#666; line-height:1.7; margin:0 0 12px;">${tA('intro', '廣告會顯示在溫習排行榜上方，按頁面正在顯示的地區選取（分區排行榜：所選地區；校內排行榜：該校地區；學校總排行榜：只顯示全港廣告），不會使用學生的個人資料選取。每頁最多顯示 2 個，並標明「廣告」。')}</p>
+          <label style="display:flex; align-items:center; gap:10px; padding:10px 14px; border:1px solid #E9EDF5; border-radius:10px; background:#F7FAFD; max-width:560px; cursor:pointer;">
+            <input type="checkbox" ${enabled ? 'checked' : ''} style="width:18px; height:18px;" onchange="window.adminSetTutorAdsEnabled(this.checked, this)">
+            <span style="flex:1;"><strong style="color:#29395C;">${tA('enableLabel', '對所有用戶開放地區廣告')}</strong><br><span style="font-size:12px; color:#888;">${tA('enableHint', '未開放時，只有管理員會在排行榜見到廣告預覽（標示「管理員預覽」）。')}</span></span>
+          </label>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin:16px 0 8px; max-width:720px;">
+            <strong style="color:#29395C;">${tA('listTitle', '廣告列表')}</strong>
+            <button class="btn btn-primary" style="padding:5px 14px; font-size:13px;" onclick="window.adminEditTutorAd(null)">${tA('add', '新增廣告')}</button>
+          </div>
+          <div id="admin-tutorads-form"></div>
+          <div style="display:flex; flex-direction:column; gap:8px; max-width:720px;">${rows}</div>
+        </div>`;
+      renderAdminTutorAdForm();
+    }
+
+    function renderAdminTutorAdForm() {
+      const box = document.getElementById('admin-tutorads-form');
+      if (!box) return;
+      const a = adminTutorAdEditing;
+      if (!a) { box.innerHTML = ''; return; }
+      const groups = window.HK_DISTRICT_REGION_GROUPS || [];
+      const translateDist = window.translateDistrictName || ((n) => n);
+      const sel = new Set(a.districts || []);
+      const distHtml = groups.map(g => `<div style="margin-bottom:6px;"><div style="font-size:12px; color:#888;">${adEsc(translateDist(g.region))}</div><div style="display:flex; flex-wrap:wrap; gap:4px 12px;">${
+        g.districts.map(d => `<label style="font-size:13px; display:flex; align-items:center; gap:4px;"><input type="checkbox" class="admin-ad-district" value="${adEsc(d)}" ${sel.has(d) ? 'checked' : ''}>${adEsc(translateDist(d))}</label>`).join('')
+      }</div></div>`).join('');
+      const img = window.safeImgSrc ? window.safeImgSrc(a.imageUrl) : '';
+      box.innerHTML = `
+        <div style="border:1px solid var(--brand-200); border-radius:12px; padding:14px; margin-bottom:14px; max-width:720px; background:#FBFCFE; display:flex; flex-direction:column; gap:10px;">
+          <strong style="color:#29395C;">${a.id ? tA('formEdit', '編輯廣告') : tA('formAdd', '新增廣告')}</strong>
+          <label style="font-size:13px;">${tA('fAdvertiser', '廣告客戶（只在後台顯示）')}<input id="ad-f-advertiser" class="input-field" maxlength="60" value="${adEsc(a.advertiser || '')}"></label>
+          <label style="font-size:13px;">${tA('fTitle', '標題 *')}<input id="ad-f-title" class="input-field" maxlength="40" value="${adEsc(a.title || '')}"></label>
+          <label style="font-size:13px;">${tA('fBody', '內容（最多 120 字）')}<textarea id="ad-f-body" class="input-field" rows="2" maxlength="120">${adEsc(a.body || '')}</textarea></label>
+          <label style="font-size:13px;">${tA('fContact', '聯絡方式（例如電話、WhatsApp）')}<input id="ad-f-contact" class="input-field" maxlength="60" value="${adEsc(a.contact || '')}"></label>
+          <label style="font-size:13px;">${tA('fLink', '連結（必須以 https:// 開頭，可留空）')}<input id="ad-f-link" class="input-field" maxlength="300" value="${adEsc(a.linkUrl || '')}" placeholder="https://"></label>
+          <div style="font-size:13px;">${tA('fDistricts', '顯示地區（全部不選 = 全港）')}<div style="margin-top:6px;">${distHtml}</div></div>
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <label style="font-size:13px; flex:1;">${tA('fStart', '開始日期')}<input id="ad-f-start" type="date" class="input-field" value="${adEsc(a.startDate || '')}"></label>
+            <label style="font-size:13px; flex:1;">${tA('fEnd', '結束日期')}<input id="ad-f-end" type="date" class="input-field" value="${adEsc(a.endDate || '')}"></label>
+          </div>
+          <div style="font-size:13px;">${tA('fImage', '圖片（可選，建議正方形）')}
+            <div style="display:flex; align-items:center; gap:10px; margin-top:6px;">
+              ${img ? `<img src="${img}" style="width:64px; height:64px; object-fit:cover; border-radius:8px;">` : ''}
+              <input type="file" accept="image/*" onchange="window.adminUploadTutorAdImage(this)">
+              ${img ? `<button type="button" class="btn btn-outline" style="padding:3px 10px; font-size:12px;" onclick="window.adminRemoveTutorAdImage()">${tA('removeImage', '移除圖片')}</button>` : ''}
+            </div>
+          </div>
+          <label style="font-size:13px; display:flex; align-items:center; gap:6px;"><input id="ad-f-active" type="checkbox" ${a.active !== false ? 'checked' : ''}>${tA('fActive', '刊登中（取消勾選即停用）')}</label>
+          <div style="display:flex; gap:8px; justify-content:flex-end;">
+            <button class="btn btn-outline" onclick="window.adminCancelTutorAd()">${window.t('common.cancel', '取消')}</button>
+            <button class="btn btn-primary" id="ad-f-save" onclick="window.adminSaveTutorAd()">${tA('save', '儲存廣告')}</button>
+          </div>
+        </div>`;
+    }
+
+    function collectTutorAdForm() {
+      const a = adminTutorAdEditing || {};
+      a.advertiser = (document.getElementById('ad-f-advertiser').value || '').trim();
+      a.title = (document.getElementById('ad-f-title').value || '').trim();
+      a.body = (document.getElementById('ad-f-body').value || '').trim();
+      a.contact = (document.getElementById('ad-f-contact').value || '').trim();
+      a.linkUrl = (document.getElementById('ad-f-link').value || '').trim();
+      a.startDate = document.getElementById('ad-f-start').value || '';
+      a.endDate = document.getElementById('ad-f-end').value || '';
+      a.active = document.getElementById('ad-f-active').checked;
+      a.districts = Array.from(document.querySelectorAll('.admin-ad-district')).filter(x => x.checked).map(x => x.value);
+      return a;
+    }
+
+    window.adminEditTutorAd = function(id) {
+      adminTutorAdEditing = id ? Object.assign({}, adminTutorAdsList.find(x => x.id === id) || {}) : { active: true, districts: [] };
+      renderAdminTutorAdForm();
+      const box = document.getElementById('admin-tutorads-form');
+      if (box && box.scrollIntoView) box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
+    window.adminCancelTutorAd = function() { adminTutorAdEditing = null; renderAdminTutorAdForm(); };
+
+    window.adminUploadTutorAdImage = async function(inputEl) {
+      if (!adminTutorAdEditing) return;
+      collectTutorAdForm();
+      const file = inputEl.files && inputEl.files[0];
+      if (!file || !file.type.startsWith('image/')) { window.showToast(window.t('admin.s110', '請選擇圖片檔案'), ''); return; }
+      try {
+        window.showToast(tA('uploading', '上載中…'), '');
+        const { blob, mimeType } = await compressImageFileToBlob(file, 400, 0.85);
+        const ext = mimeType === 'image/webp' ? 'webp' : (mimeType === 'image/png' ? 'png' : 'jpg');
+        const fileRef = window.storageApi.ref(window.storage, `tutor_ads/ad_${Date.now()}.${ext}`);
+        await window.storageApi.uploadBytes(fileRef, blob, { contentType: mimeType });
+        adminTutorAdEditing.imageUrl = await window.storageApi.getDownloadURL(fileRef);
+        renderAdminTutorAdForm();
+        window.showToast(tA('uploaded', '圖片已上載，請按「儲存廣告」'), '');
+      } catch (e) {
+        window.showToast(window.t('admin.s114', '圖片上傳失敗：') + (e.message || e), '');
+      }
+    };
+    window.adminRemoveTutorAdImage = function() {
+      if (!adminTutorAdEditing) return;
+      collectTutorAdForm();
+      adminTutorAdEditing.imageUrl = '';
+      renderAdminTutorAdForm();
+    };
+
+    window.adminSaveTutorAd = async function() {
+      const a = collectTutorAdForm();
+      if (!a.title) { window.showToast(tA('needTitle', '請填寫標題'), ''); return; }
+      if (a.linkUrl && !/^https:\/\/[^\s"'<>`]+$/i.test(a.linkUrl)) { window.showToast(tA('badLink', '連結必須以 https:// 開頭'), ''); return; }
+      if (a.startDate && a.endDate && a.endDate < a.startDate) { window.showToast(tA('badDates', '結束日期不可早於開始日期'), ''); return; }
+      const data = {
+        advertiser: a.advertiser, title: a.title, body: a.body, contact: a.contact, linkUrl: a.linkUrl,
+        districts: a.districts, startDate: a.startDate, endDate: a.endDate, active: !!a.active,
+        imageUrl: a.imageUrl || '', updatedAt: Date.now()
+      };
+      const btn = document.getElementById('ad-f-save');
+      if (btn) btn.disabled = true;
+      try {
+        if (a.id) {
+          await window.fs.updateDoc(window.fs.doc(window.db, 'tutorAds', a.id), data);
+        } else {
+          data.createdAt = Date.now();
+          data.clicks = 0;
+          await window.fs.addDoc(window.fs.collection(window.db, 'tutorAds'), data);
+        }
+        if (typeof window.logAdminAction === 'function') window.logAdminAction(a.id ? '修改廣告' : '新增廣告', { title: a.title, advertiser: a.advertiser });
+        adminTutorAdEditing = null;
+        if (window.clearTutorAdsCache) window.clearTutorAdsCache();
+        window.showToast(tA('saved', '廣告已儲存'), '');
+        renderAdminTutorAdsTab();
+      } catch (e) {
+        window.showToast(window.t('admin.s138', '儲存失敗：') + (e.message || e), '');
+        if (btn) btn.disabled = false;
+      }
+    };
+
+    window.adminDeleteTutorAd = async function(id) {
+      const a = adminTutorAdsList.find(x => x.id === id);
+      if (!a || !confirm(tA('confirmDelete', '確定刪除此廣告？刪除後無法復原。'))) return;
+      try {
+        await window.fs.deleteDoc(window.fs.doc(window.db, 'tutorAds', id));
+        if (typeof window.logAdminAction === 'function') window.logAdminAction('刪除廣告', { title: a.title, advertiser: a.advertiser || '' });
+        if (window.clearTutorAdsCache) window.clearTutorAdsCache();
+        window.showToast(tA('deleted', '廣告已刪除'), '');
+        renderAdminTutorAdsTab();
+      } catch (e) {
+        window.showToast(window.t('admin.s138', '儲存失敗：') + (e.message || e), '');
+      }
+    };
+
+    window.adminSetTutorAdsEnabled = async function(on, input) {
+      if (!(window.isCurrentUserSuperAdmin && window.isCurrentUserSuperAdmin())) { window.showToast(window.t('admin.s608', '只有超級管理員可以修改此設定'), ''); if (input) input.checked = !on; return; }
+      if (on && !confirm(tA('confirmEnable', '開放後，所有用戶都會在溫習排行榜見到廣告。確定開放？'))) { if (input) input.checked = false; return; }
+      if (input) input.disabled = true;
+      try {
+        await window.fs.setDoc(window.fs.doc(window.db, 'admin_config', 'navVisibility'), {
+          adsEnabled: !!on, updatedAt: Date.now(), updatedBy: window.currentUser ? window.currentUser.email : null
+        }, { merge: true });
+        window.tutorAdsEnabled = !!on;
+        window.showToast(on ? tA('enabledToast', '已對所有用戶開放地區廣告') : tA('disabledToast', '已關閉地區廣告（只限管理員預覽）'), '');
+        if (typeof window.logAdminAction === 'function') window.logAdminAction(on ? '開放地區廣告' : '關閉地區廣告', null);
+      } catch (e) {
+        if (input) input.checked = !on;
         window.showToast(window.t('admin.s138', '儲存失敗：') + (e.message || e), '');
       } finally {
         if (input) input.disabled = false;

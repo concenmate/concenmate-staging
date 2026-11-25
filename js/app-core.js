@@ -1283,7 +1283,10 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
           hours: "0.0",
           points: 0,
           exp: 0,
-          createdAt: new Date().toISOString()
+          createdAt: new Date().toISOString(),
+          // v1.249.0：註冊時是否同意接收補習資訊（記低同意時間作紀錄）
+          tutorInfoOptIn: profileData.tutorInfoOptIn === true,
+          tutorInfoOptInAt: Date.now()
           // v1.239.0：學歷改為註冊後在「完成個人資料」填寫，屆時由伺服器記錄本學年已確認
         };
 
@@ -2140,6 +2143,8 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
       if (tutorHint) tutorHint.style.display = isTutor ? 'block' : 'none';
       const verifyNotice = document.getElementById('reg-student-verify-notice');
       if (verifyNotice) verifyNotice.style.display = isTutor ? 'none' : 'block';
+      const optInWrap = document.getElementById('reg-tutor-info-optin-wrap');
+      if (optInWrap) optInWrap.style.display = isTutor ? 'none' : 'flex';
 
       const schoolInput = document.getElementById('reg-school');
       const gradeInput = document.getElementById('reg-grade');
@@ -2234,9 +2239,19 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
       const isSecondaryStudent = false;
 
       if (accountType === 'student') {
-        window.registerWithFirebase(loginId, password, {
-          accountType, username, contactEmail, birthYear, birthMonth, isSecondaryStudent
+        // v1.249.0：未剔「接收補習資訊」→ 溫和提示一次（兩個選擇都會繼續註冊，唔會擋住）
+        const optInEl = document.getElementById('reg-tutor-info-optin');
+        const doRegister = (optIn) => window.registerWithFirebase(loginId, password, {
+          accountType, username, contactEmail, birthYear, birthMonth, isSecondaryStudent,
+          tutorInfoOptIn: !!optIn
         });
+        if (optInEl && !optInEl.checked && !window.__regOptInNudged && typeof window.openModal === 'function' && document.getElementById('modal-reg-optin-nudge')) {
+          window.__regOptInNudged = true;
+          window.__regOptInContinue = doRegister;
+          window.openModal('modal-reg-optin-nudge');
+          return;
+        }
+        doRegister(optInEl && optInEl.checked);
       } else {
         const tutorBio = document.getElementById('reg-tutor-bio').value.trim();
         const tutorSubjectsRaw = document.getElementById('reg-tutor-subjects').value.trim();
@@ -2250,6 +2265,15 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
           birthYear, birthMonth, isSecondaryStudent
         });
       }
+    };
+
+    window.resolveRegOptInNudge = function(optIn) {
+      if (typeof window.closeModal === 'function') window.closeModal('modal-reg-optin-nudge');
+      const optInEl = document.getElementById('reg-tutor-info-optin');
+      if (optInEl) optInEl.checked = !!optIn;
+      const cont = window.__regOptInContinue;
+      window.__regOptInContinue = null;
+      if (typeof cont === 'function') cont(!!optIn);
     };
 
     window.handleLoginSubmit = async function(e) {

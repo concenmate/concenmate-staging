@@ -352,6 +352,8 @@
           (snap) => {
             const data = snap.exists() ? snap.data() : null;
             window.navHiddenFeatures = (data && data.hidden && typeof data.hidden === 'object') ? data.hidden : {};
+            // v1.250.0：地區補習廣告總開關（預設關閉；關閉時只有管理員見到預覽）
+            window.tutorAdsEnabled = !!(data && data.adsEnabled === true);
             try { localStorage.setItem(NAV_CACHE_KEY, JSON.stringify(window.navHiddenFeatures)); } catch (e) {}
             document.documentElement.classList.remove('nav-config-pending');
             window.applyNavVisibility();
@@ -500,6 +502,12 @@
     window.loadLeaderboardTab = async function() {
       if (!window.currentUser || !window.db || !window.fs) return;
       populateLeaderboardDistrictSelect();
+      if (typeof window.renderLeaderboardAds === 'function') {
+        const dSel = document.getElementById('lb-district-select');
+        const adDistrict = leaderboardMode === 'district' ? (dSel && dSel.value) :
+          (leaderboardMode === 'schoolInternal' ? (window.currentUser.district || '') : '');
+        window.renderLeaderboardAds(adDistrict);
+      }
       if (leaderboardMode === 'school') {
         await renderSchoolLeaderboard();
       } else if (leaderboardMode === 'schoolInternal') {
@@ -3325,6 +3333,86 @@
       return window.fs.doc(window.db, 'publicProfiles', uid);
     };
     window.safeImgSrc = safeImgSrc;
+
+    // ===================== v1.250.0：地區補習廣告 =====================
+    // 廣告跟「頁面內容」揀（排行榜正在顯示的地區），唔係跟學生個人資料揀：
+    // 分區排行榜 → 揀選中的地區；校內排行榜 → 該校所在地區；學校總排行榜 → 全港廣告。
+    // 廣告由超級管理員喺後台上載（tutorAds 集合）；總開關 admin_config/navVisibility.adsEnabled。
+    let tutorAdsCache = null, tutorAdsCacheAt = 0;
+    async function loadActiveTutorAds() {
+      if (tutorAdsCache && Date.now() - tutorAdsCacheAt < 10 * 60 * 1000) return tutorAdsCache;
+      const snap = await window.fs.getDocs(window.fs.query(window.fs.collection(window.db, 'tutorAds'), window.fs.where('active', '==', true)));
+      tutorAdsCache = snap.docs.map(d => Object.assign({ id: d.id }, d.data()));
+      tutorAdsCacheAt = Date.now();
+      return tutorAdsCache;
+    }
+    window.clearTutorAdsCache = function() { tutorAdsCache = null; };
+    function todayStr() {
+      const d = new Date();
+      return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+    }
+    window.renderLeaderboardAds = async function(district) {
+      const slot = document.getElementById('lb-ad-slot');
+      if (!slot) return;
+      const isAdmin = typeof window.isCurrentUserAdmin === 'function' && window.isCurrentUserAdmin();
+      if (!window.tutorAdsEnabled && !isAdmin) { slot.innerHTML = ''; slot.style.display = 'none'; return; }
+      let ads = [];
+      try { ads = await loadActiveTutorAds(); } catch (e) { slot.innerHTML = ''; slot.style.display = 'none'; return; }
+      const today = todayStr();
+      const matched = ads.filter(a => {
+        if (a.startDate && a.startDate > today) return false;
+        if (a.endDate && a.endDate < today) return false;
+        const ds = Array.isArray(a.districts) ? a.districts : [];
+        return ds.length === 0 || (district && ds.includes(district));
+      });
+      // 指定地區的廣告排前，其餘（全港）其後；同類隨機排列，最多顯示 2 個
+      matched.sort((x, y) => {
+        const xs = (x.districts || []).length ? 0 : 1, ys = (y.districts || []).length ? 0 : 1;
+        return xs - ys || Math.random() - 0.5;
+      });
+      const shown = matched.slice(0, 2);
+      if (!shown.length) { slot.innerHTML = ''; slot.style.display = 'none'; return; }
+      const preview = !window.tutorAdsEnabled && isAdmin;
+      slot.style.display = 'flex';
+      slot.innerHTML = shown.map(a => {
+        const img = safeImgSrc(a.imageUrl);
+        const hasLink = /^https:\/\/[^\s"'<>`]+$/i.test(a.linkUrl || '');
+        return `<div style="display:flex; gap:12px; align-items:flex-start; background:#fff; border:1px solid var(--brand-200); border-radius:12px; padding:10px 12px;">
+          ${img ? `<img src="${img}" alt="" loading="lazy" style="width:72px; height:72px; object-fit:cover; border-radius:8px; flex-shrink:0;">` : ''}
+          <div style="flex:1; min-width:0;">
+            <div style="display:flex; gap:6px; align-items:center; margin-bottom:2px;">
+              <span style="font-size:11px; color:#888; border:1px solid #ccc; border-radius:4px; padding:0 5px;">${escapeHtml(window.t('ads.label', '廣告'))}</span>
+              ${preview ? `<span style="font-size:11px; color:#8a6d1f; background:#FFF7E6; border-radius:4px; padding:0 5px;">${escapeHtml(window.t('ads.previewTag', '管理員預覽（未開放）'))}</span>` : ''}
+            </div>
+            <div style="font-weight:bold; font-size:14px; color:var(--brand-800);">${escapeHtml(a.title || '')}</div>
+            ${a.body ? `<div style="font-size:13px; color:#555; line-height:1.6; margin-top:2px;">${escapeHtml(a.body)}</div>` : ''}
+            ${a.contact ? `<div style="font-size:12px; color:#777; margin-top:4px;">${escapeHtml(a.contact)}</div>` : ''}
+            ${hasLink ? `<button type="button" class="btn btn-outline" style="margin-top:6px; padding:4px 12px; font-size:13px;" onclick="window.openTutorAd(${jsArg(a.id)})">${escapeHtml(window.t('ads.learnMore', '了解更多'))}</button>` : ''}
+          </div>
+        </div>`;
+      }).join('');
+    };
+    window.openTutorAd = function(adId) {
+      const ad = (tutorAdsCache || []).find(a => a.id === adId);
+      if (!ad || !/^https:\/\/[^\s"'<>`]+$/i.test(ad.linkUrl || '')) return;
+      window.open(ad.linkUrl, '_blank', 'noopener');
+      // 點擊次數（只係加 1，唔記錄邊個撳）
+      if (window.tutorAdsEnabled) {
+        window.fs.updateDoc(window.fs.doc(window.db, 'tutorAds', adId), { clicks: window.fs.increment(1) }).catch(() => {});
+      }
+      // 未同意接收補習資訊的學生：撳廣告後問一次（每部裝置一次）
+      const u = window.currentUser;
+      let asked = false;
+      try { asked = localStorage.getItem('cm_adOptInAsked') === '1'; } catch (e) {}
+      if (u && u.accountType !== 'tutor' && u.tutorInfoOptIn !== true && !asked && document.getElementById('modal-ad-optin-nudge')) {
+        try { localStorage.setItem('cm_adOptInAsked', '1'); } catch (e) {}
+        setTimeout(() => window.openModal && window.openModal('modal-ad-optin-nudge'), 600);
+      }
+    };
+    window.resolveAdOptInNudge = function(yes) {
+      if (typeof window.closeModal === 'function') window.closeModal('modal-ad-optin-nudge');
+      if (yes && typeof window.setTutorInfoOptIn === 'function') window.setTutorInfoOptIn(true);
+    };
 
     function formatTime(ts) {
       if (!ts) return '';

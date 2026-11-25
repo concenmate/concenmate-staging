@@ -150,7 +150,7 @@ window.ensureAdminPanelLoaded = function () {
       'gacha', 'level', 'icons', 'landing', 'scoring', 'roomsettings',
       'antiidle', 'announcement', 'adminlist', 'auditlog',
       'subjects', 'districts', 'schools', 'legal', 'snapshotbg', 'navmenu', 'turn', 'streaming',
-      'costs', 'lists', 'mobileapp'
+      'costs', 'lists', 'mobileapp', 'tutorads'
     ];
     // v1.228.0：合併顯示的分頁——撳一個分頁掣，會依次顯示多個原有的分頁內容
     const ADMIN_TAB_GROUPS = {
