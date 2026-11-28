@@ -6,7 +6,7 @@
        打開檔案唔使拉就見到，方便快速核對版本）
        ======================================== -->
   <script>
-    window.APP_VERSION = "v1.250.0"; // 每次推送 GitHub 前，喺呢度改版號
+    window.APP_VERSION = "v1.251.0"; // 每次推送 GitHub 前，喺呢度改版號
   </script>
 
   <!-- v1.227.8：全站確認／輸入視窗，取代瀏覽器原生 confirm()／prompt()，外觀同資訊卡一致。
@@ -2149,6 +2149,9 @@
         <p data-i18n="html.s11" style="font-size:13px; color:#999; margin-top:16px;">收不到郵件？請檢查垃圾郵件夾，或按「重新發送」。</p>
       </div>
 
+      <!-- v1.251.0：註冊第 4 步——中學生必須以學校電郵驗證碼完成驗證（內容由 renderSchoolVerifyGate 產生） -->
+      <div id="school-verify-screen" class="auth-wall-container" style="display:none;"></div>
+
       <div id="authenticated-app-content">
 
         <!-- ===== 主頁 ===== -->
@@ -3428,123 +3431,120 @@
   <div class="modal-backdrop" id="modal-register" style="display:none;">
     <div class="modal-box">
       <h3 style="font-size:18px; font-weight:bold; color:var(--brand-800); text-align:center;" data-i18n="auth.registerTitle">註冊 ConcenMate 會員</h3>
-      <!-- v1.236.0：Google 註冊／登入（只在網站顯示；App 版待上架前加入） -->
-      <div class="cm-web-only" id="reg-google-entry" style="margin-top:12px;">
-        <button type="button" class="btn btn-outline cm-google-btn" onclick="window.signInWithGoogle && window.signInWithGoogle()" style="width:100%; justify-content:center; gap:10px; background:#fff;"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg><span data-i18n="auth.googleRegisterBtn">使用 Google 帳戶註冊</span></button>
-        <div style="display:flex; align-items:center; gap:10px; margin:12px 0 0; color:#9AA3B5; font-size:12px;"><span style="flex:1; height:1px; background:var(--brand-200);"></span><span data-i18n="auth.orUseAccountId">或使用帳號 ID</span><span style="flex:1; height:1px; background:var(--brand-200);"></span></div>
+      <!-- v1.251.0：註冊分步驟（1 登入方式 → 2 身份 → 3 基本資料 → 4 學校電郵驗證〔只限中學生，註冊後進行〕） -->
+      <div id="reg-progress" style="margin-top:10px;">
+        <div style="font-size:12px; color:#6B7894; text-align:center;" id="reg-progress-text">第 1 步，共 3 步</div>
+        <div style="height:6px; background:var(--brand-100); border-radius:4px; margin-top:4px; overflow:hidden;"><div id="reg-progress-bar" style="height:100%; width:33%; background:var(--brand-500); border-radius:4px; transition:width .25s;"></div></div>
       </div>
-      <!-- Google 帳戶完成註冊模式：顯示正在使用的 Google 電郵（由 app-core.js 的 openGoogleCompleteRegistration 開啟） -->
       <div id="reg-google-banner" style="display:none; margin-top:12px; padding:10px 12px; border:1px solid var(--brand-200); border-radius:10px; font-size:13px; line-height:1.7; color:var(--brand-800);"></div>
 
-      <!-- 帳號類型：學生／導師 兩邊，一開始註冊就要揀，唔係先開學生
-           帳號再事後申請升級。揀「導師」嗰邊會直接喺呢個表格入面收埋
-           導師申請所需嘅資料（自我介紹、想教嘅科目），註冊成功嗰刻
-           就會即刻連同申請一齊送出，之後帳戶會以「導師身份審批中」
-           嘅狀態運作（審批批准之前，功能同學生帳戶一樣，唔會因為
-           揀咗導師就即刻解鎖導師後台）。見 window.setRegisterAccountType()。 -->
-      <div style="display:flex; gap:8px; margin-top:12px;">
-        <button type="button" id="reg-type-student-btn" class="btn btn-primary" style="flex:1; justify-content:center;" data-i18n="auth.iAmStudentBtn" onclick="setRegisterAccountType('student')">我是學生</button>
-        <button type="button" id="reg-type-tutor-btn" class="btn btn-outline" style="flex:1; justify-content:center;" data-i18n="auth.iAmTutorBtn" onclick="setRegisterAccountType('tutor')">我是導師</button>
-      </div>
-      <p id="reg-type-tutor-hint" style="display:none; font-size:13px; color:#8a6d1f; background:#FFF7E6; border:1px solid #F0D9A0; border-radius:8px; padding:8px 10px; margin-top:8px;" data-i18n="auth.tutorPendingHint">導師帳號需要管理員審批，通過之前可以正常以學生身份使用平台其他功能，審批結果會在「我的帳戶」顯示。</p>
-
-      <form onsubmit="handleRegisterSubmit(event)" style="display:flex; flex-direction:column; gap:10px; margin-top:10px;">
+      <form onsubmit="handleRegisterSubmit(event)" novalidate style="display:flex; flex-direction:column; gap:10px; margin-top:12px;">
         <input type="hidden" id="reg-account-type" value="student">
 
-        <div>
-          <label style="font-size:13px; font-weight:bold; color:#555;" data-i18n="auth.nicknameLabel">暱稱（顯示用）*</label>
-          <input type="text" id="reg-username" class="input-field" required maxlength="30" placeholder="例如：Alex Wong" data-i18n-placeholder="profile.usernamePlaceholder">
-        </div>
-
-        <div>
-          <label style="font-size:13px; font-weight:bold; color:#555;" data-i18n="auth.regAccountIdLabel">帳號 ID（登入用）*</label>
-          <input type="text" autocapitalize="none" autocorrect="off" spellcheck="false" autocomplete="username" inputmode="latin" lang="en" id="reg-account-id" class="input-field" required placeholder="例如：alex_wong2026" pattern="[A-Za-z0-9_]{3,20}" maxlength="20" data-i18n-placeholder="auth.regAccountIdPlaceholder">
-        </div>
-
-        <div class="reg-pw-field">
-          <label style="font-size:13px; font-weight:bold; color:#555;"><span data-i18n="auth.setPasswordLabel">設定密碼 *</span> <span style="font-weight:normal; color:#999; font-size:12px;" data-i18n="auth.atLeast6CharsHint">（至少 6 位）</span></label>
-          <input type="password" id="reg-password" class="input-field" required placeholder="請輸入密碼" data-i18n-placeholder="auth.passwordPlaceholder" oninput="window.checkRegisterPasswordMatch && window.checkRegisterPasswordMatch()">
-        </div>
-
-        <div class="reg-pw-field">
-          <label style="font-size:13px; font-weight:bold; color:#555;" data-i18n="auth.confirmPasswordRegLabel">確認密碼 *</label>
-          <input type="password" id="reg-password-confirm" class="input-field" required placeholder="請再次輸入相同的密碼" data-i18n-placeholder="auth.confirmPasswordRegPlaceholder" oninput="window.checkRegisterPasswordMatch && window.checkRegisterPasswordMatch()">
-          <p id="reg-password-mismatch-hint" style="display:none; font-size:13px; color:#c0392b; margin-top:4px;" data-i18n="auth.passwordMismatchHint">兩次輸入的密碼不一致，請重新確認</p>
-        </div>
-
-        <!-- 出生年月：唔記錄「日」，純粹用嚟計返約數年齡顯示，畀學生
-             參考。呢個欄位唔會即時用嚟限制邊個可以用邊種溫習室（因為
-             有學生可能留班／遲入學，中五、中六都可能已經 18 歲），純粹
-             留為日後身份驗證用途。學生／導師帳號都要填，唔跟住
-             #register-student-fields／#register-tutor-fields 嗰兩組
-             顯隱切換。 -->
-        <div>
-          <label style="font-size:13px; font-weight:bold; color:#555;" data-i18n="auth.birthDateLabel">出生年月 *</label>
-          <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
-            <select id="reg-birth-year" class="input-field" required style="flex:1; min-width:90px;" onchange="window.updateRegBirthAgeDisplay && window.updateRegBirthAgeDisplay()">
-              <option value="" data-i18n="auth.yearOption">年</option>
-            </select>
-            <select id="reg-birth-month" class="input-field" required style="flex:1; min-width:80px;" onchange="window.updateRegBirthAgeDisplay && window.updateRegBirthAgeDisplay()">
-              <option value="" data-i18n="auth.monthOption">月</option>
-            </select>
-            <span id="reg-birth-age-display" style="font-size:13px; color:#999; white-space:nowrap;"></span>
+        <!-- ===== 第 1 步：註冊方式 ===== -->
+        <div id="reg-step-1" class="reg-step" style="display:flex; flex-direction:column; gap:10px;">
+          <div style="font-size:15px; font-weight:bold; color:var(--brand-800);" data-i18n="reg.step1Title">選擇註冊方式</div>
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <div class="cm-web-only" id="reg-google-entry" style="flex:1; min-width:180px; display:flex;">
+              <button type="button" class="btn btn-outline cm-google-btn" onclick="window.signInWithGoogle && window.signInWithGoogle()" style="width:100%; min-height:52px; justify-content:center; gap:10px; background:#fff;"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg><span data-i18n="auth.googleRegisterBtn">使用 Google 帳戶註冊</span></button>
+            </div>
+            <button type="button" id="reg-method-id-btn" class="btn btn-outline" style="flex:1; min-width:180px; min-height:52px; justify-content:center;" onclick="window.regChooseIdMethod && window.regChooseIdMethod()" data-i18n="reg.methodIdBtn">用帳號 ID 及密碼註冊</button>
+          </div>
+          <div id="reg-id-fields" style="display:none; flex-direction:column; gap:10px;">
+            <div id="reg-account-id-wrap">
+              <label style="font-size:13px; font-weight:bold; color:#555;" data-i18n="auth.regAccountIdLabel">帳號 ID（登入用）*</label>
+              <input type="text" autocapitalize="none" autocorrect="off" spellcheck="false" autocomplete="username" inputmode="latin" lang="en" id="reg-account-id" class="input-field" placeholder="例如：alex_wong2026" pattern="[A-Za-z0-9_]{3,20}" maxlength="20" data-i18n-placeholder="auth.regAccountIdPlaceholder">
+            </div>
+            <div class="reg-pw-field">
+              <label style="font-size:13px; font-weight:bold; color:#555;"><span data-i18n="auth.setPasswordLabel">設定密碼 *</span> <span style="font-weight:normal; color:#999; font-size:12px;" data-i18n="auth.atLeast6CharsHint">（至少 6 位）</span></label>
+              <input type="password" id="reg-password" class="input-field" placeholder="請輸入密碼" autocomplete="new-password" data-i18n-placeholder="auth.passwordPlaceholder" oninput="window.checkRegisterPasswordMatch && window.checkRegisterPasswordMatch()">
+            </div>
+            <div class="reg-pw-field">
+              <label style="font-size:13px; font-weight:bold; color:#555;" data-i18n="auth.confirmPasswordRegLabel">確認密碼 *</label>
+              <input type="password" id="reg-password-confirm" class="input-field" placeholder="請再次輸入相同的密碼" autocomplete="new-password" data-i18n-placeholder="auth.confirmPasswordRegPlaceholder" oninput="window.checkRegisterPasswordMatch && window.checkRegisterPasswordMatch()">
+              <p id="reg-password-mismatch-hint" style="display:none; font-size:13px; color:#c0392b; margin-top:4px;" data-i18n="auth.passwordMismatchHint">兩次輸入的密碼不一致，請重新確認</p>
+            </div>
           </div>
         </div>
 
-        <!-- v1.239.0：學生的年級、是否中學生、學校、喜愛／討厭學科已移到
-             「完成個人資料」視窗（#modal-complete-profile），註冊時毋須填寫 -->
-        <!-- v1.240.0：學生註冊提示——部分功能需要核實學生身份，鼓勵如實填寫年級及學校 -->
-        <div id="reg-student-verify-notice" style="font-size:13px; line-height:1.6; color:#8a6d1f; background:#FFF7E6; border:1px solid #F0D9A0; border-radius:10px; padding:10px 12px;" data-i18n="reg.studentVerifyNotice">請注意：部分功能及活動（例如中學生溫習室）需要核實學生身份才可參與，溫習排行榜亦會按你的年級及學校分類。註冊後請如實填寫年級及學校，資料不正確可能無法使用這些功能。</div>
-        <!-- 導師專用欄位（導師申請資料）：揀「學生」嗰陣會隱藏並取消 required -->
-        <div id="register-tutor-fields" style="display:none;">
+        <!-- ===== 第 2 步：身份 ===== -->
+        <div id="reg-step-2" class="reg-step" style="display:none; flex-direction:column; gap:10px;">
+          <div style="font-size:15px; font-weight:bold; color:var(--brand-800);" data-i18n="reg.step2Title">你是？</div>
+          <button type="button" class="reg-identity-card" data-identity="secondary" onclick="window.regChooseIdentity && window.regChooseIdentity('secondary')" style="text-align:left; padding:12px 14px; border:1.5px solid var(--brand-200); border-radius:12px; background:#fff; cursor:pointer;">
+            <div style="font-size:15px; font-weight:bold; color:var(--brand-800);" data-i18n="reg.idSecondary">中學生</div>
+            <div style="font-size:12px; color:#6B7894; margin-top:2px;" data-i18n="reg.idSecondaryHint">部分功能只限中學生，需要以學校電郵驗證</div>
+          </button>
+          <button type="button" class="reg-identity-card" data-identity="other" onclick="window.regChooseIdentity && window.regChooseIdentity('other')" style="text-align:left; padding:12px 14px; border:1.5px solid var(--brand-200); border-radius:12px; background:#fff; cursor:pointer;">
+            <div style="font-size:15px; font-weight:bold; color:var(--brand-800);" data-i18n="reg.idOther">大學生或其他</div>
+          </button>
+          <button type="button" class="reg-identity-card" data-identity="tutor" onclick="window.regChooseIdentity && window.regChooseIdentity('tutor')" style="text-align:left; padding:12px 14px; border:1.5px solid var(--brand-200); border-radius:12px; background:#fff; cursor:pointer;">
+            <div style="font-size:15px; font-weight:bold; color:var(--brand-800);" data-i18n="reg.idTutor">導師</div>
+            <div style="font-size:12px; color:#6B7894; margin-top:2px;" data-i18n="reg.idTutorHint">需要管理員審批</div>
+          </button>
+        </div>
+
+        <!-- ===== 第 3 步：基本資料 ===== -->
+        <div id="reg-step-3" class="reg-step" style="display:none; flex-direction:column; gap:10px;">
+          <div style="font-size:15px; font-weight:bold; color:var(--brand-800);" data-i18n="reg.step3Title">基本資料</div>
+          <div id="reg-step3-id-slot"></div>
           <div>
-            <label style="font-size:13px; font-weight:bold; color:#555;" data-i18n="auth.tutorBioLabel">自我介紹</label>
-            <textarea id="reg-tutor-bio" class="input-field" rows="3" maxlength="500" placeholder="簡單介紹自己的教學背景、經驗" data-i18n-placeholder="auth.tutorBioPlaceholder" style="width:100%; resize:vertical;"></textarea>
+            <label style="font-size:13px; font-weight:bold; color:#555;" data-i18n="auth.nicknameLabel">暱稱（顯示用）*</label>
+            <input type="text" id="reg-username" class="input-field" maxlength="30" placeholder="例如：Alex Wong" data-i18n-placeholder="profile.usernamePlaceholder">
           </div>
-
-          <div style="margin-top:10px;">
-            <label style="font-size:13px; font-weight:bold; color:#555;" data-i18n="auth.tutorSubjectsLabel">想教的科目 *（可選多科，亦可自行輸入）</label>
-            <div id="reg-tutor-subjects-picker"></div>
-            <input type="hidden" id="reg-tutor-subjects">
+          <div>
+            <label style="font-size:13px; font-weight:bold; color:#555;" data-i18n="auth.birthDateLabel">出生年月 *</label>
+            <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+              <select id="reg-birth-year" class="input-field" style="flex:1; min-width:90px;" onchange="window.updateRegBirthAgeDisplay && window.updateRegBirthAgeDisplay()">
+                <option value="" data-i18n="auth.yearOption">年</option>
+              </select>
+              <select id="reg-birth-month" class="input-field" style="flex:1; min-width:80px;" onchange="window.updateRegBirthAgeDisplay && window.updateRegBirthAgeDisplay()">
+                <option value="" data-i18n="auth.monthOption">月</option>
+              </select>
+              <span id="reg-birth-age-display" style="font-size:13px; color:#999; white-space:nowrap;"></span>
+            </div>
+          </div>
+          <div class="reg-email-field" id="reg-contact-email-wrap">
+            <label style="font-size:13px; font-weight:bold; color:#555;" data-i18n="auth.contactEmailLabel">電郵地址 *</label>
+            <input type="email" id="reg-contact-email" class="input-field" placeholder="example@gmail.com" data-i18n-placeholder="reg.contactEmailPlaceholder">
+            <p id="reg-contact-email-hint" style="font-size:12px; color:#999; margin-top:4px;" data-i18n="reg.contactEmailShortHint">註冊後會寄出驗證電郵</p>
+          </div>
+          <div id="register-tutor-fields" style="display:none;">
+            <div>
+              <label style="font-size:13px; font-weight:bold; color:#555;" data-i18n="auth.tutorBioLabel">自我介紹</label>
+              <textarea id="reg-tutor-bio" class="input-field" rows="3" maxlength="500" placeholder="簡單介紹自己的教學背景、經驗" data-i18n-placeholder="auth.tutorBioPlaceholder" style="width:100%; resize:vertical;"></textarea>
+            </div>
+            <div style="margin-top:10px;">
+              <label style="font-size:13px; font-weight:bold; color:#555;" data-i18n="auth.tutorSubjectsLabel">想教的科目 *（可選多科，亦可自行輸入）</label>
+              <div id="reg-tutor-subjects-picker"></div>
+              <input type="hidden" id="reg-tutor-subjects">
+            </div>
+          </div>
+          <div id="reg-tutor-info-optin-wrap" style="display:flex; align-items:flex-start; gap:8px; background:#F5F7F8; border-radius:10px; padding:10px 12px;">
+            <input type="checkbox" id="reg-tutor-info-optin" style="margin-top:3px; flex-shrink:0; width:16px; height:16px;">
+            <label for="reg-tutor-info-optin" style="font-size:13px; color:#555; line-height:1.6;">
+              <span style="font-weight:bold; display:block;" data-i18n="profile.tutorOptInTitle">我願意接收補習導師及補習社的資訊</span>
+            </label>
+          </div>
+          <div style="display:flex; align-items:flex-start; gap:8px; background:#F5F7F8; border-radius:10px; padding:10px 12px;">
+            <input type="checkbox" id="reg-agree-terms" style="margin-top:3px; flex-shrink:0; width:16px; height:16px;">
+            <label for="reg-agree-terms" style="font-size:13px; color:#555; line-height:1.6;">
+              <span data-i18n="auth.agreeTermsPrefix">我已閱讀並同意</span>
+              <span style="color:#3F588F; text-decoration:underline; cursor:pointer;" data-i18n="auth.termsLinkText" onclick="event.preventDefault(); typeof window.openModal==='function' && window.openModal('modal-terms');">《服務條款》</span>
+              <span data-i18n="auth.andConnector">及</span>
+              <span style="color:#3F588F; text-decoration:underline; cursor:pointer;" data-i18n="auth.privacyLinkText" onclick="event.preventDefault(); typeof window.openModal==='function' && window.openModal('modal-privacy-policy');">《私隱政策》</span>
+              *
+            </label>
           </div>
         </div>
 
-        <div class="reg-email-field">
-          <label style="font-size:13px; font-weight:bold; color:#555;" data-i18n="auth.contactEmailLabel">電郵地址 *</label>
-          <input type="email" id="reg-contact-email" class="input-field" required placeholder="example@school.edu.hk" data-i18n-placeholder="auth.contactEmailPlaceholder">
-          <p id="reg-contact-email-hint" style="font-size:13px; color:#999; margin-top:4px;" data-i18n="auth.contactEmailHint">不會用作登入，但需要進行電郵驗證：提交表格後會收到一封驗證電郵，請點擊當中的連結確認</p>
-        </div>
-
-        <!-- v1.249.0：同意接收補習資訊（只限學生帳號；預設唔剔，未剔會喺提交時溫和提示一次） -->
-        <div id="reg-tutor-info-optin-wrap" style="display:flex; align-items:flex-start; gap:8px; background:#F5F7F8; border-radius:10px; padding:10px 12px;">
-          <input type="checkbox" id="reg-tutor-info-optin" style="margin-top:3px; flex-shrink:0; width:16px; height:16px;">
-          <label for="reg-tutor-info-optin" style="font-size:13px; color:#555; line-height:1.6;">
-            <span style="font-weight:bold; display:block;" data-i18n="profile.tutorOptInTitle">我願意接收補習導師及補習社的資訊</span>
-            <span style="color:#888; display:block;" data-i18n="reg.tutorOptInShortHint">日後可收到你所在地區的補習導師、補習社及學習資源資訊。可隨時在「我的帳戶」取消。</span>
-          </label>
-        </div>
-
-        <!-- 同意條款：註冊前一定要剔選先可以提交（required），連結
-             會打開下面嘅 modal-terms／modal-privacy-policy（喺註冊視窗
-             之上再彈多一層，唔會令註冊視窗關閉、之前填嘅資料唔會
-             因此不見咗）。見 #10 審查報告：未成年使用者收集個人資料，
-             一定要有清晰嘅同意機制先可以正式對外。 -->
-        <div style="display:flex; align-items:flex-start; gap:8px; background:#F5F7F8; border-radius:10px; padding:10px 12px;">
-          <input type="checkbox" id="reg-agree-terms" required style="margin-top:3px; flex-shrink:0; width:16px; height:16px;">
-          <label for="reg-agree-terms" style="font-size:13px; color:#555; line-height:1.6;">
-            <span data-i18n="auth.agreeTermsPrefix">我已閱讀並同意</span>
-            <span style="color:#3F588F; text-decoration:underline; cursor:pointer;" data-i18n="auth.termsLinkText" onclick="event.preventDefault(); typeof window.openModal==='function' && window.openModal('modal-terms');">《服務條款》</span>
-            <span data-i18n="auth.andConnector">及</span>
-            <span style="color:#3F588F; text-decoration:underline; cursor:pointer;" data-i18n="auth.privacyLinkText" onclick="event.preventDefault(); typeof window.openModal==='function' && window.openModal('modal-privacy-policy');">《私隱政策》</span>
-            *
-          </label>
-        </div>
-
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px;">
-          <span style="font-size:13px; color:#3F588F; cursor:pointer;" data-i18n="auth.alreadyHaveAccountLink" onclick="typeof window.closeModal==='function' && window.closeModal('modal-register'); typeof window.openModal==='function' && window.openModal('modal-login');">已有帳號？點此登入</span>
-          <div style="display:flex; gap:6px;">
-            <button class="btn btn-outline" type="button" data-i18n="common.cancel" onclick="window.cancelRegister ? window.cancelRegister() : closeModal('modal-register')">取消</button>
-            <button class="btn btn-primary" type="submit" data-i18n="auth.registerSubmitBtn">完成註冊並登入</button>
+        <!-- 底部按鈕 -->
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; margin-top:6px; flex-wrap:wrap;">
+          <span id="reg-login-link" style="font-size:13px; color:#3F588F; cursor:pointer;" data-i18n="auth.alreadyHaveAccountLink" onclick="typeof window.closeModal==='function' && window.closeModal('modal-register'); typeof window.openModal==='function' && window.openModal('modal-login');">已有帳號？點此登入</span>
+          <div style="display:flex; gap:6px; margin-left:auto;">
+            <button class="btn btn-outline" type="button" id="reg-back-btn" style="display:none;" data-i18n="reg.backBtn" onclick="window.regGoBack && window.regGoBack()">上一步</button>
+            <button class="btn btn-outline" type="button" id="reg-cancel-btn" data-i18n="common.cancel" onclick="window.cancelRegister ? window.cancelRegister() : closeModal('modal-register')">取消</button>
+            <button class="btn btn-primary" type="button" id="reg-next-btn" style="display:none;" data-i18n="reg.nextBtn" onclick="window.regGoNext && window.regGoNext()">下一步</button>
+            <button class="btn btn-primary" type="submit" id="reg-submit-btn" style="display:none;" data-i18n="auth.registerSubmitBtn">完成註冊</button>
           </div>
         </div>
       </form>
@@ -4795,14 +4795,14 @@
   })();
   </script>
 
-  <script src="js/i18n.js?v=1.250.0"></script>
+  <script src="js/i18n.js?v=1.251.0"></script>
 
-  <script src="js/app-features.js?v=1.250.0"></script>
+  <script src="js/app-features.js?v=1.251.0"></script>
 
-  <script type="module" src="js/app-core.js?v=1.250.0"></script>
+  <script type="module" src="js/app-core.js?v=1.251.0"></script>
 
-  <script src="js/room-video.js?v=1.250.0"></script>
-  <script src="js/stream.js?v=1.250.0"></script>
+  <script src="js/room-video.js?v=1.251.0"></script>
+  <script src="js/stream.js?v=1.251.0"></script>
   <!-- 房主退出房間選擇彈窗 -->
   <div class="modal-backdrop" id="modal-host-leave" style="display:none;">
     <div class="modal-box" style="text-align:center;">
@@ -5073,7 +5073,7 @@
   </div>
 
   <!-- v1.244.0：管理後台（admin-panel.js）改為管理員先載入，見 site-config.js -->
-  <script src="js/site-config.js?v=1.250.0"></script>
+  <script src="js/site-config.js?v=1.251.0"></script>
   <!-- pdf.js：導師教材嘅 PDF 預覽（整份文件／學生視角）同教材卡嘅第一頁
        縮圖，都用呢個 library 自己畫落 <canvas>，唔再靠瀏覽器內建嘅PDF
        viewer（手機Safari個內建viewer塞喺iframe度揭唔到第二頁）。淨係
@@ -5100,7 +5100,7 @@
       return window._pdfJsLoading;
     };
   </script>
-  <script src="js/tutor-panel.js?v=1.250.0"></script>
+  <script src="js/tutor-panel.js?v=1.251.0"></script>
 
 </body>
 </html>
