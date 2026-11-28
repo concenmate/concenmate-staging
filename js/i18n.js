@@ -1863,6 +1863,7 @@
     'reg.idSecondaryHint': { 'zh-Hant': '以學校電郵驗證，即可解鎖中學生專屬溫習室及功能', 'en': 'Verify with your school email to unlock study rooms and features just for secondary students', 'yue': '用學校電郵驗證，就可以解鎖中學生專屬溫習室同功能' },
     'reg.idOther': { 'zh-Hant': '大學生或其他', 'en': 'University student or other', 'yue': '大學生或者其他' },
     'reg.idOtherHint': { 'zh-Hant': '以一般電郵驗證即可', 'en': 'Just verify with any email address', 'yue': '用一般電郵驗證就得' },
+    'auth.googleAlreadyRegistered': { 'zh-Hant': '此 Google 帳戶已經註冊，已為你直接登入', 'en': 'This Google account is already registered, so we\'ve signed you in', 'yue': '呢個 Google 帳戶已經註冊咗，已經幫你直接登入' },
     'reg.idTutor': { 'zh-Hant': '導師', 'en': 'Tutor', 'yue': '導師' },
     'reg.idTutorHint': { 'zh-Hant': '需要管理員審批', 'en': 'Needs admin approval', 'yue': '要管理員審批' },
     'reg.step3Title': { 'zh-Hant': '基本資料', 'en': 'Basic information', 'yue': '基本資料' },

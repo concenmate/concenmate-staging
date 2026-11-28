@@ -1151,7 +1151,8 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
       return !!(u && Array.isArray(u.providerData) && u.providerData.some(p => p && p.providerId === 'google.com'));
     }
     window.isGoogleAccount = function() { return isGoogleAuthUser(auth.currentUser); };
-    window.signInWithGoogle = async function() {
+    // v1.251.1：fromRegister＝喺註冊視窗撳；如果呢個 Google 帳戶已註冊，會直接登入並提示
+    window.signInWithGoogle = async function(fromRegister) {
       if (window.IS_NATIVE_APP) {
         window.showToast(window.t('auth.googleNotInApp', 'App 暫未支援 Google 登入，請使用帳號 ID 登入'), '');
         return;
@@ -1165,7 +1166,11 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
         const snap = await getDoc(doc(db, 'users', cred.user.uid)).catch(() => null);
         if (snap && snap.exists()) {
           window.closeModal('modal-register');
-          window.showToast(window.t('core.welcomeBack', '歡迎回來 ConcenMate！'), '');
+          if (fromRegister === 'register') {
+            window.showToast(window.t('auth.googleAlreadyRegistered', '此 Google 帳戶已經註冊，已為你直接登入'), '');
+          } else {
+            window.showToast(window.t('core.welcomeBack', '歡迎回來 ConcenMate！'), '');
+          }
           if (typeof window.switchTab === 'function') window.switchTab('home');
         }
       } catch (error) {
