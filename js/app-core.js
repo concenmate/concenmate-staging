@@ -1200,6 +1200,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
       ['reg-password', 'reg-password-confirm', 'reg-contact-email'].forEach(id => { const el = document.getElementById(id); if (el) el.required = true; });
       const banner = document.getElementById('reg-google-banner'); if (banner) banner.style.display = 'none';
       window.__googleRegUser = null;
+      if (typeof window.regWizardReset === 'function') window.regWizardReset();
     }
     // 取消註冊：Google 模式下要一併登出（未完成註冊的 Google 登入不保留）
     window.cancelRegister = async function() {
@@ -1286,12 +1287,22 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
           createdAt: new Date().toISOString(),
           // v1.249.0：註冊時是否同意接收補習資訊（記低同意時間作紀錄）
           tutorInfoOptIn: profileData.tutorInfoOptIn === true,
-          tutorInfoOptInAt: Date.now()
+          tutorInfoOptInAt: Date.now(),
+          // v1.251.0：揀咗中學生 → 要完成學校電郵驗證先可以使用（由伺服器驗證成功後清除）
+          ...(profileData.signupSecondary ? { signupVerifyRequired: true } : {})
           // v1.239.0：學歷改為註冊後在「完成個人資料」填寫，屆時由伺服器記錄本學年已確認
         };
 
         await setDoc(doc(db, "users", uid), newProfile);
         window.currentUser = newProfile;
+        // v1.251.0：中學生——即時把學歷設為中學生（伺服器再核對年齡），之後進入學校電郵驗證
+        if (profileData.signupSecondary) {
+          try {
+            const r = await window.callCloudFunction('confirmEducation', { isSecondary: true });
+            newProfile.isSecondaryStudent = true;
+            if (r && r.educationConfirmedYear) newProfile.educationConfirmedYear = r.educationConfirmedYear;
+          } catch (e) { console.error('註冊時設定中學生失敗（驗證頁會再試）:', e); }
+        }
 
         // 寄驗證電郵係「錦上添花」，就算寄唔到（例如 EmailJS 未設定、
         // 用戶網絡有問題）都唔應該擋住成個註冊流程，所以特登唔用
@@ -1330,6 +1341,10 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
           return;
         }
         window.updateUserAuthUI();
+        if (profileData.signupSecondary) {
+          window.showToast(window.t('reg.secondaryNextToast', '帳戶已建立！最後一步：驗證學校電郵'), '');
+          return;
+        }
         if (profileData.accountType === 'tutor') {
           if (tutorApplySucceeded) {
             window.showToast(window.t('core.registerSuccessTutorAppliedTemplate', `註冊成功！您的帳號 ID 是「${loginId}」。導師身份申請已經一併送出，請等候管理員審批，審批結果會在「我的帳戶」顯示`).replace('{id}', loginId), "🎓");
@@ -2183,6 +2198,101 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
       }
     };
 
+    // ===================== v1.251.0：註冊分步驟 =====================
+    // 1 註冊方式（Google／帳號 ID＋密碼）→ 2 身份（中學生／大學生或其他／導師）→ 3 基本資料
+    // → 4 學校電郵驗證碼（只限中學生，帳戶建立後喺 #school-verify-screen 進行，必須完成）
+    const regState = { step: 1, method: null, identity: null };
+    function regTotalSteps() { return regState.identity === 'secondary' ? 4 : 3; }
+    function regRender() {
+      const st = regState.step;
+      [1, 2, 3].forEach(n => { const el = document.getElementById('reg-step-' + n); if (el) el.style.display = (n === st) ? 'flex' : 'none'; });
+      const total = regTotalSteps();
+      const pt = document.getElementById('reg-progress-text');
+      if (pt) pt.textContent = window.t('reg.progress', '第 {n} 步，共 {total} 步').replace('{n}', st).replace('{total}', total);
+      const pb = document.getElementById('reg-progress-bar');
+      if (pb) pb.style.width = Math.round(st / total * 100) + '%';
+      const google = regState.method === 'google';
+      const back = document.getElementById('reg-back-btn');
+      if (back) back.style.display = (st === 3 || (st === 2 && !google)) ? '' : 'none';
+      const next = document.getElementById('reg-next-btn');
+      if (next) next.style.display = (st === 1 && regState.method === 'id') ? '' : 'none';
+      const submit = document.getElementById('reg-submit-btn');
+      if (submit) {
+        submit.style.display = st === 3 ? '' : 'none';
+        submit.textContent = regState.identity === 'secondary'
+          ? window.t('reg.submitSecondary', '下一步：驗證學校電郵')
+          : window.t('auth.registerSubmitBtn', '完成註冊');
+      }
+      const loginLink = document.getElementById('reg-login-link');
+      if (loginLink) loginLink.style.display = st === 1 ? '' : 'none';
+      // 第 3 步欄位：Google 註冊時帳號 ID 移到第 3 步；中學生毋須填聯絡電郵（驗證後的學校電郵即作聯絡電郵）
+      const idWrap = document.getElementById('reg-account-id-wrap');
+      const slot = document.getElementById('reg-step3-id-slot');
+      const idFields = document.getElementById('reg-id-fields');
+      if (idWrap && slot && idFields) {
+        if (google && idWrap.parentElement !== slot) slot.appendChild(idWrap);
+        if (!google && idWrap.parentElement !== idFields) idFields.insertBefore(idWrap, idFields.firstChild);
+      }
+      const emailWrap = document.getElementById('reg-contact-email-wrap');
+      if (emailWrap) emailWrap.style.display = (!google && regState.identity !== 'secondary') ? '' : 'none';
+      document.querySelectorAll('.reg-identity-card').forEach(c => {
+        const on = c.getAttribute('data-identity') === regState.identity;
+        c.style.borderColor = on ? 'var(--brand-500)' : 'var(--brand-200)';
+        c.style.background = on ? 'var(--brand-50, #F3F6FC)' : '#fff';
+      });
+    }
+    window.regWizardReset = function() {
+      regState.method = window.__googleRegUser ? 'google' : null;
+      regState.step = window.__googleRegUser ? 2 : 1;
+      regState.identity = null;
+      window.__regOptInNudged = false;
+      const idFields = document.getElementById('reg-id-fields');
+      if (idFields) idFields.style.display = 'none';
+      const idBtn = document.getElementById('reg-method-id-btn');
+      if (idBtn) idBtn.className = 'btn btn-outline';
+      regRender();
+    };
+    window.regChooseIdMethod = function() {
+      regState.method = 'id';
+      const idFields = document.getElementById('reg-id-fields');
+      if (idFields) idFields.style.display = 'flex';
+      const idBtn = document.getElementById('reg-method-id-btn');
+      if (idBtn) idBtn.className = 'btn btn-primary';
+      regRender();
+      const idInput = document.getElementById('reg-account-id');
+      if (idInput) idInput.focus();
+    };
+    window.regGoNext = async function() {
+      if (regState.step !== 1 || regState.method !== 'id') return;
+      const loginId = (document.getElementById('reg-account-id').value || '').trim();
+      const pw = document.getElementById('reg-password').value;
+      const pw2 = document.getElementById('reg-password-confirm').value;
+      if (!/^[A-Za-z0-9_]{3,20}$/.test(loginId)) { window.showToast(window.t('core.accountIdFormatInvalid', '帳號 ID 格式要是 3-20 個英文字母／數字／底線'), '⚠️'); return; }
+      if (!pw || pw.length < 6) { window.showToast(window.t('reg.passwordTooShort', '密碼最少要有 6 位'), '⚠️'); return; }
+      if (pw !== pw2) { window.checkRegisterPasswordMatch(); window.showToast(window.t('core.registerPasswordMismatch', '兩次輸入的密碼不一致，請重新確認'), '⚠️'); return; }
+      const next = document.getElementById('reg-next-btn');
+      if (next) next.disabled = true;
+      try {
+        const existing = await getDoc(doc(db, 'usernames', loginId.toLowerCase()));
+        if (existing.exists()) { window.showToast(window.t('core.accountIdTaken', '這個帳號 ID 已經有人使用，請更換一個'), '⚠️'); return; }
+      } catch (e) { /* 網絡問題：留待提交時再檢查 */ }
+      finally { if (next) next.disabled = false; }
+      regState.step = 2;
+      regRender();
+    };
+    window.regChooseIdentity = function(identity) {
+      regState.identity = identity;
+      window.setRegisterAccountType(identity === 'tutor' ? 'tutor' : 'student');
+      regState.step = 3;
+      regRender();
+    };
+    window.regGoBack = function() {
+      if (regState.step > 1) regState.step--;
+      if (regState.step === 1 && regState.method === 'google') regState.step = 2;
+      regRender();
+    };
+    window.getRegIdentity = function() { return regState.identity; };
+
     // 密碼／確認密碼即時對比：打緊字嗰陣就檢查，唔使等撳咗「註冊」
     // 先知道兩次密碼唔一致（見 index.html 個 oninput 掛勾）。確認密碼
     // 未打字之前唔顯示提示，避免一開始就嚇親用戶。
@@ -2218,7 +2328,14 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
         window.showToast(window.t('core.accountIdFormatInvalid', '帳號 ID 格式要是 3-20 個英文字母／數字／底線'), '⚠️');
         return;
       }
-      if (!googleMode && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactEmail)) {
+      // v1.251.0：分步驟註冊——手動檢查必填欄位（表格用 novalidate，避免瀏覽器停喺隱藏咗嘅步驟）
+      const identity = window.getRegIdentity ? window.getRegIdentity() : null;
+      if (!identity) { window.showToast(window.t('reg.chooseIdentity', '請先選擇你的身份'), '⚠️'); return; }
+      if (!username) { window.showToast(window.t('reg.needNickname', '請填寫暱稱'), '⚠️'); return; }
+      const agreeEl = document.getElementById('reg-agree-terms');
+      if (agreeEl && !agreeEl.checked) { window.showToast(window.t('reg.needAgree', '請先閱讀並同意服務條款及私隱政策'), '⚠️'); return; }
+      const needContactEmail = !googleMode && identity !== 'secondary';
+      if (needContactEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactEmail)) {
         window.showToast(window.t('core.invalidEmailForVerify', '請輸入一個有效的電郵地址，用來做電郵驗證'), '⚠️');
         return;
       }
@@ -2237,13 +2354,21 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
       // v1.239.0：年級、是否中學生、學校、喜愛／討厭學科已移到註冊後的「完成個人資料」
       // 視窗（openCompleteProfileModal），註冊時只填基本資料，減少新用戶要填的欄位。
       const isSecondaryStudent = false;
+      // v1.251.0：揀「中學生」要未滿 20 歲
+      const signupSecondary = identity === 'secondary';
+      if (signupSecondary) {
+        const now = new Date();
+        let age = now.getFullYear() - birthYear;
+        if (now.getMonth() + 1 < birthMonth) age--;
+        if (age >= 20) { window.showToast(window.t('reg.secondaryTooOld', '根據出生年月，不可以選擇中學生，請返回上一步改選其他身份'), '⚠️'); return; }
+      }
 
       if (accountType === 'student') {
         // v1.249.0：未剔「接收補習資訊」→ 溫和提示一次（兩個選擇都會繼續註冊，唔會擋住）
         const optInEl = document.getElementById('reg-tutor-info-optin');
         const doRegister = (optIn) => window.registerWithFirebase(loginId, password, {
-          accountType, username, contactEmail, birthYear, birthMonth, isSecondaryStudent,
-          tutorInfoOptIn: !!optIn
+          accountType, username, contactEmail: needContactEmail ? contactEmail : '', birthYear, birthMonth, isSecondaryStudent,
+          tutorInfoOptIn: !!optIn, signupSecondary
         });
         if (optInEl && !optInEl.checked && !window.__regOptInNudged && typeof window.openModal === 'function' && document.getElementById('modal-reg-optin-nudge')) {
           window.__regOptInNudged = true;

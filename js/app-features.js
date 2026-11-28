@@ -151,6 +151,10 @@
       if (id === 'modal-register' && typeof window.populateRegBirthDateOptions === 'function') {
         window.populateRegBirthDateOptions();
       }
+      // v1.251.0：每次打開註冊視窗都由第 1 步開始（Google 完成註冊模式由第 2 步開始）
+      if (id === 'modal-register' && typeof window.regWizardReset === 'function') {
+        window.regWizardReset();
+      }
       // 書伴留言牆嘅「發佈搵書伴貼文」表格：每次打開都重設返一個乾淨
       // 嘅表格（清空上次揀低嘅身份標籤／科目／內容），並且喺呢一刻
       // 先至畫科目 chip picker——呢陣時 tutor-panel.js 一定已經載入
@@ -2402,6 +2406,8 @@
       const landingPage = document.getElementById('landing-page');
       const appShell = document.getElementById('app-shell');
       if (verifyScreen) verifyScreen.style.display = 'none';
+      const schoolVerifyScreen = document.getElementById('school-verify-screen');
+      if (schoolVerifyScreen) schoolVerifyScreen.style.display = 'none';
 
       // 電郵驗證未完成，就完全鎖死，除咗「重新發送」「重新整理」「登出」
       // 之外咩都用唔到——一定要撳咗驗證連結先算數，唔係嘅話個驗證形同虛設。
@@ -2416,6 +2422,35 @@
         !window.currentUser.emailVerified &&
         !(typeof window.isCurrentUserAdmin === 'function' && window.isCurrentUserAdmin())
       );
+
+      // v1.251.0：註冊時揀咗中學生，但未完成學校電郵驗證 → 只顯示驗證頁（可改為「我不是中學生」）
+      const needsSchoolVerify = !!(
+        window.currentUser && window.currentUser.signupVerifyRequired === true && !needsEmailVerification &&
+        !(typeof window.isCurrentUserAdmin === 'function' && window.isCurrentUserAdmin())
+      );
+      if (needsSchoolVerify) {
+        closeModal('modal-login');
+        closeModal('modal-register');
+        if (landingPage) landingPage.style.display = 'none';
+        if (appShell) appShell.style.display = '';
+        unauthScreen.style.display = 'none';
+        authContent.style.display = 'none';
+        if (schoolVerifyScreen) {
+          schoolVerifyScreen.style.display = 'block';
+          if (typeof window.renderSchoolVerifyGate === 'function') window.renderSchoolVerifyGate();
+        }
+        headerStats.style.display = 'none';
+        const gsb = document.getElementById('global-status-bar');
+        if (gsb) gsb.style.display = 'none';
+        const cdt = document.getElementById('chat-dock-toggle');
+        if (cdt) cdt.style.display = 'none';
+        headerAuthBtn.className = "btn btn-outline";
+        headerAuthBtn.style.borderRadius = "20px";
+        headerAuthBtn.style.padding = "4px 10px";
+        headerAuthBtn.style.fontSize = "11px";
+        headerAuthBtn.innerHTML = `${window.t('reg.pendingSchoolVerify', '待驗證學校電郵')}`;
+        return;
+      }
 
       if (window.currentUser && needsEmailVerification) {
         closeModal('modal-login');
@@ -6447,7 +6482,10 @@
   window.isJuniorSecondary = function (u) {
     if (!u) return false;
     const g = u.grade || '';
-    return JUNIOR_GRADES.includes(g) || (u.isSecondaryStudent === true && !SENIOR_GRADES.includes(g));
+    if (JUNIOR_GRADES.includes(g) || (u.isSecondaryStudent === true && !SENIOR_GRADES.includes(g))) return true;
+    // v1.251.0：未滿 16 歲（按出生年月）一律當初中（導師帳戶除外）
+    const age = window.userAgeYears(u);
+    return u.accountType !== 'tutor' && age != null && age < 16;
   };
   window.canUseRoomPool = function (u, pool) {
     if (!u) return false;
@@ -6466,6 +6504,138 @@
   function refreshPool() {
     if (typeof window.retryListenToPublicRooms === 'function') { try { window.retryListenToPublicRooms(); } catch (_) {} }
   }
+
+  // ---------- v1.251.0：學校電郵 6 位數字驗證碼（學生身份驗證分頁及註冊第 4 步共用） ----------
+  window.schoolCodeFormHtml = function (p) {
+    const u = window.currentUser || {};
+    const pending = u.schoolEmailPending || '';
+    return `
+      <label for="${p}-school-email" style="display:block; font-size:14px; font-weight:700; color:var(--brand-800); margin-bottom:6px;">${esc(t('verify.emailLabel', '學校電郵'))}</label>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <input id="${p}-school-email" type="email" inputmode="email" autocomplete="email" value="${esc(pending)}" placeholder="${esc(t('verify.emailPlaceholder', '例如 s1234567@school.edu.hk'))}" style="flex:1; min-width:200px; padding:10px 12px; border:1px solid var(--brand-300); border-radius:10px; font-size:15px; box-sizing:border-box;">
+        <button type="button" id="${p}-school-send" class="btn btn-primary" style="justify-content:center; min-height:42px;" onclick="window.sendSchoolEmailCode('${p}')">${esc(t('verify.sendCodeBtn', '寄出驗證碼'))}</button>
+      </div>
+      <p style="font-size:12px; color:#6B7894; margin:6px 0 0; line-height:1.6;">${esc(t('verify.emailHintShort', '只接受以 .edu.hk 結尾的中學電郵，不會公開。'))}</p>
+      <div id="${p}-school-code-area" style="display:${pending ? 'block' : 'none'}; margin-top:12px;">
+        <label for="${p}-school-code" style="display:block; font-size:14px; font-weight:700; color:var(--brand-800); margin-bottom:6px;">${esc(t('verify.codeLabel', '輸入 6 位數字驗證碼'))}</label>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <input id="${p}-school-code" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" placeholder="123456" style="flex:1; min-width:140px; max-width:220px; padding:10px 12px; border:1px solid var(--brand-300); border-radius:10px; font-size:20px; letter-spacing:6px; text-align:center; box-sizing:border-box;" oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,6); if(this.value.length===6) window.submitSchoolEmailCode('${p}')">
+          <button type="button" id="${p}-school-verify" class="btn btn-primary" style="justify-content:center; min-height:42px;" onclick="window.submitSchoolEmailCode('${p}')">${esc(t('verify.confirmCodeBtn', '確認'))}</button>
+        </div>
+        <p id="${p}-school-code-hint" style="font-size:12px; color:#6B7894; margin:6px 0 0;">${esc(t('verify.codeHint', '驗證碼 10 分鐘內有效。收不到？請檢查垃圾郵件，或 60 秒後重新寄出。'))}</p>
+      </div>`;
+  };
+  const codeCooldown = {};
+  function startSendCooldown(p) {
+    const btn = document.getElementById(p + '-school-send');
+    if (!btn) return;
+    let left = 60;
+    clearInterval(codeCooldown[p]);
+    btn.disabled = true;
+    btn.textContent = t('verify.resendIn', '{s} 秒後可重寄').replace('{s}', left);
+    codeCooldown[p] = setInterval(() => {
+      left--;
+      const b = document.getElementById(p + '-school-send');
+      if (!b) { clearInterval(codeCooldown[p]); return; }
+      if (left <= 0) { clearInterval(codeCooldown[p]); b.disabled = false; b.textContent = t('verify.resendCodeBtn', '重新寄出'); return; }
+      b.textContent = t('verify.resendIn', '{s} 秒後可重寄').replace('{s}', left);
+    }, 1000);
+  }
+  window.sendSchoolEmailCode = async function (p) {
+    const input = document.getElementById(p + '-school-email');
+    const btn = document.getElementById(p + '-school-send');
+    const email = (input && input.value || '').trim().toLowerCase();
+    if (!/^[^\s@]+@[^\s@]+\.edu\.hk$/.test(email)) { window.showToast(t('verify.badEmail', '請輸入以 .edu.hk 結尾的學校電郵'), '⚠️'); return; }
+    if (btn) { btn.disabled = true; btn.textContent = t('verify.sending', '寄出中…'); }
+    try {
+      const u = window.currentUser;
+      // 註冊時未能設定中學生（例如網絡問題）→ 先補設定
+      if (u && u.signupVerifyRequired === true && u.isSecondaryStudent !== true) {
+        const r = await window.callCloudFunction('confirmEducation', { isSecondary: true });
+        u.isSecondaryStudent = true;
+        if (r && r.educationConfirmedYear) u.educationConfirmedYear = r.educationConfirmedYear;
+      }
+      await window.callCloudFunction('requestSchoolEmailCode', { email });
+      if (u) u.schoolEmailPending = email;
+      window.showToast(t('verify.codeSentToast', '驗證碼已寄出，請到學校電郵信箱查收'), '✅');
+      const area = document.getElementById(p + '-school-code-area');
+      if (area) area.style.display = 'block';
+      const codeEl = document.getElementById(p + '-school-code');
+      if (codeEl) codeEl.focus();
+      startSendCooldown(p);
+    } catch (e) {
+      window.showToast(window.friendlyErrorText ? window.friendlyErrorText(e) : (e.message || e), '❌');
+      if (btn) { btn.disabled = false; btn.textContent = t('verify.sendCodeBtn', '寄出驗證碼'); }
+    }
+  };
+  let submittingCode = false;
+  window.submitSchoolEmailCode = async function (p) {
+    const codeEl = document.getElementById(p + '-school-code');
+    const code = (codeEl && codeEl.value || '').trim();
+    if (!/^[0-9]{6}$/.test(code)) { window.showToast(t('verify.badCode', '請輸入 6 位數字驗證碼'), '⚠️'); return; }
+    if (submittingCode) return;
+    submittingCode = true;
+    const btn = document.getElementById(p + '-school-verify');
+    if (btn) btn.disabled = true;
+    try {
+      const res = await window.callCloudFunction('verifySchoolEmailCode', { code });
+      const u = window.currentUser;
+      if (u) {
+        try {
+          const snap = await window.fs.getDoc(window.fs.doc(window.db, 'users', u.uid));
+          if (snap.exists()) Object.assign(u, snap.data());
+        } catch (_) {}
+        delete u.signupVerifyRequired;
+      }
+      window.showToast(res && res.status === 'verified'
+        ? t('verify.doneToast', '學校電郵驗證成功')
+        : t('verify.pendingToast', '已收到你的學校電郵，管理員核實學校後會自動生效'), '✅');
+      refreshPool();
+      if (p === 'gate') {
+        if (typeof window.updateUserAuthUI === 'function') window.updateUserAuthUI();
+        if (typeof window.switchTab === 'function') window.switchTab('home');
+      } else {
+        window.renderVerificationTab();
+      }
+    } catch (e) {
+      window.showToast(window.friendlyErrorText ? window.friendlyErrorText(e) : (e.message || e), '❌');
+      if (codeEl) { codeEl.value = ''; codeEl.focus(); }
+    } finally {
+      submittingCode = false;
+      if (btn) btn.disabled = false;
+    }
+  };
+  // 註冊第 4 步（必須完成）：揀咗中學生但未驗證學校電郵 → 登入後只顯示呢一頁
+  window.renderSchoolVerifyGate = function () {
+    const box = document.getElementById('school-verify-screen');
+    if (!box) return;
+    box.innerHTML = `
+      <div style="max-width:460px; margin:0 auto; text-align:left;">
+        <div style="font-size:12px; color:#6B7894; text-align:center;">${esc(t('reg.progress', '第 {n} 步，共 {total} 步').replace('{n}', 4).replace('{total}', 4))}</div>
+        <div style="height:6px; background:var(--brand-100); border-radius:4px; margin:4px 0 16px; overflow:hidden;"><div style="height:100%; width:100%; background:var(--brand-500);"></div></div>
+        <h2 style="font-size:20px; font-weight:bold; color:var(--brand-800); text-align:center; margin:0 0 6px;">${esc(t('reg.step4Title', '驗證學校電郵'))}</h2>
+        <p style="font-size:14px; color:#666; text-align:center; margin:0 0 16px;">${esc(t('reg.step4Body', '完成驗證後即可開始使用 ConcenMate。'))}</p>
+        <div class="card" style="padding:16px;">${window.schoolCodeFormHtml('gate')}</div>
+        <div style="display:flex; justify-content:center; gap:16px; margin-top:16px; flex-wrap:wrap; font-size:13px;">
+          <span style="color:#3F588F; cursor:pointer; text-decoration:underline;" onclick="window.leaveSecondarySignup()">${esc(t('reg.notSecondaryLink', '我不是中學生'))}</span>
+          <span style="color:#3F588F; cursor:pointer; text-decoration:underline;" onclick="window.logoutWithFirebase && window.logoutWithFirebase()">${esc(t('html.s10', '登出'))}</span>
+        </div>
+      </div>`;
+  };
+  window.leaveSecondarySignup = async function () {
+    const ok = window.appConfirm ? await window.appConfirm(t('reg.notSecondaryConfirm', '確定改為一般帳戶？一般帳戶不能使用中學生溫習室；未滿 16 歲亦不能使用公開溫習室。')) : confirm(t('reg.notSecondaryConfirm', '確定改為一般帳戶？一般帳戶不能使用中學生溫習室；未滿 16 歲亦不能使用公開溫習室。'));
+    if (!ok) return;
+    try {
+      await window.callCloudFunction('confirmEducation', { isSecondary: false });
+      const u = window.currentUser;
+      if (u) { u.isSecondaryStudent = false; delete u.signupVerifyRequired; }
+      refreshPool();
+      if (typeof window.updateUserAuthUI === 'function') window.updateUserAuthUI();
+      if (typeof window.switchTab === 'function') window.switchTab('home');
+    } catch (e) {
+      window.showToast(window.friendlyErrorText ? window.friendlyErrorText(e) : (e.message || e), '❌');
+    }
+  };
 
   // ---------- 學生身份驗證分頁 ----------
   window.renderVerificationTab = function () {
@@ -6487,15 +6657,8 @@
     } else if (c.emailPending) {
       emailBox = `<p style="font-size:14px; color:var(--brand-800); line-height:1.7; margin:0;">${esc(t('verify.emailPendingDomain', '你的學校電郵已確認收到，由於這是我們第一次收到這間學校的電郵，管理員需要核實一次，一般需時一至兩個工作天，完成後會自動生效。'))}<br><b>${esc(u.schoolEmail || '')}</b></p>`;
     } else {
-      const sent = u.schoolEmailPending ? `<p style="font-size:13px; color:var(--brand-700); margin:8px 0 0;">${esc(t('verify.sentTemplate', '驗證連結已寄到 {email}，請在 24 小時內打開電郵並點擊連結。').replace('{email}', u.schoolEmailPending))}</p>` : '';
       const rejected = c.emailRejected ? `<p style="font-size:13px; color:#C0392B; margin:0 0 8px;">${esc(t('verify.rejected', '你之前提交的電郵不屬於中學，請使用學校派發的學生電郵。'))}</p>` : '';
-      emailBox = `${rejected}
-        <label for="verify-school-email" style="display:block; font-size:14px; font-weight:700; color:var(--brand-800); margin-bottom:6px;">${esc(t('verify.emailLabel', '學校電郵'))}</label>
-        <div style="display:flex; gap:8px; flex-wrap:wrap;">
-          <input id="verify-school-email" type="email" inputmode="email" autocomplete="email" placeholder="${esc(t('verify.emailPlaceholder', '例如 s1234567@school.edu.hk'))}" style="flex:1; min-width:200px; padding:10px 12px; border:1px solid var(--brand-300); border-radius:10px; font-size:15px; box-sizing:border-box;">
-          <button type="button" id="verify-school-send" class="btn btn-primary" style="justify-content:center; min-height:42px;" onclick="window.sendSchoolEmailLink()">${esc(t('verify.sendBtn', '寄出驗證連結'))}</button>
-        </div>
-        <p style="font-size:12px; color:#6B7894; margin:8px 0 0; line-height:1.6;">${esc(t('verify.emailHint', '只接受學校派發、以 .edu.hk 結尾的中學電郵。學校電郵只用作核實身份，不會公開。'))}</p>${sent}`;
+      emailBox = rejected + window.schoolCodeFormHtml('vt');
     }
     sec.innerHTML = `
       <div style="max-width:620px; margin:0 auto; padding:8px 4px 24px;">
