@@ -1864,6 +1864,12 @@
     'reg.idOther': { 'zh-Hant': '大學生或其他', 'en': 'University student or other', 'yue': '大學生或者其他' },
     'reg.idOtherHint': { 'zh-Hant': '以一般電郵驗證即可', 'en': 'Just verify with any email address', 'yue': '用一般電郵驗證就得' },
     'auth.googleAlreadyRegistered': { 'zh-Hant': '此 Google 帳戶已經註冊，已為你直接登入', 'en': 'This Google account is already registered, so we\'ve signed you in', 'yue': '呢個 Google 帳戶已經註冊咗，已經幫你直接登入' },
+    // v1.252.0：獨立導師註冊
+    'landing.tutorRegisterBtn': { 'zh-Hant': '導師註冊', 'en': 'Tutor Sign Up', 'yue': '導師註冊' },
+    'reg.tutorTitle': { 'zh-Hant': '導師註冊', 'en': 'Tutor Sign Up', 'yue': '導師註冊' },
+    'reg.tutorStepTitle': { 'zh-Hant': '教學資料', 'en': 'Teaching details', 'yue': '教學資料' },
+    'reg.tutorApprovalNote': { 'zh-Hant': '提交後由管理員審批，批准後即可使用導師功能。', 'en': 'An admin will review your application. Tutor features unlock once approved.', 'yue': '提交之後由管理員審批，批准咗就可以用導師功能。' },
+    'reg.tutorSubmit': { 'zh-Hant': '提交導師申請', 'en': 'Submit tutor application', 'yue': '提交導師申請' },
     'reg.idTutor': { 'zh-Hant': '導師', 'en': 'Tutor', 'yue': '導師' },
     'reg.idTutorHint': { 'zh-Hant': '需要管理員審批', 'en': 'Needs admin approval', 'yue': '要管理員審批' },
     'reg.step3Title': { 'zh-Hant': '基本資料', 'en': 'Basic information', 'yue': '基本資料' },

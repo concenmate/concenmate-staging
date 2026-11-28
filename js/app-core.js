@@ -1212,6 +1212,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
       const wasGoogle = !!window.__googleRegUser;
       window.closeModal('modal-register');
       leaveGoogleMode();
+      window.__regTutorMode = false;
       if (wasGoogle) { try { await signOut(auth); } catch (_) {} }
     };
 
@@ -2206,11 +2207,34 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
     // ===================== v1.251.0：註冊分步驟 =====================
     // 1 註冊方式（Google／帳號 ID＋密碼）→ 2 身份（中學生／大學生或其他／導師）→ 3 基本資料
     // → 4 學校電郵驗證碼（只限中學生，帳戶建立後喺 #school-verify-screen 進行，必須完成）
+    // v1.252.0：導師註冊完全獨立（首頁「導師註冊」按鈕）：1 註冊方式 → 2 基本資料 → 3 教學資料
     const regState = { step: 1, method: null, identity: null };
-    function regTotalSteps() { return regState.identity === 'secondary' ? 4 : 3; }
+    function regIsTutor() { return window.__regTutorMode === true; }
+    function regTotalSteps() { return (!regIsTutor() && regState.identity === 'secondary') ? 4 : 3; }
+    // 每一步對應邊個面板
+    function regPanelFor(st) {
+      if (regIsTutor()) return ({ 1: 'reg-step-1', 2: 'reg-step-3', 3: 'reg-step-tutor' })[st];
+      return 'reg-step-' + st;
+    }
+    window.openRegister = function(mode) {
+      window.__regTutorMode = (mode === 'tutor');
+      if (typeof window.openModal === 'function') window.openModal('modal-register');
+    };
     function regRender() {
       const st = regState.step;
-      [1, 2, 3].forEach(n => { const el = document.getElementById('reg-step-' + n); if (el) el.style.display = (n === st) ? 'flex' : 'none'; });
+      const tutor = regIsTutor();
+      const panel = regPanelFor(st);
+      ['reg-step-1', 'reg-step-2', 'reg-step-3', 'reg-step-tutor'].forEach(id => { const el = document.getElementById(id); if (el) el.style.display = (id === panel) ? 'flex' : 'none'; });
+      const title = document.getElementById('reg-title');
+      if (title) title.textContent = tutor ? window.t('reg.tutorTitle', '導師註冊') : window.t('auth.registerTitle', '註冊 ConcenMate 會員');
+      // 同意條款：導師註冊放喺最後一步（教學資料），學生放喺基本資料
+      const terms = document.getElementById('reg-terms-wrap');
+      const tSlot = document.getElementById('reg-tutor-terms-slot');
+      const s3 = document.getElementById('reg-step-3');
+      if (terms && tSlot && s3) {
+        if (tutor && terms.parentElement !== tSlot) tSlot.appendChild(terms);
+        if (!tutor && terms.parentElement !== s3) s3.appendChild(terms);
+      }
       const total = regTotalSteps();
       const pt = document.getElementById('reg-progress-text');
       if (pt) pt.textContent = window.t('reg.progress', '第 {n} 步，共 {total} 步').replace('{n}', st).replace('{total}', total);
@@ -2220,13 +2244,15 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
       const back = document.getElementById('reg-back-btn');
       if (back) back.style.display = (st === 3 || (st === 2 && !google)) ? '' : 'none';
       const next = document.getElementById('reg-next-btn');
-      if (next) next.style.display = (st === 1 && regState.method === 'id') ? '' : 'none';
+      if (next) next.style.display = ((st === 1 && regState.method === 'id') || (tutor && st === 2)) ? '' : 'none';
       const submit = document.getElementById('reg-submit-btn');
       if (submit) {
         submit.style.display = st === 3 ? '' : 'none';
-        submit.textContent = regState.identity === 'secondary'
-          ? window.t('reg.submitSecondary', '下一步：驗證學校電郵')
-          : window.t('auth.registerSubmitBtn', '完成註冊');
+        submit.textContent = tutor
+          ? window.t('reg.tutorSubmit', '提交導師申請')
+          : (regState.identity === 'secondary'
+            ? window.t('reg.submitSecondary', '下一步：驗證學校電郵')
+            : window.t('auth.registerSubmitBtn', '完成註冊'));
       }
       const loginLink = document.getElementById('reg-login-link');
       if (loginLink) loginLink.style.display = st === 1 ? '' : 'none';
@@ -2249,7 +2275,8 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
     window.regWizardReset = function() {
       regState.method = window.__googleRegUser ? 'google' : null;
       regState.step = window.__googleRegUser ? 2 : 1;
-      regState.identity = null;
+      regState.identity = regIsTutor() ? 'tutor' : null;
+      if (typeof window.setRegisterAccountType === 'function') window.setRegisterAccountType(regIsTutor() ? 'tutor' : 'student');
       window.__regOptInNudged = false;
       const idFields = document.getElementById('reg-id-fields');
       if (idFields) idFields.style.display = 'none';
@@ -2268,6 +2295,21 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
       if (idInput) idInput.focus();
     };
     window.regGoNext = async function() {
+      // 導師註冊第 2 步（基本資料）→ 第 3 步（教學資料）
+      if (regIsTutor() && regState.step === 2) {
+        const google = regState.method === 'google';
+        if (google) {
+          const gid = (document.getElementById('reg-account-id').value || '').trim();
+          if (!/^[A-Za-z0-9_]{3,20}$/.test(gid)) { window.showToast(window.t('core.accountIdFormatInvalid', '帳號 ID 格式要是 3-20 個英文字母／數字／底線'), '⚠️'); return; }
+        }
+        if (!(document.getElementById('reg-username').value || '').trim()) { window.showToast(window.t('reg.needNickname', '請填寫暱稱'), '⚠️'); return; }
+        if (!document.getElementById('reg-birth-year').value || !document.getElementById('reg-birth-month').value) { window.showToast(window.t('core.selectBirthYearMonth', '請選擇出生年份及月份'), '⚠️'); return; }
+        const em = (document.getElementById('reg-contact-email').value || '').trim();
+        if (!google && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)) { window.showToast(window.t('core.invalidEmailForVerify', '請輸入一個有效的電郵地址，用來做電郵驗證'), '⚠️'); return; }
+        regState.step = 3;
+        regRender();
+        return;
+      }
       if (regState.step !== 1 || regState.method !== 'id') return;
       const loginId = (document.getElementById('reg-account-id').value || '').trim();
       const pw = document.getElementById('reg-password').value;
@@ -2282,7 +2324,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
         if (existing.exists()) { window.showToast(window.t('core.accountIdTaken', '這個帳號 ID 已經有人使用，請更換一個'), '⚠️'); return; }
       } catch (e) { /* 網絡問題：留待提交時再檢查 */ }
       finally { if (next) next.disabled = false; }
-      regState.step = 2;
+      regState.step = 2;  // 學生：身份；導師：基本資料
       regRender();
     };
     window.regChooseIdentity = function(identity) {

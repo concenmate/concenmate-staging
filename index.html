@@ -6,7 +6,7 @@
        打開檔案唔使拉就見到，方便快速核對版本）
        ======================================== -->
   <script>
-    window.APP_VERSION = "v1.251.2"; // 每次推送 GitHub 前，喺呢度改版號
+    window.APP_VERSION = "v1.252.0"; // 每次推送 GitHub 前，喺呢度改版號
   </script>
 
   <!-- v1.227.8：全站確認／輸入視窗，取代瀏覽器原生 confirm()／prompt()，外觀同資訊卡一致。
@@ -1561,6 +1561,9 @@
     .landing-btn { border: none; border-radius: 12px; padding: 15px 28px; font-size: 17px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px; transition: transform .15s ease, box-shadow .15s ease, background .15s ease; text-decoration: none; }
     .landing-btn-primary { background: var(--brand-500); color: #fff; box-shadow: 0 4px 14px rgba(74,104,168,.32); }
     .landing-btn-primary:hover { background: var(--brand-600); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(74,104,168,.4); }
+    /* v1.252.0：導師註冊（深色背景上的外框按鈕） */
+    .landing-btn-ghost { background: transparent; color: #fff; border: 2px solid rgba(255,255,255,.75); }
+    .landing-btn-ghost:hover { background: rgba(255,255,255,.12); transform: translateY(-2px); }
 
     .landing-container { max-width: 1160px; margin: 0 auto; padding: 0 40px; }
 
@@ -1896,7 +1899,7 @@
         <div class="landing-nav-actions">
           <button class="btn btn-outline landing-nav-lang-btn" type="button" aria-label="Language / 語言" onclick="typeof window.openModal==='function' && window.openModal('modal-language-switcher')" style="padding:6px 10px;"><svg class="header-lang-icon" aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.5 2.7 3.8 5.7 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-5.7-3.8-9S9.5 5.7 12 3z"/></svg><span class="header-lang-text" id="landing-current-lang-label">繁體中文</span></button>
           <button type="button" class="landing-nav-login landing-nav-login-header" data-i18n="landing.navLogin" onclick="typeof window.openModal==='function' && window.openModal('modal-login')">登入</button>
-          <button type="button" class="landing-btn landing-btn-primary" style="padding:11px 22px; font-size:15px;" data-i18n="landing.registerBtn" onclick="typeof window.openModal==='function' && window.openModal('modal-register')">註冊帳號</button>
+          <button type="button" class="landing-btn landing-btn-primary" style="padding:11px 22px; font-size:15px;" data-i18n="landing.registerBtn" onclick="typeof window.openRegister==='function' && window.openRegister('student')">註冊帳號</button>
         </div>
       </div>
     </nav>
@@ -1908,7 +1911,8 @@
           <h1 class="landing-hero-h1"><span data-i18n="landing.heroH1Line1">相遇你的書伴，陪你走過</span><span data-i18n="landing.heroH1Line2">每一段溫習時光</span></h1>
           <p class="landing-hero-sub" data-i18n="landing.heroSub">ConcenMate 書伴是專為學生設計的線上溫習室，讓你尋找志同道合的夥伴，結合專注力計時、溫習社群與成長獎勵機制，陪伴你建立持續而穩定的學習習慣。</p>
           <div class="landing-hero-ctas">
-            <button type="button" class="landing-btn landing-btn-primary" data-i18n="landing.registerBtn" onclick="typeof window.openModal==='function' && window.openModal('modal-register')">註冊帳號</button>
+            <button type="button" class="landing-btn landing-btn-primary" data-i18n="landing.registerBtn" onclick="typeof window.openRegister==='function' && window.openRegister('student')">註冊帳號</button>
+            <button type="button" class="landing-btn landing-btn-ghost" data-i18n="landing.tutorRegisterBtn" onclick="typeof window.openRegister==='function' && window.openRegister('tutor')">導師註冊</button>
           </div>
         </div>
         <div class="landing-hero-art">
@@ -1959,7 +1963,7 @@
       <div class="landing-container">
         <h2 class="landing-cta-h2" data-i18n="landing.ctaH2">由今天開始，讓書伴陪你溫習</h2>
         <p class="landing-cta-sub" data-i18n="landing.ctaSub">免費註冊帳戶，開始你的專注溫習旅程。</p>
-        <button type="button" class="landing-btn landing-btn-primary" style="padding:16px 36px; font-size:18px;" data-i18n="landing.registerBtn" onclick="typeof window.openModal==='function' && window.openModal('modal-register')">註冊帳號</button>
+        <button type="button" class="landing-btn landing-btn-primary" style="padding:16px 36px; font-size:18px;" data-i18n="landing.registerBtn" onclick="typeof window.openRegister==='function' && window.openRegister('student')">註冊帳號</button>
       </div>
     </section>
 
@@ -2130,7 +2134,7 @@
 
         <div style="display:flex; justify-content:center; gap:12px; margin-top:20px; flex-wrap:wrap;">
           <button data-i18n="auth.loginTitle" class="btn btn-primary" style="padding:10px 20px; font-size:16px;" onclick="typeof window.openModal==='function' && window.openModal('modal-login')">會員登入</button>
-          <button data-i18n="html.s5" class="btn btn-amber" style="padding:10px 20px; font-size:16px;" onclick="typeof window.openModal==='function' && window.openModal('modal-register')">新用戶註冊</button>
+          <button data-i18n="html.s5" class="btn btn-amber" style="padding:10px 20px; font-size:16px;" onclick="typeof window.openRegister==='function' && window.openRegister('student')">新用戶註冊</button>
         </div>
       </div>
 
@@ -3430,7 +3434,7 @@
 
   <div class="modal-backdrop" id="modal-register" style="display:none;">
     <div class="modal-box">
-      <h3 style="font-size:18px; font-weight:bold; color:var(--brand-800); text-align:center;" data-i18n="auth.registerTitle">註冊 ConcenMate 會員</h3>
+      <h3 id="reg-title" style="font-size:18px; font-weight:bold; color:var(--brand-800); text-align:center;" data-i18n="auth.registerTitle">註冊 ConcenMate 會員</h3>
       <!-- v1.251.0：註冊分步驟（1 登入方式 → 2 身份 → 3 基本資料 → 4 學校電郵驗證〔只限中學生，註冊後進行〕） -->
       <div id="reg-progress" style="margin-top:10px;">
         <div style="font-size:12px; color:#6B7894; text-align:center;" id="reg-progress-text">第 1 步，共 3 步</div>
@@ -3478,10 +3482,6 @@
             <div style="font-size:15px; font-weight:bold; color:var(--brand-800);" data-i18n="reg.idOther">大學生或其他</div>
             <div class="reg-email-field" style="font-size:12px; color:#6B7894; margin-top:2px;" data-i18n="reg.idOtherHint">以一般電郵驗證即可</div>
           </button>
-          <button type="button" class="reg-identity-card" data-identity="tutor" onclick="window.regChooseIdentity && window.regChooseIdentity('tutor')" style="text-align:left; padding:12px 14px; border:1.5px solid var(--brand-200); border-radius:12px; background:#fff; cursor:pointer;">
-            <div style="font-size:15px; font-weight:bold; color:var(--brand-800);" data-i18n="reg.idTutor">導師</div>
-            <div style="font-size:12px; color:#6B7894; margin-top:2px;" data-i18n="reg.idTutorHint">需要管理員審批</div>
-          </button>
         </div>
 
         <!-- ===== 第 3 步：基本資料 ===== -->
@@ -3509,6 +3509,27 @@
             <input type="email" id="reg-contact-email" class="input-field" placeholder="example@gmail.com" data-i18n-placeholder="reg.contactEmailPlaceholder">
             <p id="reg-contact-email-hint" style="font-size:12px; color:#999; margin-top:4px;" data-i18n="reg.contactEmailShortHint">註冊後會寄出驗證電郵</p>
           </div>
+          <div id="reg-tutor-info-optin-wrap" style="display:flex; align-items:flex-start; gap:8px; background:#F5F7F8; border-radius:10px; padding:10px 12px;">
+            <input type="checkbox" id="reg-tutor-info-optin" style="margin-top:3px; flex-shrink:0; width:16px; height:16px;">
+            <label for="reg-tutor-info-optin" style="font-size:13px; color:#555; line-height:1.6;">
+              <span style="font-weight:bold; display:block;" data-i18n="profile.tutorOptInTitle">我願意接收補習導師及補習社的資訊</span>
+            </label>
+          </div>
+          <div id="reg-terms-wrap" style="display:flex; align-items:flex-start; gap:8px; background:#F5F7F8; border-radius:10px; padding:10px 12px;">
+            <input type="checkbox" id="reg-agree-terms" style="margin-top:3px; flex-shrink:0; width:16px; height:16px;">
+            <label for="reg-agree-terms" style="font-size:13px; color:#555; line-height:1.6;">
+              <span data-i18n="auth.agreeTermsPrefix">我已閱讀並同意</span>
+              <span style="color:#3F588F; text-decoration:underline; cursor:pointer;" data-i18n="auth.termsLinkText" onclick="event.preventDefault(); typeof window.openModal==='function' && window.openModal('modal-terms');">《服務條款》</span>
+              <span data-i18n="auth.andConnector">及</span>
+              <span style="color:#3F588F; text-decoration:underline; cursor:pointer;" data-i18n="auth.privacyLinkText" onclick="event.preventDefault(); typeof window.openModal==='function' && window.openModal('modal-privacy-policy');">《私隱政策》</span>
+              *
+            </label>
+          </div>
+        </div>
+
+        <!-- ===== v1.252.0：導師註冊第 3 步：教學資料（導師註冊：1 註冊方式 → 2 基本資料 → 3 教學資料） ===== -->
+        <div id="reg-step-tutor" class="reg-step" style="display:none; flex-direction:column; gap:10px;">
+          <div style="font-size:15px; font-weight:bold; color:var(--brand-800);" data-i18n="reg.tutorStepTitle">教學資料</div>
           <div id="register-tutor-fields" style="display:none;">
             <div>
               <label style="font-size:13px; font-weight:bold; color:#555;" data-i18n="auth.tutorBioLabel">自我介紹</label>
@@ -3520,22 +3541,8 @@
               <input type="hidden" id="reg-tutor-subjects">
             </div>
           </div>
-          <div id="reg-tutor-info-optin-wrap" style="display:flex; align-items:flex-start; gap:8px; background:#F5F7F8; border-radius:10px; padding:10px 12px;">
-            <input type="checkbox" id="reg-tutor-info-optin" style="margin-top:3px; flex-shrink:0; width:16px; height:16px;">
-            <label for="reg-tutor-info-optin" style="font-size:13px; color:#555; line-height:1.6;">
-              <span style="font-weight:bold; display:block;" data-i18n="profile.tutorOptInTitle">我願意接收補習導師及補習社的資訊</span>
-            </label>
-          </div>
-          <div style="display:flex; align-items:flex-start; gap:8px; background:#F5F7F8; border-radius:10px; padding:10px 12px;">
-            <input type="checkbox" id="reg-agree-terms" style="margin-top:3px; flex-shrink:0; width:16px; height:16px;">
-            <label for="reg-agree-terms" style="font-size:13px; color:#555; line-height:1.6;">
-              <span data-i18n="auth.agreeTermsPrefix">我已閱讀並同意</span>
-              <span style="color:#3F588F; text-decoration:underline; cursor:pointer;" data-i18n="auth.termsLinkText" onclick="event.preventDefault(); typeof window.openModal==='function' && window.openModal('modal-terms');">《服務條款》</span>
-              <span data-i18n="auth.andConnector">及</span>
-              <span style="color:#3F588F; text-decoration:underline; cursor:pointer;" data-i18n="auth.privacyLinkText" onclick="event.preventDefault(); typeof window.openModal==='function' && window.openModal('modal-privacy-policy');">《私隱政策》</span>
-              *
-            </label>
-          </div>
+          <div style="font-size:12px; color:#6B7894;" data-i18n="reg.tutorApprovalNote">提交後由管理員審批，批准後即可使用導師功能。</div>
+          <div id="reg-tutor-terms-slot"></div>
         </div>
 
         <!-- 底部按鈕 -->
@@ -4796,14 +4803,14 @@
   })();
   </script>
 
-  <script src="js/i18n.js?v=1.251.2"></script>
+  <script src="js/i18n.js?v=1.252.0"></script>
 
-  <script src="js/app-features.js?v=1.251.2"></script>
+  <script src="js/app-features.js?v=1.252.0"></script>
 
-  <script type="module" src="js/app-core.js?v=1.251.2"></script>
+  <script type="module" src="js/app-core.js?v=1.252.0"></script>
 
-  <script src="js/room-video.js?v=1.251.2"></script>
-  <script src="js/stream.js?v=1.251.2"></script>
+  <script src="js/room-video.js?v=1.252.0"></script>
+  <script src="js/stream.js?v=1.252.0"></script>
   <!-- 房主退出房間選擇彈窗 -->
   <div class="modal-backdrop" id="modal-host-leave" style="display:none;">
     <div class="modal-box" style="text-align:center;">
@@ -5074,7 +5081,7 @@
   </div>
 
   <!-- v1.244.0：管理後台（admin-panel.js）改為管理員先載入，見 site-config.js -->
-  <script src="js/site-config.js?v=1.251.2"></script>
+  <script src="js/site-config.js?v=1.252.0"></script>
   <!-- pdf.js：導師教材嘅 PDF 預覽（整份文件／學生視角）同教材卡嘅第一頁
        縮圖，都用呢個 library 自己畫落 <canvas>，唔再靠瀏覽器內建嘅PDF
        viewer（手機Safari個內建viewer塞喺iframe度揭唔到第二頁）。淨係
@@ -5101,7 +5108,7 @@
       return window._pdfJsLoading;
     };
   </script>
-  <script src="js/tutor-panel.js?v=1.251.2"></script>
+  <script src="js/tutor-panel.js?v=1.252.0"></script>
 
 </body>
 </html>
