@@ -1539,6 +1539,27 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
     // hidden input 用剔選 chip 揀最多 N 科」，冚唔到「喜愛」定「討厭」
     // 呢啲語意，所以「討厭學科」欄位都直接借用返呢個函數（唔使另外
     // 寫多次一模一樣嘅邏輯），淨係傳唔同嘅 pickerId／hiddenInputId。
+    // v1.253.1：導師「就讀／畢業院校」下拉選單（最後一項「其他」→ 自行輸入）
+    window.populateTutorSchoolSelect = function() {
+      const sel = document.getElementById('reg-tutor-school-select');
+      if (!sel || sel.options.length > 1) return;
+      (window.HK_TERTIARY_INSTITUTIONS_COMMON || []).forEach(name => {
+        const o = document.createElement('option'); o.value = name; o.textContent = name; sel.appendChild(o);
+      });
+      const other = document.createElement('option');
+      other.value = '__other'; other.textContent = window.t('reg.tutorSchoolOther', '其他（自行輸入）');
+      sel.appendChild(other);
+    };
+    window.onTutorSchoolSelectChange = function() {
+      const sel = document.getElementById('reg-tutor-school-select');
+      const input = document.getElementById('reg-tutor-school');
+      if (!sel || !input) return;
+      const isOther = sel.value === '__other';
+      input.style.display = isOther ? '' : 'none';
+      input.value = isOther ? '' : sel.value;
+      if (isOther) input.focus();
+    };
+
     // v1.253.0：任教區域多選（十八區，按港島／九龍／新界分組）
     window.renderRegDistrictPicker = function(pickerId, hiddenInputId) {
       const picker = document.getElementById(pickerId);
@@ -2214,6 +2235,9 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
       // v1.253.0：註冊時任教學科最多 3 項，另加任教區域
       if (isTutor && typeof window.renderStudentFavSubjectChipPicker === 'function') {
         window.renderStudentFavSubjectChipPicker('reg-tutor-subjects-picker', 'reg-tutor-subjects', 3);
+      }
+      if (isTutor && typeof window.populateTutorSchoolSelect === 'function') {
+        window.populateTutorSchoolSelect();
       }
       if (isTutor && typeof window.renderRegDistrictPicker === 'function') {
         window.renderRegDistrictPicker('reg-tutor-districts-picker', 'reg-tutor-districts');

@@ -1886,6 +1886,8 @@
     'reg.eduGraduated': { 'zh-Hant': '已畢業', 'en': 'Graduated', 'yue': '已經畢業' },
     'reg.tutorSchoolLabel': { 'zh-Hant': '就讀／畢業院校 *', 'en': 'School / university *', 'yue': '讀緊／畢業嘅院校 *' },
     'reg.tutorSchoolPlaceholder': { 'zh-Hant': '例如：香港大學', 'en': 'e.g. The University of Hong Kong', 'yue': '例如：香港大學' },
+    'reg.tutorSchoolOther': { 'zh-Hant': '其他（自行輸入）', 'en': 'Other (type in)', 'yue': '其他（自己輸入）' },
+    'reg.tutorSchoolOtherPlaceholder': { 'zh-Hant': '請輸入院校名稱', 'en': 'Enter the name of your school or university', 'yue': '請輸入院校名' },
     'reg.tutorMajorLabel': { 'zh-Hant': '主修學科 *', 'en': 'Major *', 'yue': '主修學科 *' },
     'reg.tutorMajorPlaceholder': { 'zh-Hant': '例如：數學', 'en': 'e.g. Mathematics', 'yue': '例如：數學' },
     'reg.tutorIgLabel': { 'zh-Hant': 'Instagram ID *', 'en': 'Instagram ID *', 'yue': 'Instagram ID *' },
