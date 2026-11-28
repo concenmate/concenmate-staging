@@ -784,5 +784,10 @@
     'adminAds.title': { 'zh-Hant': '地區補習廣告', 'en': 'District tutoring ads', 'yue': '地區補習廣告' },
     'adminAds.uploaded': { 'zh-Hant': '圖片已上載，請按「儲存廣告」', 'en': 'Image uploaded. Press "Save ad" to keep it.', 'yue': '圖片已上載，請按「儲存廣告」' },
     'adminAds.uploading': { 'zh-Hant': '上載中…', 'en': 'Uploading…', 'yue': '上載中…' },
+    // v1.253.0：導師申請新資料
+    'admin.tutorAppGender': { 'zh-Hant': '性別：', 'en': 'Gender: ', 'yue': '性別：' },
+    'admin.tutorAppEdu': { 'zh-Hant': '學歷：', 'en': 'Education: ', 'yue': '學歷：' },
+    'admin.tutorAppDistricts': { 'zh-Hant': '任教區域：', 'en': 'Districts: ', 'yue': '任教區域：' },
+    'admin.tutorAppOnline': { 'zh-Hant': '網課：', 'en': 'Online lessons: ', 'yue': '網課：' },
   });
 })();

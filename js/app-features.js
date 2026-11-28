@@ -6614,7 +6614,7 @@
         <div style="font-size:12px; color:#6B7894; text-align:center;">${esc(t('reg.progress', '第 {n} 步，共 {total} 步').replace('{n}', 4).replace('{total}', 4))}</div>
         <div style="height:6px; background:var(--brand-100); border-radius:4px; margin:4px 0 16px; overflow:hidden;"><div style="height:100%; width:100%; background:var(--brand-500);"></div></div>
         <h2 style="font-size:20px; font-weight:bold; color:var(--brand-800); text-align:center; margin:0 0 6px;">${esc(t('reg.step4Title', '驗證學校電郵'))}</h2>
-        <p style="font-size:14px; color:#666; text-align:center; margin:0 0 16px;">${esc(t('reg.step4Body', '完成驗證後即可開始使用 ConcenMate。'))}</p>
+        <p style="font-size:14px; color:#666; text-align:center; margin:0 0 16px;">${esc(t('reg.step4Body', '驗證後即可使用中學生專屬溫習室，與同齡同學一起溫習。'))}</p>
         <div class="card" style="padding:16px;">${window.schoolCodeFormHtml('gate')}</div>
         <div style="display:flex; justify-content:center; gap:16px; margin-top:16px; flex-wrap:wrap; font-size:13px;">
           <span style="color:#3F588F; cursor:pointer; text-decoration:underline;" onclick="window.leaveSecondarySignup()">${esc(t('reg.notSecondaryLink', '我不是中學生'))}</span>

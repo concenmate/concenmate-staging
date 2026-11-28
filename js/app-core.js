@@ -1330,6 +1330,13 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
               bio: profileData.tutorBio || '',
               subjectsIntended: profileData.tutorSubjects || [],
               contactInfo: profileData.contactEmail || '',
+              gender: profileData.tutorGender || '',
+              eduStatus: profileData.tutorEduStatus || '',
+              school: profileData.tutorSchool || '',
+              major: profileData.tutorMajor || '',
+              instagram: profileData.tutorInstagram || '',
+              districts: profileData.tutorDistricts || [],
+              teachOnline: profileData.tutorTeachOnline === true,
             });
             tutorApplySucceeded = true;
           } catch (applyErr) {
@@ -1532,6 +1539,32 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
     // hidden input 用剔選 chip 揀最多 N 科」，冚唔到「喜愛」定「討厭」
     // 呢啲語意，所以「討厭學科」欄位都直接借用返呢個函數（唔使另外
     // 寫多次一模一樣嘅邏輯），淨係傳唔同嘅 pickerId／hiddenInputId。
+    // v1.253.0：任教區域多選（十八區，按港島／九龍／新界分組）
+    window.renderRegDistrictPicker = function(pickerId, hiddenInputId) {
+      const picker = document.getElementById(pickerId);
+      const hiddenInput = document.getElementById(hiddenInputId);
+      if (!picker || !hiddenInput || !window.HK_DISTRICT_REGION_GROUPS) return;
+      const selected = new Set((hiddenInput.value || '').split('、').map(s => s.trim()).filter(Boolean));
+      const tr = (d) => window.translateDistrictName ? window.translateDistrictName(d) : d;
+      function render() {
+        picker.innerHTML = window.HK_DISTRICT_REGION_GROUPS.map(g => `
+          <div style="font-size:12px; color:#6B7894; margin:4px 0 2px;">${window.escapeHtml(tr(g.region))}</div>
+          <div style="display:flex; flex-wrap:wrap;">${g.districts.map(d => {
+            const on = selected.has(d);
+            return `<button type="button" class="tag" data-district="${window.escapeHtml(d)}" style="cursor:pointer; border:1px solid ${on ? 'var(--brand-500)' : '#ddd'}; background:${on ? 'var(--brand-500)' : '#F5F7F8'}; color:${on ? '#fff' : '#555'}; border-radius:99px; padding:4px 10px; font-size:13px; margin:0 6px 6px 0;">${on ? '✓ ' : ''}${window.escapeHtml(tr(d))}</button>`;
+          }).join('')}</div>`).join('');
+        picker.querySelectorAll('button[data-district]').forEach(btn => {
+          btn.onclick = () => {
+            const d = btn.getAttribute('data-district');
+            if (selected.has(d)) selected.delete(d); else selected.add(d);
+            hiddenInput.value = Array.from(selected).join('、');
+            render();
+          };
+        });
+      }
+      render();
+    };
+
     window.renderStudentFavSubjectChipPicker = function(pickerId, hiddenInputId, maxSelect) {
       const picker = document.getElementById(pickerId);
       const hiddenInput = document.getElementById(hiddenInputId);
@@ -2178,8 +2211,12 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
       // 唔使嘅工夫；每次切返導師嗰邊都重畫一次，會保留返之前剔選開嘅
       // 內容，因為 renderTutorSubjectChipPicker() 係由 hidden input 而家
       // 嘅 value 讀返選咗乜嘢）
-      if (isTutor && typeof window.renderTutorSubjectChipPicker === 'function') {
-        window.renderTutorSubjectChipPicker('reg-tutor-subjects-picker', 'reg-tutor-subjects');
+      // v1.253.0：註冊時任教學科最多 3 項，另加任教區域
+      if (isTutor && typeof window.renderStudentFavSubjectChipPicker === 'function') {
+        window.renderStudentFavSubjectChipPicker('reg-tutor-subjects-picker', 'reg-tutor-subjects', 3);
+      }
+      if (isTutor && typeof window.renderRegDistrictPicker === 'function') {
+        window.renderRegDistrictPicker('reg-tutor-districts-picker', 'reg-tutor-districts');
       }
 
       // 揀「我是學生」就填好「地區／學校」兩級選單，同埋畫返「喜愛
@@ -2210,10 +2247,10 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
     // v1.252.0：導師註冊完全獨立（首頁「導師註冊」按鈕）：1 註冊方式 → 2 基本資料 → 3 教學資料
     const regState = { step: 1, method: null, identity: null };
     function regIsTutor() { return window.__regTutorMode === true; }
-    function regTotalSteps() { return (!regIsTutor() && regState.identity === 'secondary') ? 4 : 3; }
+    function regTotalSteps() { return (regIsTutor() || regState.identity === 'secondary') ? 4 : 3; }
     // 每一步對應邊個面板
     function regPanelFor(st) {
-      if (regIsTutor()) return ({ 1: 'reg-step-1', 2: 'reg-step-3', 3: 'reg-step-tutor' })[st];
+      if (regIsTutor()) return ({ 1: 'reg-step-1', 2: 'reg-step-3', 3: 'reg-step-tutor-edu', 4: 'reg-step-tutor' })[st];
       return 'reg-step-' + st;
     }
     window.openRegister = function(mode) {
@@ -2224,9 +2261,16 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
       const st = regState.step;
       const tutor = regIsTutor();
       const panel = regPanelFor(st);
-      ['reg-step-1', 'reg-step-2', 'reg-step-3', 'reg-step-tutor'].forEach(id => { const el = document.getElementById(id); if (el) el.style.display = (id === panel) ? 'flex' : 'none'; });
+      ['reg-step-1', 'reg-step-2', 'reg-step-3', 'reg-step-tutor-edu', 'reg-step-tutor'].forEach(id => { const el = document.getElementById(id); if (el) el.style.display = (id === panel) ? 'flex' : 'none'; });
       const title = document.getElementById('reg-title');
       if (title) title.textContent = tutor ? window.t('reg.tutorTitle', '導師註冊') : window.t('auth.registerTitle', '註冊 ConcenMate 會員');
+      // v1.253.0：導師註冊——暱稱改為「導師稱呼」，並加性別
+      const nameLabel = document.getElementById('reg-username-label');
+      if (nameLabel) nameLabel.textContent = tutor ? window.t('reg.tutorNameLabel', '導師稱呼 *') : window.t('auth.nicknameLabel', '暱稱（顯示用）*');
+      const nameInput = document.getElementById('reg-username');
+      if (nameInput) nameInput.placeholder = tutor ? window.t('reg.tutorNamePlaceholder', '例如：陳老師') : window.t('profile.usernamePlaceholder', '例如：Alex Wong');
+      const genderWrap = document.getElementById('reg-tutor-gender-wrap');
+      if (genderWrap) genderWrap.style.display = tutor ? '' : 'none';
       // 同意條款：導師註冊放喺最後一步（教學資料），學生放喺基本資料
       const terms = document.getElementById('reg-terms-wrap');
       const tSlot = document.getElementById('reg-tutor-terms-slot');
@@ -2242,12 +2286,12 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
       if (pb) pb.style.width = Math.round(st / total * 100) + '%';
       const google = regState.method === 'google';
       const back = document.getElementById('reg-back-btn');
-      if (back) back.style.display = (st === 3 || (st === 2 && !google)) ? '' : 'none';
+      if (back) back.style.display = (st >= 3 || (st === 2 && !google)) ? '' : 'none';
       const next = document.getElementById('reg-next-btn');
-      if (next) next.style.display = ((st === 1 && regState.method === 'id') || (tutor && st === 2)) ? '' : 'none';
+      if (next) next.style.display = ((st === 1 && regState.method === 'id') || (tutor && (st === 2 || st === 3))) ? '' : 'none';
       const submit = document.getElementById('reg-submit-btn');
       if (submit) {
-        submit.style.display = st === 3 ? '' : 'none';
+        submit.style.display = st === total ? '' : 'none';
         submit.textContent = tutor
           ? window.t('reg.tutorSubmit', '提交導師申請')
           : (regState.identity === 'secondary'
@@ -2306,7 +2350,19 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
         if (!document.getElementById('reg-birth-year').value || !document.getElementById('reg-birth-month').value) { window.showToast(window.t('core.selectBirthYearMonth', '請選擇出生年份及月份'), '⚠️'); return; }
         const em = (document.getElementById('reg-contact-email').value || '').trim();
         if (!google && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)) { window.showToast(window.t('core.invalidEmailForVerify', '請輸入一個有效的電郵地址，用來做電郵驗證'), '⚠️'); return; }
+        if (!document.getElementById('reg-tutor-gender').value) { window.showToast(window.t('reg.needGender', '請選擇性別'), '⚠️'); return; }
         regState.step = 3;
+        regRender();
+        return;
+      }
+      // 導師註冊第 3 步（學歷及身份）→ 第 4 步（教學資料）
+      if (regIsTutor() && regState.step === 3) {
+        if (!document.getElementById('reg-tutor-edu-status').value) { window.showToast(window.t('reg.needEduStatus', '請選擇現況（就讀中／已畢業）'), '⚠️'); return; }
+        if (!(document.getElementById('reg-tutor-school').value || '').trim()) { window.showToast(window.t('reg.needTutorSchool', '請填寫就讀／畢業院校'), '⚠️'); return; }
+        if (!(document.getElementById('reg-tutor-major').value || '').trim()) { window.showToast(window.t('reg.needTutorMajor', '請填寫主修學科'), '⚠️'); return; }
+        const ig = (document.getElementById('reg-tutor-instagram').value || '').trim().replace(/^@/, '');
+        if (!/^[A-Za-z0-9._]{1,30}$/.test(ig)) { window.showToast(window.t('reg.needTutorIg', '請填寫正確的 Instagram ID（只可包含英文字母、數字、句號及底線）'), '⚠️'); return; }
+        regState.step = 4;
         regRender();
         return;
       }
@@ -2425,16 +2481,27 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/fireba
         }
         doRegister(optInEl && optInEl.checked);
       } else {
-        const tutorBio = document.getElementById('reg-tutor-bio').value.trim();
+        // v1.253.0：導師註冊資料（學歷、Instagram、任教區域、網課）
         const tutorSubjectsRaw = document.getElementById('reg-tutor-subjects').value.trim();
-        const tutorSubjects = tutorSubjectsRaw.split(/[,，、]/).map(s => s.trim()).filter(Boolean);
+        const tutorSubjects = tutorSubjectsRaw.split(/[,，、]/).map(s => s.trim()).filter(Boolean).slice(0, 3);
         if (tutorSubjects.length === 0) {
           window.showToast(window.t('core.selectAtLeastOneTeachSubject', '請至少填寫一個想教的科目'), '⚠️');
           return;
         }
+        const teachOnlineVal = document.getElementById('reg-tutor-online').value;
+        if (!teachOnlineVal) { window.showToast(window.t('reg.needTutorOnline', '請選擇會否教授網課'), '⚠️'); return; }
+        const tutorDistricts = (document.getElementById('reg-tutor-districts').value || '').split('、').map(s => s.trim()).filter(Boolean);
+        if (tutorDistricts.length === 0 && teachOnlineVal !== 'yes') { window.showToast(window.t('reg.needTutorDistrict', '請至少選擇一個任教區域'), '⚠️'); return; }
         window.registerWithFirebase(loginId, password, {
-          accountType, username, contactEmail, tutorBio, tutorSubjects,
-          birthYear, birthMonth, isSecondaryStudent
+          accountType, username, contactEmail, tutorSubjects,
+          birthYear, birthMonth, isSecondaryStudent,
+          tutorGender: document.getElementById('reg-tutor-gender').value,
+          tutorEduStatus: document.getElementById('reg-tutor-edu-status').value,
+          tutorSchool: document.getElementById('reg-tutor-school').value.trim(),
+          tutorMajor: document.getElementById('reg-tutor-major').value.trim(),
+          tutorInstagram: document.getElementById('reg-tutor-instagram').value.trim().replace(/^@/, ''),
+          tutorDistricts,
+          tutorTeachOnline: teachOnlineVal === 'yes'
         });
       }
     };

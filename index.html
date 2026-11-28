@@ -6,7 +6,7 @@
        打開檔案唔使拉就見到，方便快速核對版本）
        ======================================== -->
   <script>
-    window.APP_VERSION = "v1.252.0"; // 每次推送 GitHub 前，喺呢度改版號
+    window.APP_VERSION = "v1.253.0"; // 每次推送 GitHub 前，喺呢度改版號
   </script>
 
   <!-- v1.227.8：全站確認／輸入視窗，取代瀏覽器原生 confirm()／prompt()，外觀同資訊卡一致。
@@ -3489,8 +3489,16 @@
           <div style="font-size:15px; font-weight:bold; color:var(--brand-800);" data-i18n="reg.step3Title">基本資料</div>
           <div id="reg-step3-id-slot"></div>
           <div>
-            <label style="font-size:13px; font-weight:bold; color:#555;" data-i18n="auth.nicknameLabel">暱稱（顯示用）*</label>
+            <label id="reg-username-label" style="font-size:13px; font-weight:bold; color:#555;" data-i18n="auth.nicknameLabel">暱稱（顯示用）*</label>
             <input type="text" id="reg-username" class="input-field" maxlength="30" placeholder="例如：Alex Wong" data-i18n-placeholder="profile.usernamePlaceholder">
+          </div>
+          <div id="reg-tutor-gender-wrap" style="display:none;">
+            <label style="font-size:13px; font-weight:bold; color:#555;" data-i18n="reg.tutorGenderLabel">性別 *</label>
+            <select id="reg-tutor-gender" class="input-field">
+              <option value="" data-i18n="reg.pleaseSelect">請選擇</option>
+              <option value="male" data-i18n="reg.genderMale">男</option>
+              <option value="female" data-i18n="reg.genderFemale">女</option>
+            </select>
           </div>
           <div>
             <label style="font-size:13px; font-weight:bold; color:#555;" data-i18n="auth.birthDateLabel">出生年月 *</label>
@@ -3527,19 +3535,53 @@
           </div>
         </div>
 
-        <!-- ===== v1.252.0：導師註冊第 3 步：教學資料（導師註冊：1 註冊方式 → 2 基本資料 → 3 教學資料） ===== -->
+        <!-- ===== v1.253.0：導師註冊（1 註冊方式 → 2 基本資料 → 3 學歷及身份 → 4 教學資料） ===== -->
+        <div id="reg-step-tutor-edu" class="reg-step" style="display:none; flex-direction:column; gap:10px;">
+          <div style="font-size:15px; font-weight:bold; color:var(--brand-800);" data-i18n="reg.tutorEduTitle">學歷及身份</div>
+          <div>
+            <label style="font-size:13px; font-weight:bold; color:#555;" data-i18n="reg.tutorEduStatusLabel">現況 *</label>
+            <select id="reg-tutor-edu-status" class="input-field">
+              <option value="" data-i18n="reg.pleaseSelect">請選擇</option>
+              <option value="studying" data-i18n="reg.eduStudying">就讀中</option>
+              <option value="graduated" data-i18n="reg.eduGraduated">已畢業</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size:13px; font-weight:bold; color:#555;" data-i18n="reg.tutorSchoolLabel">就讀／畢業院校 *</label>
+            <input type="text" id="reg-tutor-school" class="input-field" maxlength="60" placeholder="例如：香港大學" data-i18n-placeholder="reg.tutorSchoolPlaceholder">
+          </div>
+          <div>
+            <label style="font-size:13px; font-weight:bold; color:#555;" data-i18n="reg.tutorMajorLabel">主修學科 *</label>
+            <input type="text" id="reg-tutor-major" class="input-field" maxlength="60" placeholder="例如：數學" data-i18n-placeholder="reg.tutorMajorPlaceholder">
+          </div>
+          <div>
+            <label style="font-size:13px; font-weight:bold; color:#555;" data-i18n="reg.tutorIgLabel">Instagram ID *</label>
+            <input type="text" id="reg-tutor-instagram" class="input-field" maxlength="31" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="例如：chan_tutor" data-i18n-placeholder="reg.tutorIgPlaceholder">
+            <p style="font-size:12px; color:#6B7894; margin-top:4px;" data-i18n="reg.tutorIgHint">我們會傳送確認訊息到你的 Instagram 收件匣，以核實導師身份。</p>
+          </div>
+        </div>
+
         <div id="reg-step-tutor" class="reg-step" style="display:none; flex-direction:column; gap:10px;">
           <div style="font-size:15px; font-weight:bold; color:var(--brand-800);" data-i18n="reg.tutorStepTitle">教學資料</div>
           <div id="register-tutor-fields" style="display:none;">
             <div>
-              <label style="font-size:13px; font-weight:bold; color:#555;" data-i18n="auth.tutorBioLabel">自我介紹</label>
-              <textarea id="reg-tutor-bio" class="input-field" rows="3" maxlength="500" placeholder="簡單介紹自己的教學背景、經驗" data-i18n-placeholder="auth.tutorBioPlaceholder" style="width:100%; resize:vertical;"></textarea>
-            </div>
-            <div style="margin-top:10px;">
-              <label style="font-size:13px; font-weight:bold; color:#555;" data-i18n="auth.tutorSubjectsLabel">想教的科目 *（可選多科，亦可自行輸入）</label>
+              <label style="font-size:13px; font-weight:bold; color:#555;" data-i18n="reg.tutorSubjectsLabel">任教學科 *（最多 3 項）</label>
               <div id="reg-tutor-subjects-picker"></div>
               <input type="hidden" id="reg-tutor-subjects">
             </div>
+          </div>
+          <div>
+            <label style="font-size:13px; font-weight:bold; color:#555;" data-i18n="reg.tutorDistrictsLabel">任教區域（可選多區）</label>
+            <div id="reg-tutor-districts-picker"></div>
+            <input type="hidden" id="reg-tutor-districts">
+          </div>
+          <div>
+            <label style="font-size:13px; font-weight:bold; color:#555;" data-i18n="reg.tutorOnlineLabel">會否教授網課 *</label>
+            <select id="reg-tutor-online" class="input-field">
+              <option value="" data-i18n="reg.pleaseSelect">請選擇</option>
+              <option value="yes" data-i18n="reg.onlineYes">會</option>
+              <option value="no" data-i18n="reg.onlineNo">不會</option>
+            </select>
           </div>
           <div style="font-size:12px; color:#6B7894;" data-i18n="reg.tutorApprovalNote">提交後由管理員審批，批准後即可使用導師功能。</div>
           <div id="reg-tutor-terms-slot"></div>
@@ -3627,7 +3669,11 @@
   <div class="modal-backdrop" id="modal-reg-optin-nudge" style="display:none;">
     <div class="modal-box" style="max-width:420px;">
       <h3 style="font-size:17px; font-weight:bold; color:var(--brand-800); margin-bottom:8px;" data-i18n="reg.optInNudgeTitle">想收到附近的補習資訊嗎？</h3>
-      <p style="font-size:14px; color:#555; line-height:1.7; margin-bottom:16px;" data-i18n="reg.optInNudgeBody">勾選後，日後可收到你所在地區經審核的補習導師、補習社及學習資源資訊，方便你找到合適的補習。你的個人資料不會提供予導師或補習社，亦可隨時在「我的帳戶」取消。</p>
+      <ul style="font-size:14px; color:#555; line-height:1.8; margin:0 0 16px; padding-left:20px;">
+        <li data-i18n="reg.optInNudgeB1">你所在地區經審核的導師及補習社資訊</li>
+        <li data-i18n="reg.optInNudgeB2">個人資料不會提供予導師或補習社</li>
+        <li data-i18n="reg.optInNudgeB3">可隨時在「我的帳戶」取消</li>
+      </ul>
       <div style="display:flex; flex-direction:column; gap:8px;">
         <button type="button" class="btn btn-primary" style="justify-content:center;" data-i18n="reg.optInNudgeYes" onclick="window.resolveRegOptInNudge && window.resolveRegOptInNudge(true)">好，我想收到</button>
         <button type="button" class="btn btn-outline" style="justify-content:center;" data-i18n="reg.optInNudgeNo" onclick="window.resolveRegOptInNudge && window.resolveRegOptInNudge(false)">暫時不用，繼續註冊</button>
@@ -4803,14 +4849,14 @@
   })();
   </script>
 
-  <script src="js/i18n.js?v=1.252.0"></script>
+  <script src="js/i18n.js?v=1.253.0"></script>
 
-  <script src="js/app-features.js?v=1.252.0"></script>
+  <script src="js/app-features.js?v=1.253.0"></script>
 
-  <script type="module" src="js/app-core.js?v=1.252.0"></script>
+  <script type="module" src="js/app-core.js?v=1.253.0"></script>
 
-  <script src="js/room-video.js?v=1.252.0"></script>
-  <script src="js/stream.js?v=1.252.0"></script>
+  <script src="js/room-video.js?v=1.253.0"></script>
+  <script src="js/stream.js?v=1.253.0"></script>
   <!-- 房主退出房間選擇彈窗 -->
   <div class="modal-backdrop" id="modal-host-leave" style="display:none;">
     <div class="modal-box" style="text-align:center;">
@@ -5081,7 +5127,7 @@
   </div>
 
   <!-- v1.244.0：管理後台（admin-panel.js）改為管理員先載入，見 site-config.js -->
-  <script src="js/site-config.js?v=1.252.0"></script>
+  <script src="js/site-config.js?v=1.253.0"></script>
   <!-- pdf.js：導師教材嘅 PDF 預覽（整份文件／學生視角）同教材卡嘅第一頁
        縮圖，都用呢個 library 自己畫落 <canvas>，唔再靠瀏覽器內建嘅PDF
        viewer（手機Safari個內建viewer塞喺iframe度揭唔到第二頁）。淨係
@@ -5108,7 +5154,7 @@
       return window._pdfJsLoading;
     };
   </script>
-  <script src="js/tutor-panel.js?v=1.252.0"></script>
+  <script src="js/tutor-panel.js?v=1.253.0"></script>
 
 </body>
 </html>

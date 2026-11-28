@@ -1616,7 +1616,13 @@
             <span style="font-size:13px; color:#999;">${escapeHtml(when)}</span>
           </div>
           <p style="font-size:13px; margin-bottom:3px;"><b>${window.t('admin.s322', '顯示名稱：')}</b>${escapeHtml(a.displayName || '—')}</p>
-          <p style="font-size:13px; color:#666; margin-bottom:3px;">${escapeHtml(a.bio || window.t('admin.s317', '（未填寫自我介紹）'))}</p>
+          ${a.school || a.instagram ? `
+          <p style="font-size:13px; margin-bottom:3px;"><b>${window.t('admin.tutorAppGender', '性別：')}</b>${escapeHtml(a.gender === 'male' ? window.t('reg.genderMale', '男') : (a.gender === 'female' ? window.t('reg.genderFemale', '女') : '—'))}</p>
+          <p style="font-size:13px; margin-bottom:3px;"><b>${window.t('admin.tutorAppEdu', '學歷：')}</b>${escapeHtml(a.school || '—')}（${escapeHtml(a.major || '—')}，${escapeHtml(a.eduStatus === 'graduated' ? window.t('reg.eduGraduated', '已畢業') : window.t('reg.eduStudying', '就讀中'))}）</p>
+          <p style="font-size:13px; margin-bottom:3px;"><b>Instagram：</b>${a.instagram ? `<a href="https://www.instagram.com/${encodeURIComponent(a.instagram)}/" target="_blank" rel="noopener">@${escapeHtml(a.instagram)}</a>` : '—'}</p>
+          <p style="font-size:13px; margin-bottom:3px;"><b>${window.t('admin.tutorAppDistricts', '任教區域：')}</b>${escapeHtml((a.districts || []).map(d => window.translateDistrictName ? window.translateDistrictName(d) : d).join('、') || '—')}</p>
+          <p style="font-size:13px; margin-bottom:3px;"><b>${window.t('admin.tutorAppOnline', '網課：')}</b>${a.teachOnline ? window.t('reg.onlineYes', '會') : window.t('reg.onlineNo', '不會')}</p>
+          ` : `<p style="font-size:13px; color:#666; margin-bottom:3px;">${escapeHtml(a.bio || window.t('admin.s317', '（未填寫自我介紹）'))}</p>`}
           <p style="font-size:13px; margin-bottom:3px;">${subjectsHtml || window.t('admin.s318', '（未填寫科目）')}</p>
           <p style="font-size:13px; color:#888; margin-bottom:3px;"><b>${window.t('admin.s323', '聯絡方式：')}</b>${escapeHtml(a.contactInfo || '—')}</p>
           <p style="font-size:12px; color:#aaa; margin-bottom:3px;">${escapeHtml(uid)}</p>
